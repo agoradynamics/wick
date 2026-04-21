@@ -1,0 +1,19 @@
+# Example instinct file. Filename matches the `id` field.
+# This is `memory/instincts/EXAMPLE.yaml` — a demonstration, not an active instinct.
+# Delete this file when you start logging real instincts, or rename it.
+
+id: prefer-bullet-lists-for-technical-summaries
+trigger: "when user asks for a code review, architecture overview, or technical summary"
+behavior: "default to structured bullet points over paragraphs; preserve prose only when the argument is cumulative and would lose meaning if bulletized"
+confidence: 0.60
+domain: "voice"
+source: "user-correction"
+scope: "project"
+created: 2026-04-20
+reinforced: 2
+last_reinforced: 2026-04-20
+notes: >
+  User first corrected on 2026-04-18 after a 300-word PR review:
+  "Too long. Bullets next time." Reinforced 2026-04-20 when a security
+  review in bullet format got "Good." Confidence bumped from 0.40 to 0.60.
+  Watch for 2 more reinforcements before proposing /promote to learning-journal.

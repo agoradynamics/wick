@@ -1,0 +1,41 @@
+{
+  "meta_schema_version": "wick-meta/1.0",
+  "version": "1.0.0",
+  "release_channel": "alpha",
+  "released_at": "2026-04-20",
+  "license": "MIT",
+  "publisher": "Agora Dynamics LLC",
+  "training_pairs": 23,
+  "refusal_pairs": 14,
+  "total_pairs": 37,
+  "features": [
+    "5 Operational Gates (Control, Assent, Specificity, Adversarial Convergence, Calibration)",
+    "14 slash commands — Core 6 (/reflect, /calibrate, /decide, /learn, /review, /status) + Analytical 6 (/premortem, /steelman, /frame, /doubt, /forget, /audit) + Instinct 2 (/evolve, /promote)",
+    "8 on-demand skills, spec-compliant per agentskills.io (wick-consolidate-memory, wick-simplify, wick-code-review, wick-security-review, wick-tldr, wick-red-team, wick-base-rate, wick-research)",
+    "8 memory templates (about-you, decisions, learning-journal, domain-knowledge, predictions, calibration, failure-log, curiosity) + opt-in instincts layer",
+    "3 install modes — full takeover / personality layer / subagent",
+    "AGENTS.md bridge — compatible with Codex, Aider, Cursor, Zed, JetBrains, Warp, Gemini CLI, Windsurf, goose, and 20+ AGENTS.md-aware tools",
+    "First Session Protocol — one question at a time with proposed recommended answers",
+    "Offered Reflection — Wick offers memory updates at natural trigger points; never auto-writes",
+    "Epistemic humility decision tree — three-level confidence (I know / I believe, here's why / I don't know, here's how I'd approach it) with worked dialogues",
+    "Framework library — four philosophical operating systems (Stoic / Platonic / Aristotelian / Epicurean) + modern decision science (Tetlock superforecasting, Brier scoring, Gigerenzer fast-and-frugal, Acemoglu, Schelling, Smead, Watts, Klein, Munger, Bayes)",
+    "Benchmark layer — 3 seed smoke tasks + external benchmark docs (Inspect AI, GAIA2, galileo-ai/agent-leaderboard)",
+    "Anti-wordy voice rules — framework-cited in 3-5 words, no preamble recap, don't philosophize about the philosophy",
+    "Two-file training strategy — analytical mastery + epistemic humility refusals",
+    "tools/wick-scrub.mjs — 16-pattern pre-commit secret scanner for the memory/ folder"
+  ],
+  "audit_status": {
+    "identity_claims": "clean",
+    "confabulation_triggers": "clean",
+    "truncation": "clean",
+    "secret_scanner_pass": "clean (wick-scrub 16 patterns, 37 files)",
+    "skill_spec_validation": "clean (skills-ref validate, 8/8 skills pass agentskills.io/specification)"
+  },
+  "links": {
+    "source": "https://github.com/agoradynamics/wick",
+    "download": "https://agoradynamics.dev/wick.html",
+    "training_pairs_dataset": "https://huggingface.co/datasets/AgoraDynamics/wick",
+    "company": "https://agoradynamics.dev",
+    "contact": "contact@agoradynamics.dev"
+  }
+}

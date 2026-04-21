@@ -1,0 +1,42 @@
+MIT License
+
+Copyright (c) 2026 Agora Dynamics LLC
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+─────────────────────────────────────────────────────────────────
+
+TRADEMARK NOTICE (separate from the MIT copyright grant)
+
+"Wick" and "Agora Dynamics" are trademarks of Agora Dynamics LLC.
+
+The MIT license above grants you rights in the copyrighted work. It does
+NOT grant any right to use the Agora Dynamics trademarks. You may use the
+marks to refer to the Software as-is (nominative fair use — e.g., "my fork
+of Wick" or "I built this on top of Wick"). You may not use the marks to
+imply endorsement, sponsorship, or affiliation, or to brand a derivative
+product in a way that could cause confusion about its source.
+
+A short, plain-English version: fork freely, modify freely, resell
+freely — but if you ship a significantly changed version, give it a
+different name so users aren't confused about what they're getting.
+
+Questions about trademark usage: contact@agoradynamics.dev
+
+SPDX-License-Identifier: MIT

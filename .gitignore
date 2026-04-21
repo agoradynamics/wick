@@ -1,0 +1,66 @@
+# ─── OS / Editor noise ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.idea/
+.vscode/
+*.sublime-*
+
+# ─── Secrets (never commit) ────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+credentials.json
+secrets.json
+
+# ─── Node / npm (if anyone adds tooling) ───────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# ─── Python (for fine-tuning TRAINING-GUIDE scripts) ───────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# ─── User session artifacts ─────────────────────────────────────────
+# If you've enabled the optional observer hook (see memory/instincts/README.md),
+# raw behavioral observations get written to this file. They're personal to
+# your install — never commit them to a public repo.
+memory/instincts/.observations.jsonl
+
+# ─── Benchmark results (may contain session data) ──────────────────
+.benchmark-results/
+benchmark-output/
+
+# ─── Build / dist artifacts (for future package-build tooling) ─────
+dist/
+build/
+*.tsbuildinfo
+
+# ─── Note on the memory/ folder ────────────────────────────────────
+# The `memory/` folder ships with empty templates. Over time it fills
+# with YOUR accumulated context (decisions, predictions, domain
+# knowledge, etc.). If you fork this repo PRIVATELY, committing your
+# memory is fine. If you fork it PUBLICLY, you probably want to add:
+#
+#     memory/
+#     !memory/*.md     # keep the templates
+#     !memory/README.md
+#
+# to YOUR .gitignore (this .gitignore intentionally doesn't exclude
+# memory/ by default — the shipped templates need to be visible).
+#
+# Always run `tools/wick-scrub.mjs memory/` before pushing any
+# Wick-powered project publicly. See `WICK-INTEGRATION.md` §11 for
+# the full privacy / security hygiene guide.

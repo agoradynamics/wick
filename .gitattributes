@@ -1,0 +1,17 @@
+# Normalize text files to LF in the repo, preserve OS-native line endings
+# in working trees. Cross-platform Git convention — keeps diffs clean.
+
+* text=auto eol=lf
+
+# Binary types — never touch line endings
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.tar binary
+*.tar.gz binary
+*.woff binary
+*.woff2 binary
