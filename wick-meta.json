@@ -5,6 +5,8 @@
   "released_at": "2026-05-06",
   "license": "MIT",
   "publisher": "Agora Dynamics LLC",
+  "protocols_version": "1.0.0",
+  "protocols_source": "agora-dynamics/protocols/",
   "training_pairs": 23,
   "refusal_pairs": 14,
   "total_pairs": 37,
