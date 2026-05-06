@@ -15,6 +15,7 @@ Skills are on-demand capabilities Wick can invoke without bloating the main prom
 | `wick-base-rate` | Force base-rate reasoning before a probability estimate |
 | `wick-research` | Structured research with CRAAP test and source hierarchy |
 | `wick-catalog` | Extract structured fields from a source and save a queryable record to `memory/catalog/` |
+| `wick-changelog-summary` | Produce a one-paragraph narrative from a CHANGELOG.md version entry — for release notes, blog posts, social copy |
 
 ## Relationship to slash commands
 

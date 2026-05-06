@@ -263,7 +263,7 @@ Fourteen slash commands. They ship as `.claude/commands/*.md` files (Claude Code
 | `/evolve` | Cluster `memory/instincts/*.yaml` entries and propose graduations — to skills, to `KNOWLEDGE.md`, or to `learning-journal.md` |
 | `/promote [instinct-id]` | Promote a `scope: project` instinct to `scope: global` — for behaviors observed in 2+ projects |
 
-### On-Demand Skills (9)
+### On-Demand Skills (10)
 
 Skills live in `.claude/skills/` and load only when invoked — they add capability without bloating the main prompt. See `.claude/skills/README.md` for the full index.
 
@@ -278,6 +278,7 @@ Skills live in `.claude/skills/` and load only when invoked — they add capabil
 | `wick-base-rate` | Force base-rate reasoning before a probability estimate |
 | `wick-research` | Structured research with CRAAP test and source hierarchy |
 | `wick-catalog` | Extract structured fields from a source — paper, web page, API doc, UI — and save a queryable record to `memory/catalog/` |
+| `wick-changelog-summary` | One-paragraph narrative from a CHANGELOG.md version entry — for release notes, blog posts, social copy |
 
 **Adding your own skills:** drop a markdown file with frontmatter into `.claude/skills/`. See the directory README for format and examples.
 

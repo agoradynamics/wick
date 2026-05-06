@@ -1,5 +1,16 @@
 # Wick Changelog
 
+## v1.0.2 (2026-05-06) — Changelog-summary skill added
+
+### Added
+
+- **`wick-changelog-summary` skill** — produces a one-paragraph narrative summary of a `CHANGELOG.md` version entry, suitable for release announcements, blog posts, or social copy. Defaults to the latest version; takes an optional version argument like `v1.0.0`. Preserves technical specifics (file paths, command names, counts) rather than vaguifying them. Refuses to invent content if the requested version isn't in the file. Validates clean against agentskills.io spec.
+- **Skills count: 9 → 10.** All 10 pass `skills-ref validate` (v0.1.5).
+
+### Note
+
+This is the first skill built end-to-end through the new `/wick` execution path — Wick now plans and ships in a single turn rather than handing off to the operator. Internal scaffolding change for Ryan's local setup; no impact on customer installs (which always had Wick as the sole assistant).
+
 ## v1.0.1 (2026-05-06) — Commands shipped as files; catalog skill added
 
 ### Fixed
