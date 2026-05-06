@@ -128,7 +128,7 @@ Wick is plaintext markdown. The memory files, the framework library, the command
 
 **What you can do that no other package allows:**
 - Carry the same `memory/` folder from Claude Code → Cursor → ChatGPT → local Ollama → back to Claude Code. Not a byte lost.
-- Slash commands (`/calibrate`, `/decide`, `/reflect`, all 12) work in every one of those tools — because they're pattern recognition, not runtime features.
+- Slash commands (`/calibrate`, `/decide`, `/reflect`, all 14) work in every one of those tools — they ship as `.claude/commands/*.md` files (which Claude Code surfaces in the `/` menu) and are also pattern-recognized from `CLAUDE.md` for hosts that don't read commands files.
 - Move from cloud to offline without losing your thinking partner. If Anthropic or OpenAI goes down, paste `CLAUDE.md` into a local model and keep going.
 - Git-track your Wick. Version it, diff it, branch it, share it across machines.
 
@@ -184,7 +184,7 @@ Session 1 is dramatically better than vanilla Claude. Session 30 is dramatically
 
 | File | Purpose |
 |------|---------|
-| `CLAUDE.md` | Wick's identity, five operational gates, voice, 12 commands, learning engine |
+| `CLAUDE.md` | Wick's identity, five operational gates, voice, 14 commands, learning engine |
 | `WICK.md` | Mirror of `CLAUDE.md` for Mode B (personality layer without overwriting existing CLAUDE.md) |
 | `AGENTS.md` | Open-format bridge — makes Wick work in Codex, Aider, Cursor, Zed, JetBrains, Warp, Gemini CLI, Windsurf, and 20+ other tools |
 | `KNOWLEDGE.md` | Framework library: philosophy, game theory, Bayes, Gigerenzer heuristics, decision science, biases, methodology, operationalized epistemic humility |
@@ -232,7 +232,7 @@ Next session, Wick remembers everything.
 
 ## Commands
 
-Twelve slash commands. They work in **any runtime** — Claude Code, Cursor, ChatGPT, Aider, local Ollama — because they're text patterns Wick recognizes, not runtime features.
+Fourteen slash commands. They ship as `.claude/commands/*.md` files (Claude Code surfaces them in the `/` autocomplete menu) and are also pattern-recognized from `CLAUDE.md` for runtimes that don't read commands files — Cursor, ChatGPT, Aider, local Ollama. Same behavior, two delivery paths.
 
 ### Core (6)
 
@@ -256,7 +256,14 @@ Twelve slash commands. They work in **any runtime** — Claude Code, Cursor, Cha
 | `/forget [topic]` | Graceful memory deletion with audit trail — privacy hygiene done right |
 | `/audit` | Self-critique memory files — flag stale entries, contradictions, consolidation candidates |
 
-### On-Demand Skills (8)
+### Lifecycle (2)
+
+| Command | What It Does |
+|---------|-------------|
+| `/evolve` | Cluster `memory/instincts/*.yaml` entries and propose graduations — to skills, to `KNOWLEDGE.md`, or to `learning-journal.md` |
+| `/promote [instinct-id]` | Promote a `scope: project` instinct to `scope: global` — for behaviors observed in 2+ projects |
+
+### On-Demand Skills (9)
 
 Skills live in `.claude/skills/` and load only when invoked — they add capability without bloating the main prompt. See `.claude/skills/README.md` for the full index.
 
@@ -270,8 +277,28 @@ Skills live in `.claude/skills/` and load only when invoked — they add capabil
 | `wick-red-team` | Adversarial critique of a plan (inverse of `/steelman`) |
 | `wick-base-rate` | Force base-rate reasoning before a probability estimate |
 | `wick-research` | Structured research with CRAAP test and source hierarchy |
+| `wick-catalog` | Extract structured fields from a source — paper, web page, API doc, UI — and save a queryable record to `memory/catalog/` |
 
 **Adding your own skills:** drop a markdown file with frontmatter into `.claude/skills/`. See the directory README for format and examples.
+
+#### Catalog skill — worked example
+
+Wick's `wick-catalog` skill is source-agnostic: papers, web pages, API docs, UI screenshots, tools you're evaluating. Here's the pattern applied to one category from the popular [public-apis/public-apis](https://github.com/public-apis/public-apis) list — Weather APIs:
+
+```
+You: /research weather APIs with free tier and HTTPS
+Wick: [returns 3-5 candidates from public-apis/public-apis]
+
+You: catalog OpenWeatherMap and 7Timer using wick-catalog
+Wick: [creates memory/catalog/weather-openweathermap.md
+       and memory/catalog/weather-7timer.md, each with the API schema —
+       provider, auth, free-tier, https, cors, endpoints-of-interest, rate-limits, captured-date]
+       [appends both to memory/catalog/INDEX.md]
+```
+
+Now `memory/catalog/` is a queryable index *you* own. Next time you need a weather API, ask Wick — she reads the catalog, doesn't re-research from scratch. Same pattern works for papers in a literature review, components in a UI audit, or vendors in a procurement decision.
+
+**Why the catalog skill ships empty:** Wick doesn't pre-bake a public-APIs catalog into the package. Upstream lists update weekly; a baked-in catalog would bit-rot the day after release. Wick ships the *engine*, you point it at the sources you care about, the catalog grows where it earns.
 
 ---
 

@@ -1,5 +1,17 @@
 # Wick Changelog
 
+## v1.0.1 (2026-05-06) — Commands shipped as files; catalog skill added
+
+### Fixed
+
+- **Slash commands now ship as `.claude/commands/*.md` files.** v1.0.0's changelog promised 14 slash commands, but they only existed as trigger phrases inside `CLAUDE.md`. Mode C installs (sub-agent only, no `CLAUDE.md`) had no working commands; Mode A/B installs worked but commands didn't appear in Claude Code's `/` autocomplete menu. This release ships all 14 as proper command files: `reflect`, `calibrate`, `decide`, `learn`, `review`, `status`, `premortem`, `steelman`, `frame`, `forget`, `doubt`, `audit`, `evolve`, `promote`.
+- **README count corrections** — fixed three references to "12 commands" that should have read 14 (lines 131, 187, and the Commands section header).
+
+### Added
+
+- **`wick-catalog` skill** — extract structured fields from a source (paper, web page, API doc, UI screenshot, tool) and save a queryable record to `memory/catalog/<slug>.md`. Domain-agnostic. Complements `wick-research` (find) and `wick-tldr` (summarize) by adding a structured-index layer. Includes a worked README example pointing the skill at the [public-apis/public-apis](https://github.com/public-apis/public-apis) Weather category. Ships empty by design — Wick provides the engine, users build the catalog they care about.
+- **Skills count: 8 → 9.** README and skills/README updated.
+
 ## v1.0.0 (2026-04-20) — First Public Release 🔥
 
 The first official Agora Dynamics product release. Open source under MIT.

@@ -1,8 +1,8 @@
 {
   "meta_schema_version": "wick-meta/1.0",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "release_channel": "alpha",
-  "released_at": "2026-04-20",
+  "released_at": "2026-05-06",
   "license": "MIT",
   "publisher": "Agora Dynamics LLC",
   "training_pairs": 23,
@@ -10,8 +10,8 @@
   "total_pairs": 37,
   "features": [
     "5 Operational Gates (Control, Assent, Specificity, Adversarial Convergence, Calibration)",
-    "14 slash commands — Core 6 (/reflect, /calibrate, /decide, /learn, /review, /status) + Analytical 6 (/premortem, /steelman, /frame, /doubt, /forget, /audit) + Instinct 2 (/evolve, /promote)",
-    "8 on-demand skills, spec-compliant per agentskills.io (wick-consolidate-memory, wick-simplify, wick-code-review, wick-security-review, wick-tldr, wick-red-team, wick-base-rate, wick-research)",
+    "14 slash commands shipped as .claude/commands/*.md files (also pattern-recognized from CLAUDE.md) — Core 6 (/reflect, /calibrate, /decide, /learn, /review, /status) + Analytical 6 (/premortem, /steelman, /frame, /doubt, /forget, /audit) + Instinct 2 (/evolve, /promote)",
+    "9 on-demand skills, spec-compliant per agentskills.io (wick-consolidate-memory, wick-simplify, wick-code-review, wick-security-review, wick-tldr, wick-red-team, wick-base-rate, wick-research, wick-catalog)",
     "8 memory templates (about-you, decisions, learning-journal, domain-knowledge, predictions, calibration, failure-log, curiosity) + opt-in instincts layer",
     "3 install modes — full takeover / personality layer / subagent",
     "AGENTS.md bridge — compatible with Codex, Aider, Cursor, Zed, JetBrains, Warp, Gemini CLI, Windsurf, goose, and 20+ AGENTS.md-aware tools",
@@ -29,7 +29,7 @@
     "confabulation_triggers": "clean",
     "truncation": "clean",
     "secret_scanner_pass": "clean (wick-scrub 16 patterns, 37 files)",
-    "skill_spec_validation": "clean (skills-ref validate, 8/8 skills pass agentskills.io/specification)"
+    "skill_spec_validation": "needs revalidation — wick-catalog added in v1.0.1; v1.0.0 was 8/8 clean against agentskills.io/specification"
   },
   "links": {
     "source": "https://github.com/agoradynamics/wick",
