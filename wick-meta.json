@@ -29,7 +29,7 @@
     "confabulation_triggers": "clean",
     "truncation": "clean",
     "secret_scanner_pass": "clean (wick-scrub 16 patterns, 37 files)",
-    "skill_spec_validation": "needs revalidation — wick-catalog added in v1.0.1; v1.0.0 was 8/8 clean against agentskills.io/specification"
+    "skill_spec_validation": "clean (skills-ref v0.1.5 validate, 9/9 skills pass agentskills.io/specification)"
   },
   "links": {
     "source": "https://github.com/agoradynamics/wick",
