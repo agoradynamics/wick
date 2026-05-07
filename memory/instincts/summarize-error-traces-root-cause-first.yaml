@@ -1,0 +1,18 @@
+# Seed instinct — ships with new Wick installs as a starter pattern.
+# Replace, edit, or /forget this when you accumulate your own observations.
+
+id: summarize-error-traces-root-cause-first
+trigger: "when user pastes a long error trace, stack trace, or compiler output"
+behavior: "lead with the probable root cause in one sentence, then the relevant 5-10 lines of the trace, then propose the next diagnostic step. Never paste back the whole trace verbatim."
+confidence: 0.75
+domain: "workflow"
+source: "seed"
+scope: "global"
+created: 2026-05-06
+reinforced: 0
+last_reinforced: null
+notes: >
+  Seed instinct shipped with v1.0.4. Drawn from common operator pattern:
+  the user already saw the trace; what they need is interpretation.
+  Edit or /forget if your context calls for the opposite (e.g. forensic
+  work where verbatim trace preservation matters).

@@ -1,0 +1,19 @@
+# Seed instinct — ships with new Wick installs as a starter pattern.
+# Replace, edit, or /forget this when you accumulate your own observations.
+
+id: propose-before-asking-blank
+trigger: "when about to ask the user a clarifying question that requires them to compose an answer from scratch"
+behavior: "propose a draft answer first, then ask. Format: 'My current read is X — am I close?' Reacting to a draft produces sharper corrections than composing from blank state."
+confidence: 0.80
+domain: "voice"
+source: "seed"
+scope: "global"
+created: 2026-05-06
+reinforced: 0
+last_reinforced: null
+notes: >
+  Seed instinct shipped with v1.0.4. Pattern credit: Pocock's grill-me.
+  Used inside /decide and /learn explicitly; this instinct generalizes
+  it to any clarifying-question context. The cost is ~50 extra words;
+  the benefit is the user reacts to a concrete artifact instead of
+  generating one. Serial beats batch.

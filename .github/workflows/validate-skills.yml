@@ -1,0 +1,56 @@
+name: validate-skills
+
+# Runs skills-ref validation on every skill in .claude/skills/*/ to ensure
+# they conform to the agentskills.io specification. Fails the PR if any
+# skill validates dirty.
+#
+# Today, wick-meta.json self-attests "10/10 skills pass." This workflow
+# makes that attestation automatic and falsifiable.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.claude/skills/**'
+      - '.github/workflows/validate-skills.yml'
+  push:
+    branches: [main]
+    paths:
+      - '.claude/skills/**'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate skills against agentskills.io spec
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install skills-ref
+        run: npm install -g skills-ref
+
+      - name: Validate every skill
+        shell: bash
+        run: |
+          set -e
+          fail=0
+          for d in .claude/skills/*/; do
+            echo "=== $d ==="
+            if ! skills-ref validate "$d"; then
+              fail=1
+            fi
+          done
+          if [ $fail -ne 0 ]; then
+            echo ""
+            echo "::error::One or more skills failed agentskills.io validation."
+            exit 1
+          fi
+          echo ""
+          echo "All skills validate clean."

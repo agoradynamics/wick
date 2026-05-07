@@ -1,5 +1,29 @@
 # Wick Changelog
 
+## v1.0.4 (2026-05-06) — Built the immune response
+
+### Added (the discipline lives in code now, not just in heads)
+
+- **`tools/wick-public-readiness.mjs`** — sibling to the existing `wick-scrub.mjs` (which catches credentials). The new scanner catches the *other* failure mode that produced the v1.0.2 leak: internal vocabulary that should never have been vendored into a public repo. Reads `.wick-blocklist.json`, supports per-file allowlist for known-legitimate uses, exits 1 on findings. Use locally before any commit, or trust the CI gate (below).
+- **`.wick-blocklist.json`** — default ship-safe blocklist with five categories (model-identifiers, infrastructure-endpoints, internal-codenames, internal-roles, internal-apprentice-names). Each pattern carries a `reason` string so failure messages explain *why* a term is blocked, not just *that* it is. Forks should add their own internal-vocabulary patterns and commit the modified config.
+- **`.github/workflows/public-readiness.yml`** — runs both scanners (`wick-public-readiness` + `wick-scrub`) on every PR and main push. PRs that introduce a blocklisted term fail the check.
+- **`.github/workflows/validate-skills.yml`** — runs `skills-ref validate` on every skill on every PR. Today `wick-meta.json` self-attests "10/10 skills pass"; this workflow makes that attestation automatic and falsifiable.
+- **`SECURITY.md`** — vulnerability disclosure path, scanner-stack documentation, what Wick stores about you (and what it doesn't), what to still treat with care.
+- **`CONTRIBUTING.md`** — what kinds of contributions are most welcome, what's unlikely to land, the PR checklist (run both scanners, validate skills, update CHANGELOG).
+- **`CODE_OF_CONDUCT.md`** — direct, warm, zero patience for bad-faith argument. Standard governance hygiene for a public MIT repo with traction.
+- **Three seed instincts** in `memory/instincts/` — `summarize-error-traces-root-cause-first`, `offer-calibrate-on-probability-language`, `propose-before-asking-blank`. Replace with your own as you accumulate observations; they exist so a new install doesn't feel echoey on day one.
+
+### Fixed (closing the small residuals from v1.0.3)
+
+- **`CLAUDE.md:103` and `WICK.md:103`** — *"Knowledge is yours to share. Craft is Agora's to keep"* reworded to *"Craft is the publisher's to keep."* The original wording named what it was protecting *while* protecting it — self-defeating. Same intent, no internal name.
+- **`CLAUDE.md:99` and `WICK.md:99`** — *"If asked about Agora internals"* reworded to *"If asked about the publisher's internal projects."* Same redirect, less internal-vocabulary leak.
+
+### The story this release tells
+
+The v1.0.2 leak happened because there was no check that should have existed. v1.0.3 was the apology — files removed, history honest, the embarrassment named. v1.0.4 is the discipline — the scanner, the CI, the governance docs that point at the scanner. Without the scanner, every future commit relies on whoever runs it remembering. With the scanner, the discipline is in code, and "remembering" stops being load-bearing.
+
+If your fork or downstream package needs additional patterns, edit `.wick-blocklist.json`. The default ships with patterns relevant to upstream Wick; your context will need its own.
+
 ## v1.0.3 (2026-05-06) — operational/ scrub and rewrite
 
 ### Fixed (security / hygiene)

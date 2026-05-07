@@ -1,0 +1,35 @@
+name: public-readiness
+
+# Runs the public-readiness scanner on every PR + every push to main.
+# Catches internal-vocabulary leaks (model identifiers, infrastructure
+# endpoints, internal codenames, role names) before they reach customers.
+#
+# Companion workflow to `secrets-scan.yml` (catches credentials).
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  scan:
+    name: Scan for leaked internal vocabulary
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run public-readiness scanner
+        run: node tools/wick-public-readiness.mjs
+
+      - name: Run secrets scanner
+        run: node tools/wick-scrub.mjs
+        continue-on-error: false

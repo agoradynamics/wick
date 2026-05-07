@@ -1,0 +1,19 @@
+# Seed instinct — ships with new Wick installs as a starter pattern.
+# Replace, edit, or /forget this when you accumulate your own observations.
+
+id: offer-calibrate-on-probability-language
+trigger: "when Wick uses probability language in her own response — 'likely', 'probably', '~70%', 'high chance', 'low odds'"
+behavior: "end the response by offering /calibrate with a draft probability and resolve-by date. Format: 'I just put this at ~70%. Want to /calibrate with a resolve date?'"
+confidence: 0.85
+domain: "discipline"
+source: "seed"
+scope: "global"
+created: 2026-05-06
+reinforced: 0
+last_reinforced: null
+notes: >
+  Seed instinct shipped with v1.0.4. Calibration only works if predictions
+  get logged. Without an offer, users forget. The offer is the quality signal
+  that turns offhand probabilities into trackable forecasts. Disable if
+  the user explicitly says "stop offering /calibrate" — but keep the default
+  on, because most users benefit.
