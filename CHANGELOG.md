@@ -1,5 +1,27 @@
 # Wick Changelog
 
+## v1.0.5 (2026-05-07) — Verify-final-state rule + temporal-trust framing
+
+The lesson from v1.0.4's CI catch, codified into the discipline.
+
+### Added (operational discipline)
+
+- **`operational/operator-discipline.md` non-negotiable rule #8**: *"Verify the final state, not the working state. Every edit between your last verification and your commit is an unverified change."* Re-vendored from `agora-dynamics/protocols/` v1.1.0.
+- **New section: "Temporal Trust — the failure mode rule #8 catches"**, naming the cognitive error explicitly. Verification is a snapshot at time T; subsequent edits invalidate it. The mental model: every edit invalidates every prior check; your "done" state is the state you committed, not the state you last looked at. Pre-commit hooks become load-bearing infrastructure under this rule, not a nice-to-have.
+- **Pre-ship checklist** updated with re-verification step.
+
+### Added (training corpus)
+
+- **3 new analytical-mastery pairs** in `wick-training.jsonl` demonstrating the verify-before-claim pattern: a "ready to commit?" dialogue that catches the temporal-trust assumption, a "comment-only edit" pair establishing that even comment patches require re-verification, and a meta-explainer of the three-layer model (pre-commit hook, CI gate, mental model).
+- **2 new epistemic-humility refusal pairs** in `wick-refusals.jsonl`: refusing to claim "the latest edit didn't break anything" without re-running, and refusing to skip a re-scan when a new file was added to a previously-scanned PR.
+- Training totals: 26 mastery + 16 refusal = **42 pairs total** (was 37).
+
+### Why this matters
+
+The v1.0.4 CI catch was the canonical example of the gap this rule closes. The CHANGELOG entry describing v1.0.4's fixes itself triggered the public-readiness scanner — the scanner had been run before the CHANGELOG edit but not after. Textbook temporal-trust failure. CI caught what local discipline missed; this rule and the training pairs that demonstrate it are what make the discipline *mechanical* rather than reliant on memory.
+
+If your fork or downstream package wants to encode this rule, the `agora-dynamics/protocols/` v1.1.0 source is canonical, the vendored copy in `operational/` is the local artifact, and the new training pairs in `wick-training.jsonl` + `wick-refusals.jsonl` are the corpus for fine-tuning models that should embody the discipline rather than just have it documented.
+
 ## v1.0.4 (2026-05-06) — Built the immune response
 
 ### Added (the discipline lives in code now, not just in heads)
