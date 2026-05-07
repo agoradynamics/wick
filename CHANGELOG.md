@@ -15,8 +15,8 @@
 
 ### Fixed (closing the small residuals from v1.0.3)
 
-- **`CLAUDE.md:103` and `WICK.md:103`** — *"Knowledge is yours to share. Craft is Agora's to keep"* reworded to *"Craft is the publisher's to keep."* The original wording named what it was protecting *while* protecting it — self-defeating. Same intent, no internal name.
-- **`CLAUDE.md:99` and `WICK.md:99`** — *"If asked about Agora internals"* reworded to *"If asked about the publisher's internal projects."* Same redirect, less internal-vocabulary leak.
+- **`CLAUDE.md:103` and `WICK.md:103`** — closing rule reworded so it no longer names the publisher's internal context inside the don't-leak rule itself. Same intent, no internal-vocabulary leak. The original wording named what it was protecting *while* protecting it — self-defeating.
+- **`CLAUDE.md:99` and `WICK.md:99`** — redirect line reworded so the "if asked about [internal]" trigger no longer names the internal context. Same behavior, less leak surface.
 
 ### The story this release tells
 
