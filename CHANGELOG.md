@@ -1,5 +1,23 @@
 # Wick Changelog
 
+## v1.0.3 (2026-05-06) — operational/ scrub and rewrite
+
+### Fixed (security / hygiene)
+
+- **Removed `operational/ember-advisory.md`** and **`operational/vigil-protocols.md`** from the public repo. These files contained internal-deployment specifics — model identifiers, local endpoint URLs, and an internal-perspective critique of a sibling tool's failure modes — that should never have shipped publicly. The architectural patterns they captured (when to consult a separate strategic advisor, the operator-discipline habits) are preserved in clean, generic replacements; the leaky specifics are gone.
+- **Removed `operational/VENDORED-FROM.md`.** Wick's `operational/` is Wick's. The directory is no longer vendored from any external source.
+- **Soft-edited the v1.0.0 build-history bullets** to remove references to internal review processes that were not appropriate for public changelog history.
+
+### Changed
+
+- **`operational/advisor-pattern.md`** (new) — generic strategic-advisor consultation pattern. Pluggable to any model the user configures (local Ollama, hosted API, a different Claude or GPT instance, a human in chat). No model-specific or endpoint-specific details. Replaces the old advisory file.
+- **`operational/operator-discipline.md`** (new) — the Five Operational Gates and watchful-operator non-negotiables, framed as Wick's own discipline. Replaces the old protocols file.
+- **`wick-meta.json`** — removed `protocols_source` and `protocols_version` fields (Wick's `operational/` is self-contained, not vendored).
+
+### Note on git history
+
+These three files were committed in v1.0.2 and have lived in the public repo for a brief window. HEAD is now clean; `git log` history retains the prior versions for transparency. If your install of Wick was synced during that window, re-clone or `git pull` to get the sanitized HEAD.
+
 ## v1.0.2 (2026-05-06) — Changelog-summary skill added
 
 ### Added
@@ -79,17 +97,17 @@ Wick works **wherever markdown and chat exist** — Claude Code, Cursor, ChatGPT
 Multi-round audit sequence that produced v1.0.0:
 - Round 1: operationalized epistemic humility, added Bayes + Gigerenzer, offered-reflection pattern
 - Round 2: AGENTS.md bridge, Portability positioning, 6 analytical commands, developer integration guide
-- Round 3: Agora pattern imports (privacy/security, failure-log, curiosity queue, wick-scrub tool)
+- Round 3: privacy / security pattern imports (failure-log, curiosity queue, wick-scrub tool)
 - Round 4: SKILL.md spec compliance + goose runtime row + benchmark layer + grill-me patterns
-- Round 5: Agora Summit review; License swap to MIT, compared-to table, instinct pattern port
-- Round 6 (final): philosophy recalibration — tradition-anchored but lean, anti-wordy voice rules added, Ember recall bug fixed on the Agora backend (out-of-scope for Wick package itself)
+- Round 5: license swap to MIT, compared-to table, instinct pattern port
+- Round 6 (final): philosophy recalibration — tradition-anchored but lean, anti-wordy voice rules added
 
 ### v0.3 (2026-04-16)
 
 - Epistemic humility section added to CLAUDE.md
-- KNOWLEDGE.md expanded (game theory, Tetlock, Republic principle)
+- KNOWLEDGE.md expanded (game theory, Tetlock, decision-science framing)
 - Two-file training strategy: `wick-training.jsonl` + `wick-refusals.jsonl`
-- 10 Atlas-specific geopolitical prediction pairs removed (leakage fix)
+- 10 domain-specific prediction pairs removed from prior drafts (leakage fix)
 - Full quality audit: 0 identity claims, 0 confabulation triggers, 0 truncation
 
 ### v0.2 (2026-04-15)
