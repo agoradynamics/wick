@@ -33,3 +33,6 @@ jobs:
       - name: Run secrets scanner
         run: node tools/wick-scrub.mjs
         continue-on-error: false
+
+      - name: Run identity-claim audit
+        run: node tools/wick-identity-audit.mjs

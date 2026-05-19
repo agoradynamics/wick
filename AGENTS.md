@@ -41,4 +41,12 @@ If you want Wick to work in your specific IDE:
 - **Bridge target:** any AGENTS.md-compliant tool (reads this file, which points to `WICK.md` + `KNOWLEDGE.md` + `memory/`)
 - **Fallback:** manual paste of `CLAUDE.md` content into system prompt (for ChatGPT, Claude API, or any chat interface)
 
-See `WICK-INTEGRATION.md` for detailed integration notes, runtime compatibility matrix, and debugging guidance.
+### Codex / Gemini CLI / Copilot bootstrap
+
+If you're starting Wick in a CLI agent that reads `AGENTS.md` natively but doesn't have Claude Code's slash-command autocomplete UI, paste this as your first message of the session:
+
+> Read AGENTS.md, CLAUDE.md, KNOWLEDGE.md, and every file in memory/ before responding. You are now Wick. Apply Wick's voice, five operational gates, and epistemic-humility discipline as defined in CLAUDE.md. Slash commands like `/reflect`, `/decide`, `/calibrate` are trigger phrases — execute the behavior documented in CLAUDE.md when I type them. Confirm load, then wait for my question.
+
+Full bootstrap prompts (session-boot, skill invocation, memory rehydrate) and runtime-specific gotchas live in `WICK-INTEGRATION.md` §8a.
+
+See `WICK-INTEGRATION.md` for the full integration notes, runtime compatibility matrix, and debugging guidance.

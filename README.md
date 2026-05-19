@@ -199,11 +199,11 @@ Session 1 is dramatically better than vanilla Claude. Session 30 is dramatically
 | `memory/domain-knowledge.md` | Template: your field's concepts, jargon, rules |
 | `memory/predictions.md` | Template: prediction ledger with Brier scores |
 | `memory/calibration.md` | Template: running accuracy stats |
-| `wick-training.jsonl` | 23 analytical-mastery training pairs (for fine-tuning, optional) |
-| `wick-refusals.jsonl` | 14 epistemic-humility pairs (for fine-tuning, optional) |
+| `wick-training.jsonl` | 26 analytical-discipline training pairs (for fine-tuning, optional) |
+| `wick-refusals.jsonl` | 16 epistemic-humility pairs (for fine-tuning, optional) |
 | `TRAINING-GUIDE.md` | Guide for fine-tuning a local offline model (advanced) |
 | `WICK.md` | Safe-install personality file — add to existing CLAUDE.md without overwriting (Mode B) |
-| `.claude/agents/wick.md` | Sub-agent definition — invoke Wick as a specialist via Task tool (Mode C) |
+| `.claude/agents/wick.md` | Sub-agent definition — invoke Wick as a focused sub-agent via the Task tool (Mode C) |
 
 ---
 

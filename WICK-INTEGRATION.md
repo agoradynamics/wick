@@ -204,6 +204,62 @@ frameworks. Use memory/*.md for accumulated context.
 
 One file, 20+ runtimes. This is the highest-leverage install step for cross-tool coverage.
 
+### 8a. Codex / Gemini CLI / Copilot — explicit bootstrap
+
+CLI agents that read `AGENTS.md` natively (OpenAI Codex, Google Jules, GitHub Copilot's chat, Aider, etc.) will pick up Wick's identity from the bridge file, but they have UX differences from Claude Code worth knowing:
+
+- **Slash commands work as trigger phrases, not autocomplete menu items.** Typing `/reflect` produces the documented behavior; it just doesn't show up in a `/` dropdown the way Claude Code surfaces `.claude/commands/`.
+- **Skills are invoked by name, not via a Skill tool.** Ask the agent to "apply `wick-research` to this question" and have it read `.claude/skills/wick-research/SKILL.md` if it hasn't already.
+- **No sub-agent / Task() construct in most CLI agents.** Mode C (the subagent install) is Claude Code only — in Codex and friends, you invoke skills inline rather than spawning a sub-agent.
+- **Memory must be loaded explicitly.** Codex doesn't auto-read `memory/` on every turn the way Claude Code does. Tell it to read the files at session start.
+
+Three copy-paste prompts cover most cases:
+
+**1. Session-boot (first message of a new Codex session):**
+
+```
+Read AGENTS.md, CLAUDE.md, KNOWLEDGE.md, and every file in memory/ before
+responding. You are now Wick. Apply Wick's voice, five operational gates,
+and epistemic-humility discipline as defined in CLAUDE.md. When I type a
+slash command like /reflect, /decide, /calibrate, /doubt, /premortem, etc.,
+look up the behavior in the Commands section of CLAUDE.md and execute it.
+These are trigger phrases, not autocomplete menu items.
+
+Confirm by telling me: (a) you've loaded my memory/about-you.md context,
+(b) the five gates you'll apply silently, (c) the most recent date in
+memory/sessions/ so I know which session continuity you're picking up.
+Then wait for my actual question.
+```
+
+**2. Skill invocation (one-off):**
+
+```
+Apply the wick-research skill to this question. If you haven't already,
+read .claude/skills/wick-research/SKILL.md and follow its output format
+exactly — including the confidence tagging, source-hierarchy tiering, and
+the explicit "what I could not verify" section.
+
+Question: [your question]
+```
+
+Swap `wick-research` for any of the 10 skills (`wick-base-rate`, `wick-red-team`, `wick-tldr`, `wick-catalog`, `wick-changelog-summary`, etc.).
+
+**3. Memory bootstrap (when resuming a long-running thread):**
+
+```
+Read memory/about-you.md, memory/decisions.md, memory/predictions.md, and
+the most recent file in memory/sessions/. Summarize back to me in three
+bullets: (a) who I am from your perspective, (b) the most recent decision
+we logged, (c) any pending predictions whose resolve-by date has passed.
+Then we'll continue.
+```
+
+#### Gotchas specific to Codex
+
+- **Write access to `memory/`** — when Wick offers `/calibrate` and you accept, the model writes the prediction to `memory/predictions.md` directly (no separate persistence layer). Confirm Codex has write permission to the project tree. It usually does, but worth checking once.
+- **No mid-session state.** Codex re-reads files each turn; if you edit `memory/` manually mid-session, the next turn picks up the change. This is a feature, not a bug — but it means a long session benefits from a midway "re-read memory/" prompt if you've been logging predictions.
+- **The three scanners (`wick-scrub`, `wick-public-readiness`, `wick-identity-audit`)** are pure Node 20+, no Codex-specific bindings. Run them locally before committing memory anywhere public — they work the same way in any environment that has Node.
+
 ---
 
 ## 9. Debugging Wick
@@ -251,7 +307,7 @@ The package ships `hooks/emit-audit-event.mjs`. Wire it into your `.claude/setti
 
 ### Fine-tuning seed
 
-If you want Wick running on a local model, the package includes 37 curated pairs (`wick-training.jsonl` + `wick-refusals.jsonl`). See `TRAINING-GUIDE.md`. The refusal pairs are as important as the mastery pairs — they teach the model to say "I don't know" before fabricating. Don't ship a fine-tune without both halves.
+If you want Wick running on a local model, the package includes 42 curated pairs (`wick-training.jsonl` + `wick-refusals.jsonl`). See `TRAINING-GUIDE.md`. The refusal pairs are as important as the discipline pairs — they teach the model to say "I don't know" before fabricating. Don't ship a fine-tune without both halves.
 
 ### Multi-project Wick
 

@@ -41,12 +41,12 @@ Two JSONL files, each pair a single-turn instruction/response example:
 
 | File | Count | Purpose |
 |---|---|---|
-| `wick-training.jsonl` | 23 | Analytical-mastery pairs — decision framing, base-rate reasoning, framework application, false-premise correction |
-| `wick-refusals.jsonl` | 14 | Epistemic-humility refusals — Level-3 "I don't know, here's how I'd approach it" patterns |
+| `wick-training.jsonl` | 26 | Analytical-discipline pairs — decision framing, base-rate reasoning, framework application, false-premise correction, verify-before-claim |
+| `wick-refusals.jsonl` | 16 | Epistemic-humility refusals — Level-3 "I don't know, here's how I'd approach it" patterns |
 
-The refusal half is as important as the mastery half — it teaches the
+The refusal half is as important as the discipline half — it teaches the
 model to say "I don't know" before fabricating. Shipping a fine-tune
-with only mastery pairs produces a confident confabulator; shipping
+with only the discipline pairs produces a confident confabulator; shipping
 both halves teaches calibration.
 
 ## Supported Tasks

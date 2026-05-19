@@ -1,5 +1,36 @@
 # Wick Changelog
 
+## v1.0.6 (2026-05-07) — Identity-claim audit + Codex bootstrap
+
+### Added (third scanner — closing the third leak surface)
+
+- **`tools/wick-identity-audit.mjs`** — scanner for claim-based identity anchors in `.md` files. Pattern set targets second-person mastery declarations and first-person expert assertions that anchor the underlying model at a confident-performance stance and produce confabulation on embedded specifics. Practice-based phrasing (study, work with, demonstrate) is the recommended replacement. Exits 1 on findings. Reproduces the pattern set from the upstream identity-audit script that originally diagnosed this failure mode in adjacent internal tooling.
+- **CI workflow** (`.github/workflows/public-readiness.yml`) now runs all three scanners — credentials (`wick-scrub`), public-readiness (`wick-public-readiness`), and identity-claim (`wick-identity-audit`) — on every PR and main push.
+- **`wick-meta.json` `audit_status.identity_claim_audit`** field — current status is **clean** (0 matches across HIGH / MED / LOW severity, 56 `.md` files scanned).
+
+### Fixed (post-audit cleanups)
+
+- **`.claude/agents/wick.md:10`** — sub-agent intro reworded to drop the implicit-mastery framing in favor of a structural description (sub-agent for one focused question or task). Added an explicit *what-you-do / what-you-are-not* paragraph that demonstrates analytical discipline rather than asserting domain authority.
+- **`README.md` + `huggingface/README.md` + `WICK-INTEGRATION.md`** — renamed *"analytical-mastery pairs"* to *"analytical-discipline pairs"* across the training-corpus references. The "mastery" label was naming a training-pair category (versus epistemic-humility refusals), not an identity claim — but the term was triggering the LOW-severity false positives in the audit pattern. Renaming removes the false positives and aligns the language with the practice-based framing.
+- **Updated pair counts** to reflect v1.0.5 totals (26 discipline + 16 refusal = 42 pairs).
+
+### Added (Codex / Gemini CLI / Copilot integration)
+
+- **`AGENTS.md`** now includes a brief Codex bootstrap section with a copy-paste session-start prompt. Points at the full integration guide in `WICK-INTEGRATION.md` §8a.
+- **`WICK-INTEGRATION.md` §8a — Codex / Gemini CLI / Copilot — explicit bootstrap.** New subsection with:
+  - The four runtime-UX differences from Claude Code (slash-command-as-trigger-phrase, skill-invocation-by-name, no sub-agent, explicit memory load)
+  - Three copy-paste prompt templates: session-boot, skill invocation, memory rehydrate
+  - Codex-specific gotchas: `memory/` write permission, no mid-session state, scanner portability
+
+### Why both at once
+
+The identity audit and the Codex bootstrap close two different failure modes on the same release:
+
+- The **audit** closes a *content* gap — Wick's `.md` files now scan clean against the same pattern set that originally diagnosed confabulation-prompting prompts in adjacent internal tooling.
+- The **Codex bootstrap** closes a *usability* gap — Wick has always been technically portable to Codex via `AGENTS.md`, but the per-runtime UX differences weren't documented. New users now get a working bootstrap on the first try.
+
+Audit status: all four scanners green (`wick-scrub`, `wick-public-readiness`, `wick-identity-audit`, `skills-ref validate`). 
+
 ## v1.0.5 (2026-05-07) — Verify-final-state rule + temporal-trust framing
 
 The lesson from v1.0.4's CI catch, codified into the discipline.

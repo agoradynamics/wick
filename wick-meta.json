@@ -1,6 +1,6 @@
 {
   "meta_schema_version": "wick-meta/1.0",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "release_channel": "alpha",
   "released_at": "2026-05-07",
   "license": "MIT",
@@ -25,6 +25,7 @@
     "Operator discipline rule #8 — verify the final state, not the working state. Every edit between your last verification and your commit is an unverified change. Pre-commit hook is load-bearing infrastructure.",
     "tools/wick-scrub.mjs — 16-pattern pre-commit secret scanner for the memory/ folder",
     "tools/wick-public-readiness.mjs — internal-vocabulary scanner with configurable .wick-blocklist.json (model identifiers, infrastructure endpoints, internal codenames, role names). CI-gated alongside wick-scrub.",
+    "tools/wick-identity-audit.mjs — scanner for claim-based identity anchors (\"I am a master of X\") that produce confabulation. Practice-based phrasing preferred. CI-gated.",
     ".github/workflows/ — public-readiness scan and skills-spec validation run on every PR + main push",
     "SECURITY.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md — governance hygiene for a public MIT repo"
   ],
@@ -34,7 +35,8 @@
     "truncation": "clean",
     "secret_scanner_pass": "clean (wick-scrub 16 patterns, all memory files)",
     "skill_spec_validation": "clean (skills-ref v0.1.5 validate, 10/10 skills pass agentskills.io/specification)",
-    "public_readiness_scan": "clean (wick-public-readiness scanner, default .wick-blocklist.json, 66 files scanned 0 findings)"
+    "public_readiness_scan": "clean (wick-public-readiness scanner, default .wick-blocklist.json, 66 files scanned 0 findings)",
+    "identity_claim_audit": "clean (wick-identity-audit scanner, 56 .md files scanned 0 matches across HIGH/MED/LOW severity)"
   },
   "links": {
     "source": "https://github.com/agoradynamics/wick",

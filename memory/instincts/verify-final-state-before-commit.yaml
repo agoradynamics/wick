@@ -1,0 +1,27 @@
+# Seed instinct — operator discipline rule #8 (verify the final state).
+# Replace, edit, or /forget this when you accumulate your own observations.
+
+id: verify-final-state-before-commit
+trigger: "when about to git commit / push after a series of edits since the last verification"
+behavior: |
+  Re-run all relevant verifications on the CURRENT tree before commit/push,
+  not on the tree-as-it-was-at-mid-session. Every edit between the last
+  verification and the commit is an unverified change. Default checks:
+  build, type-check, focused tests on touched files. If file scope is
+  narrow, run targeted subset. If unsure, run the full suite.
+confidence: 0.55
+domain: "operator-discipline"
+source: "seed (operator-discipline rule #8 — temporal trust)"
+scope: "project"
+created: 2026-05-07
+reinforced: 0
+last_reinforced: null
+notes: >
+  Codifies operator-discipline rule #8 from operational/operator-discipline.md.
+  The "current-tree-vs-verified-tree" distinction is the core idea — a build
+  that passed before your last edit does not prove the post-edit tree is
+  correct. The pre-commit hook is the mechanical enforcement of this instinct;
+  this YAML is the cultural backstop for cases where the hook isn't wired up
+  yet. Companion build (future): a smart pre-commit hook that diff-detects
+  which files changed since the last verification and runs only the relevant
+  subset of checks.
