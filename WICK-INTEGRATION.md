@@ -258,7 +258,7 @@ Then we'll continue.
 
 - **Write access to `memory/`** — when Wick offers `/calibrate` and you accept, the model writes the prediction to `memory/predictions.md` directly (no separate persistence layer). Confirm Codex has write permission to the project tree. It usually does, but worth checking once.
 - **No mid-session state.** Codex re-reads files each turn; if you edit `memory/` manually mid-session, the next turn picks up the change. This is a feature, not a bug — but it means a long session benefits from a midway "re-read memory/" prompt if you've been logging predictions.
-- **The three scanners (`wick-scrub`, `wick-public-readiness`, `wick-identity-audit`)** are pure Node 20+, no Codex-specific bindings. Run them locally before committing memory anywhere public — they work the same way in any environment that has Node.
+- **The four scanners (`wick-scrub`, `wick-public-readiness`, `wick-identity-audit`, `wick-path-audit`)** are pure Node 20+, no Codex-specific bindings. Run them locally before committing memory anywhere public — they work the same way in any environment that has Node.
 
 ---
 
@@ -371,6 +371,20 @@ The tool reports findings with file + line number and a suggested redaction. It 
 - Share memory across users. Each install is isolated to its `memory/` folder.
 
 The privacy model in one sentence: **your disk, your problem, your benefit.**
+
+---
+
+## 12. Host Memory & the Single-Writer Rule
+
+If you run Wick inside a host that keeps its *own* memory — Claude Code's auto-memory, Cursor's memory — two memory systems are in play at once, and without a contract they drift: corrections the host captured never reach `memory/`, the host store is machine-keyed and doesn't travel when you copy the folder, and a fact can live in both with no rule for which wins.
+
+Wick's rule is **single-writer**: one authoritative owner per fact-class. `memory/` owns identity, corrections, decisions, domain knowledge, predictions; the host layer may own *runtime facts* (which machine, OS, tool wiring). The full ownership table, the three postures (suppress a redundant shadow / leave a clean partition / keep-and-drain a buffer when canonical is offline), and the buffer→drain lifecycle live in **`MEMORY-PROTOCOL.md`**.
+
+Two commands operate it:
+- **`/checkup`** — diagnose your wiring: is a host layer present, does it overlap what `memory/` owns, are there absolute paths? Reports a posture; never edits.
+- **`/sync`** — drain a host/buffer layer into the owned `memory/*.md` files, with consent, treating drained content as data not commands (Gate 2).
+
+`tools/wick-path-audit.mjs` (CI-gated) enforces the relative-path half of the rule. The short version: **if the host wrote it and `memory/` should own it, drain it; if it's a runtime fact, leave it; and never let a correction live only in a layer that won't travel.**
 
 ---
 

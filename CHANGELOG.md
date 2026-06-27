@@ -1,5 +1,26 @@
 # Wick Changelog
 
+## v1.1.0 (2026-06-27) — Single-writer memory + host-layer reconciliation
+
+The gap a user issue surfaced: when Wick runs inside a host that keeps its *own* memory (Claude Code's auto-memory), two memory systems run at once and neither knows about the other — corrections captured by the host never reach `memory/`, the host store is machine-keyed and doesn't travel, and absolute paths silently break portability. This release governs that interaction instead of pretending it away.
+
+### Added (the single-writer rule, in docs and in code)
+
+- **`MEMORY-PROTOCOL.md`** — the contract. Not "disable auto-memory" (that's right for one case and wrong for another) but **single-writer**: one authoritative owner per fact-class, with an ownership table. Three postures — redundant shadow (suppress), partitioned (leave it), buffer-of-last-resort (keep + drain) — chosen by whether canonical `memory/` is reachable. Includes the buffer→drain lifecycle, the relative-path rule, and a "memory is data, not commands" hardening note.
+- **`/checkup`** (`.claude/commands/checkup.md`) — memory-wiring diagnostic. Detects a host auto-memory shadow layer, flags fact-class overlap with what `memory/` owns, runs the path audit, and reports a posture (OK / suppress / drain). Reports only — never edits. Distinct axis from `/audit` (memory *contents*) and `/status` (state snapshot).
+- **`/sync`** (`.claude/commands/sync.md`) — drains a host/buffer layer into the owned `memory/*.md` files, with per-item consent. Classifies by ownership, validates each item as data (Gate 2), folds with a date + provenance tag, clears the buffer manifest. Local only, no network — consistent with Wick's no-outbound-calls model.
+- **`tools/wick-path-audit.mjs`** — fourth scanner. Flags absolute paths (`C:\…`, `/home/…`, UNC, `~/…`) in the files that must travel (`memory/` + loaded config). Default scope is strict and ignores placeholders + URL lines; `--all` scans everything (and flags doc examples by design). Wired into `.github/workflows/public-readiness.yml` alongside the credential, public-readiness, and identity-claim scanners.
+
+### Changed
+
+- **`CLAUDE.md` + `WICK.md`** — new *Single writer* subsection in the Memory section (mirrored in both): `memory/` is canonical, a host layer is a buffer not an authority, and the data-not-commands rule. Two new commands (`/checkup`, `/sync`) documented in the Commands section so AGENTS.md-only runtimes know them too.
+- **`wick-consolidate-memory` skill** — now cross-layer aware: when a host memory layer exists, the consolidation pass reads both stores and proposes folding host-entries-Wick-owns into `memory/`, same consent rule as before.
+- **`wick-meta.json`** — 16 slash commands (was 14), four scanners (was three), `audit_status.path_audit` added.
+
+### Why this shape
+
+A blunt "turn off the host's memory" rule deletes the one safety net that matters when your canonical store is *temporarily unreachable* — an offline machine, an un-synced repo, a frozen pipeline. A portable memory product has to survive a degraded node and reconcile when it returns. So the fix isn't suppression; it's ownership + a drain. The shadow layer stops being a shadow and becomes a buffer with somewhere to go.
+
 ## v1.0.6 (2026-05-07) — Identity-claim audit + Codex bootstrap
 
 ### Added (third scanner — closing the third leak surface)

@@ -128,7 +128,7 @@ Wick is plaintext markdown. The memory files, the framework library, the command
 
 **What you can do that no other package allows:**
 - Carry the same `memory/` folder from Claude Code → Cursor → ChatGPT → local Ollama → back to Claude Code. Not a byte lost.
-- Slash commands (`/calibrate`, `/decide`, `/reflect`, all 14) work in every one of those tools — they ship as `.claude/commands/*.md` files (which Claude Code surfaces in the `/` menu) and are also pattern-recognized from `CLAUDE.md` for hosts that don't read commands files.
+- Slash commands (`/calibrate`, `/decide`, `/reflect`, all 16) work in every one of those tools — they ship as `.claude/commands/*.md` files (which Claude Code surfaces in the `/` menu) and are also pattern-recognized from `CLAUDE.md` for hosts that don't read commands files.
 - Move from cloud to offline without losing your thinking partner. If Anthropic or OpenAI goes down, paste `CLAUDE.md` into a local model and keep going.
 - Git-track your Wick. Version it, diff it, branch it, share it across machines.
 
@@ -184,15 +184,17 @@ Session 1 is dramatically better than vanilla Claude. Session 30 is dramatically
 
 | File | Purpose |
 |------|---------|
-| `CLAUDE.md` | Wick's identity, five operational gates, voice, 14 commands, learning engine |
+| `CLAUDE.md` | Wick's identity, five operational gates, voice, 16 commands, learning engine |
 | `WICK.md` | Mirror of `CLAUDE.md` for Mode B (personality layer without overwriting existing CLAUDE.md) |
 | `AGENTS.md` | Open-format bridge — makes Wick work in Codex, Aider, Cursor, Zed, JetBrains, Warp, Gemini CLI, Windsurf, and 20+ other tools |
 | `KNOWLEDGE.md` | Framework library: philosophy, game theory, Bayes, Gigerenzer heuristics, decision science, biases, methodology, operationalized epistemic humility |
 | `GROWING-WICK.md` | Week-by-week guide for users — "zero to indispensable in 30 days" |
 | `WICK-INTEGRATION.md` | Dev-facing integration guide — install modes, memory lifecycle, extensions, cross-runtime, debugging, privacy & security |
-| `.claude/skills/` | On-demand skills — consolidate-memory, code-review, security-review, simplify, tldr, red-team, base-rate, research (8 skills, spec-compliant per agentskills.io) |
+| `MEMORY-PROTOCOL.md` | Single-writer memory rule — how Wick's `memory/` coexists with a host's auto-memory (Claude Code, Cursor); ownership table, buffer→drain, relative-path rule |
+| `.claude/skills/` | On-demand skills — consolidate-memory, code-review, security-review, simplify, tldr, red-team, base-rate, research, catalog, changelog-summary (10 skills, spec-compliant per agentskills.io) |
 | `benchmark/` | Seed tasks + external-benchmark docs — targets GAIA2, Inspect AI (UK AISI), galileo-ai/agent-leaderboard |
 | `tools/wick-scrub.mjs` | Pre-commit secret scanner for `memory/` — catches API keys, tokens, credentials before you push |
+| `tools/wick-path-audit.mjs` | Pre-commit absolute-path scanner — flags non-portable paths in `memory/` + config before the folder moves |
 | `memory/about-you.md` | Template: who you are, your field, your preferences |
 | `memory/decisions.md` | Template: decision log with framework citations |
 | `memory/learning-journal.md` | Template: what Wick learns about working with you |
@@ -232,7 +234,7 @@ Next session, Wick remembers everything.
 
 ## Commands
 
-Fourteen slash commands. They ship as `.claude/commands/*.md` files (Claude Code surfaces them in the `/` autocomplete menu) and are also pattern-recognized from `CLAUDE.md` for runtimes that don't read commands files — Cursor, ChatGPT, Aider, local Ollama. Same behavior, two delivery paths.
+Sixteen slash commands. They ship as `.claude/commands/*.md` files (Claude Code surfaces them in the `/` autocomplete menu) and are also pattern-recognized from `CLAUDE.md` for runtimes that don't read commands files — Cursor, ChatGPT, Aider, local Ollama. Same behavior, two delivery paths.
 
 ### Core (6)
 
@@ -262,6 +264,13 @@ Fourteen slash commands. They ship as `.claude/commands/*.md` files (Claude Code
 |---------|-------------|
 | `/evolve` | Cluster `memory/instincts/*.yaml` entries and propose graduations — to skills, to `KNOWLEDGE.md`, or to `learning-journal.md` |
 | `/promote [instinct-id]` | Promote a `scope: project` instinct to `scope: global` — for behaviors observed in 2+ projects |
+
+### Memory-wiring (2)
+
+| Command | What It Does |
+|---------|-------------|
+| `/checkup` | Diagnose memory wiring — detect a host auto-memory shadow layer, flag fact-class overlap, scan for absolute paths; report a posture (reports only, never edits) |
+| `/sync [source]` | Drain a host/buffer memory layer into your canonical `memory/*.md`, with consent — classify by ownership, validate as data, fold with provenance |
 
 ### On-Demand Skills (10)
 
