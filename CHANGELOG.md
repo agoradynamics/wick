@@ -1,5 +1,16 @@
 # Wick Changelog
 
+## v1.2.0 (2026-06-27) — Portability procedure + `wick-migrate`
+
+`MEMORY-PROTOCOL.md` (v1.1.0) gave the single-writer *rule*. This gives the *migration* to get an existing agent there — and the executable skill to run it.
+
+### Added
+- **`PORTABILITY.md`** — the canonical 14-step procedure to make a Wick agent fully portable by folder copy: freeze + verify the host auto-memory first, inventory both layers, sort Keep/Merge/Discard/Conflict (never auto-resolve a conflict), archive-don't-delete, relativize to the *launch directory* (with the two "relative-but-resolves-wrong" traps named), sweep tooling, and verify *behavior not form*. Validated against real multi-agent migrations.
+- **`wick-migrate` skill** — the executable, gated form of the procedure (gates at disable / sort / audit / deletions). Skills: 10 → 11.
+
+### Why it's a two-session job
+The load-bearing insight: auto-memory is *live*. You must disable it and confirm in a **fresh session** before consolidating, or the source mutates under you and the layers diverge invisibly. "The setting says false" is not verification; "a fresh session loaded nothing" is. Portability can't be a one-shot.
+
 ## v1.1.0 (2026-06-27) — Single-writer memory + host-layer reconciliation
 
 The gap a user issue surfaced: when Wick runs inside a host that keeps its *own* memory (Claude Code's auto-memory), two memory systems run at once and neither knows about the other — corrections captured by the host never reach `memory/`, the host store is machine-keyed and doesn't travel, and absolute paths silently break portability. This release governs that interaction instead of pretending it away.

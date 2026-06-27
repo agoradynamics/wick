@@ -386,6 +386,8 @@ Two commands operate it:
 
 `tools/wick-path-audit.mjs` (CI-gated) enforces the relative-path half of the rule. The short version: **if the host wrote it and `memory/` should own it, drain it; if it's a runtime fact, leave it; and never let a correction live only in a layer that won't travel.**
 
+To actually *move* an agent to a new machine — consolidate a host's auto-memory into `memory/`, disable the shadow portably, and relativize everything including tooling — follow **`PORTABILITY.md`** (or invoke the **`wick-migrate`** skill). It's a deliberate, gated, **two-session** procedure: the second session exists to verify in a fresh load that auto-memory is actually off *before* you migrate from it, because the source is live and will otherwise mutate under you.
+
 ---
 
 ## Quick-Reference Card
