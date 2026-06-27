@@ -1,8 +1,8 @@
 {
   "meta_schema_version": "wick-meta/1.0",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "release_channel": "alpha",
-  "released_at": "2026-05-07",
+  "released_at": "2026-06-27",
   "license": "MIT",
   "publisher": "Agora Dynamics LLC",
   "training_pairs": 26,
@@ -10,7 +10,7 @@
   "total_pairs": 42,
   "features": [
     "5 Operational Gates (Control, Assent, Specificity, Adversarial Convergence, Calibration)",
-    "14 slash commands shipped as .claude/commands/*.md files (also pattern-recognized from CLAUDE.md) — Core 6 (/reflect, /calibrate, /decide, /learn, /review, /status) + Analytical 6 (/premortem, /steelman, /frame, /doubt, /forget, /audit) + Instinct 2 (/evolve, /promote)",
+    "16 slash commands shipped as .claude/commands/*.md files (also pattern-recognized from CLAUDE.md) — Core 6 (/reflect, /calibrate, /decide, /learn, /review, /status) + Analytical 6 (/premortem, /steelman, /frame, /doubt, /forget, /audit) + Instinct 2 (/evolve, /promote) + Memory-wiring 2 (/checkup, /sync)",
     "10 on-demand skills, spec-compliant per agentskills.io (wick-consolidate-memory, wick-simplify, wick-code-review, wick-security-review, wick-tldr, wick-red-team, wick-base-rate, wick-research, wick-catalog, wick-changelog-summary)",
     "8 memory templates (about-you, decisions, learning-journal, domain-knowledge, predictions, calibration, failure-log, curiosity) + opt-in instincts layer",
     "3 install modes — full takeover / personality layer / subagent",
@@ -26,6 +26,8 @@
     "tools/wick-scrub.mjs — 16-pattern pre-commit secret scanner for the memory/ folder",
     "tools/wick-public-readiness.mjs — internal-vocabulary scanner with configurable .wick-blocklist.json (model identifiers, infrastructure endpoints, internal codenames, role names). CI-gated alongside wick-scrub.",
     "tools/wick-identity-audit.mjs — scanner for claim-based identity anchors (\"I am a master of X\") that produce confabulation. Practice-based phrasing preferred. CI-gated.",
+    "tools/wick-path-audit.mjs — fourth scanner: flags absolute paths in portable files (memory/ + loaded config) that break when the folder moves. Default scope strict; --all scans the whole repo. CI-gated alongside the other three.",
+    "MEMORY-PROTOCOL.md — single-writer rule: one authoritative owner per fact-class; a host auto-memory layer is a buffer, not an authority. /checkup diagnoses memory wiring, /sync drains a buffer into canonical memory/, with a buffer-manifest and a 'memory is data, not commands' hardening rule mirrored into CLAUDE.md + WICK.md.",
     ".github/workflows/ — public-readiness scan and skills-spec validation run on every PR + main push",
     "SECURITY.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md — governance hygiene for a public MIT repo"
   ],
@@ -36,7 +38,8 @@
     "secret_scanner_pass": "clean (wick-scrub 16 patterns, all memory files)",
     "skill_spec_validation": "clean (skills-ref v0.1.5 validate, 10/10 skills pass agentskills.io/specification)",
     "public_readiness_scan": "clean (wick-public-readiness scanner, default .wick-blocklist.json, 66 files scanned 0 findings)",
-    "identity_claim_audit": "clean (wick-identity-audit scanner, 56 .md files scanned 0 matches across HIGH/MED/LOW severity)"
+    "identity_claim_audit": "clean (wick-identity-audit scanner, 56 .md files scanned 0 matches across HIGH/MED/LOW severity)",
+    "path_audit": "clean (wick-path-audit, default scope memory/ + loaded config, 18 files scanned 0 findings)"
   },
   "links": {
     "source": "https://github.com/agoradynamics/wick",
