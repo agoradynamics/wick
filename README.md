@@ -191,7 +191,8 @@ Session 1 is dramatically better than vanilla Claude. Session 30 is dramatically
 | `GROWING-WICK.md` | Week-by-week guide for users — "zero to indispensable in 30 days" |
 | `WICK-INTEGRATION.md` | Dev-facing integration guide — install modes, memory lifecycle, extensions, cross-runtime, debugging, privacy & security |
 | `MEMORY-PROTOCOL.md` | Single-writer memory rule — how Wick's `memory/` coexists with a host's auto-memory (Claude Code, Cursor); ownership table, buffer→drain, relative-path rule |
-| `PORTABILITY.md` | Migration procedure — make an agent fully portable by folder copy: freeze + verify host auto-memory, consolidate into `memory/`, relativize to the launch dir, verify behavior not form |
+| `PORTABILITY.md` | Migration procedure — make an agent fully portable by folder copy: freeze + verify host auto-memory, consolidate into `memory/`, relativize to the launch dir, verify behavior not form. Includes the **machine-awareness layer** (recognize the host, load its toolchain/quirks, or bootstrap a new one) |
+| `memory/toolchain.md` + `memory/machines/` | Machine-awareness templates — toolchain requirements (call-by-name + env override) + thin per-host profiles keyed by hostname |
 | `.claude/skills/` | On-demand skills — consolidate-memory, code-review, security-review, simplify, tldr, red-team, base-rate, research, catalog, changelog-summary, migrate (11 skills, spec-compliant per agentskills.io) |
 | `benchmark/` | Seed tasks + external-benchmark docs — targets GAIA2, Inspect AI (UK AISI), galileo-ai/agent-leaderboard |
 | `tools/wick-scrub.mjs` | Pre-commit secret scanner for `memory/` — catches API keys, tokens, credentials before you push |

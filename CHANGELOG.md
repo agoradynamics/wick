@@ -1,5 +1,20 @@
 # Wick Changelog
 
+## v1.3.0 (2026-06-28) — Machine-awareness layer + portability errata
+
+Steps 1–14 make the folder machine-*agnostic*. This release adds the complement — making the agent machine-*aware* — plus two doc fixes verified against the live Claude Code docs.
+
+### Added
+- **Machine-awareness layer** (`PORTABILITY.md`, new section) — the agent recognizes which machine it's on by hostname and either loads that host's known toolchain/quirks or bootstraps a new one (fingerprint → discover toolchains → propose + install-on-one-approval → verify by real compile/run → write a per-machine profile). Tiered: one env read at session start; the profile body loads on demand. Includes three additions beyond the original draft — an **operational-quirks** bucket promoted to first-class (auth-token scopes, admin rights, cloud-sync folders, power/sleep — what actually breaks unattended runs), an **install-source/checksum** check in the bootstrap, and **fingerprint-as-tiebreaker** (hostnames aren't unique or stable).
+- **`memory/toolchain.md` + `memory/machines/` templates** — so the layer has somewhere to write: the toolchain-requirements doc (call-by-name + env-override convention) and the per-host registry (thin profiles keyed by hostname).
+
+### Fixed (errata — verified against code.claude.com/docs)
+- **Step 13 — hooks working directory.** Was: "hooks run with cwd at the project root — use `find .`". Corrected: a hook runs in the cwd at fire time (passed in its JSON input), **not guaranteed to be the project root**; reference the root with `${CLAUDE_PROJECT_DIR}`. The old guidance silently breaks when the session cwd isn't the root.
+- **Step 1 — auto-memory path encoding.** Was: compute the `C--Users-…` dash scheme. Corrected: the storage location + git-root derivation are documented, but the dash-encoding is an undocumented implementation detail — **list `~/.claude/projects/` and match** rather than compute a scheme that could change.
+
+### Credit
+The machine-awareness layer and both errata were contributed by the **Laplace** agent after running this procedure on itself, then fact-checked against the live docs before integration.
+
 ## v1.2.0 (2026-06-27) — Portability procedure + `wick-migrate`
 
 `MEMORY-PROTOCOL.md` (v1.1.0) gave the single-writer *rule*. This gives the *migration* to get an existing agent there — and the executable skill to run it.
