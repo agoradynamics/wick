@@ -16,10 +16,11 @@ Skills are on-demand capabilities Wick can invoke without bloating the main prom
 | `wick-research` | Structured research with CRAAP test and source hierarchy |
 | `wick-catalog` | Extract structured fields from a source and save a queryable record to `memory/catalog/` |
 | `wick-changelog-summary` | Produce a one-paragraph narrative from a CHANGELOG.md version entry — for release notes, blog posts, social copy |
+| `wick-migrate` | Make an agent fully portable between machines — consolidate host auto-memory into `memory/`, disable the shadow, relativize paths (see `PORTABILITY.md`) |
 
 ## Relationship to slash commands
 
-Wick's 14 slash commands (`/reflect`, `/calibrate`, `/decide`, `/learn`, `/review`, `/status`, `/premortem`, `/steelman`, `/frame`, `/doubt`, `/forget`, `/audit`, `/evolve`, `/promote`) ship as `.claude/commands/*.md` files — they appear in Claude Code's `/` autocomplete menu and are also pattern-recognized from the main `CLAUDE.md` on every session.
+Wick's 16 slash commands (`/reflect`, `/calibrate`, `/decide`, `/learn`, `/review`, `/status`, `/premortem`, `/steelman`, `/frame`, `/doubt`, `/forget`, `/audit`, `/evolve`, `/promote`, `/checkup`, `/sync`) ship as `.claude/commands/*.md` files — they appear in Claude Code's `/` autocomplete menu and are also pattern-recognized from the main `CLAUDE.md` on every session.
 
 Skills are **on-demand** — they load only when you invoke them. This keeps the core prompt lean while making specialized capabilities available when needed.
 

@@ -37,7 +37,7 @@
     "confabulation_triggers": "clean",
     "truncation": "clean",
     "secret_scanner_pass": "clean (wick-scrub 16 patterns, all memory files)",
-    "skill_spec_validation": "clean (skills-ref v0.1.5 validate, 10/10 skills pass agentskills.io/specification)",
+    "skill_spec_validation": "clean (skills-ref v0.1.5 validate, 11/11 skills pass agentskills.io/specification)",
     "public_readiness_scan": "clean (wick-public-readiness scanner, default .wick-blocklist.json, 66 files scanned 0 findings)",
     "identity_claim_audit": "clean (wick-identity-audit scanner, 56 .md files scanned 0 matches across HIGH/MED/LOW severity)",
     "path_audit": "clean (wick-path-audit, default scope memory/ + loaded config, 18 files scanned 0 findings)"

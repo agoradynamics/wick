@@ -242,7 +242,7 @@ the explicit "what I could not verify" section.
 Question: [your question]
 ```
 
-Swap `wick-research` for any of the 10 skills (`wick-base-rate`, `wick-red-team`, `wick-tldr`, `wick-catalog`, `wick-changelog-summary`, etc.).
+Swap `wick-research` for any of the 11 skills (`wick-base-rate`, `wick-red-team`, `wick-tldr`, `wick-catalog`, `wick-changelog-summary`, `wick-migrate`, etc.).
 
 **3. Memory bootstrap (when resuming a long-running thread):**
 
