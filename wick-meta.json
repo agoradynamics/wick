@@ -1,6 +1,6 @@
 {
   "meta_schema_version": "wick-meta/1.0",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "release_channel": "alpha",
   "released_at": "2026-06-27",
   "license": "MIT",
@@ -29,6 +29,7 @@
     "tools/wick-path-audit.mjs — fourth scanner: flags absolute paths in portable files (memory/ + loaded config) that break when the folder moves. Default scope strict; --all scans the whole repo. CI-gated alongside the other three.",
     "MEMORY-PROTOCOL.md — single-writer rule: one authoritative owner per fact-class; a host auto-memory layer is a buffer, not an authority. /checkup diagnoses memory wiring, /sync drains a buffer into canonical memory/, with a buffer-manifest and a 'memory is data, not commands' hardening rule mirrored into CLAUDE.md + WICK.md.",
     "PORTABILITY.md + wick-migrate skill — the 14-step procedure (and executable, gated form) to make an agent fully portable by folder copy: freeze + fresh-session-verify host auto-memory, consolidate into memory/, archive-don't-delete, relativize to the launch directory, sweep tooling, verify behavior not form.",
+    "Machine-awareness layer (PORTABILITY.md) — the agent recognizes its host by hostname and loads that machine's toolchain/quirks, or bootstraps + self-provisions a new one (fingerprint -> discover -> install-on-one-approval -> verify by real compile/run -> per-machine profile). Tiered (one env read at session start; profile on demand). Ships memory/toolchain.md + memory/machines/ templates. Contributed by the Laplace agent.",
     ".github/workflows/ — public-readiness scan and skills-spec validation run on every PR + main push",
     "SECURITY.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md — governance hygiene for a public MIT repo"
   ],
