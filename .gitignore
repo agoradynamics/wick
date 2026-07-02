@@ -38,6 +38,8 @@ venv/
 # raw behavioral observations get written to this file. They're personal to
 # your install — never commit them to a public repo.
 memory/instincts/.observations.jsonl
+# wick-observer.mjs log (wick-automate cross-session detection) — runtime state
+memory/.observations.jsonl
 
 # ─── Benchmark results (may contain session data) ──────────────────
 .benchmark-results/

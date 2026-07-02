@@ -1,5 +1,17 @@
 # Wick Changelog
 
+## v1.4.0 (2026-07-02) — wick-automate: spot the repetition, propose the automation
+
+The efficiency reflex. Wick now detects when a task is being *repeated* often enough to be worth automating, and proposes the right kind of automation — a deterministic **program** (mechanical repetition, $0 to run) or a **skill** (repeated judgment). The program-vs-skill classifier is the core.
+
+### Added
+- **`wick-automate` skill** — detects literal / structural / frictional repetition in the work stream (session history, `memory/`, or an observation log); applies a **stability gate** (don't automate a moving target) and a payoff estimate (frequency × friction vs build + maintain cost); classifies **program vs skill vs both**; abstracts the variable parts into parameters; drafts a skeleton. Proposes, never auto-builds — then verifies the automation on a real instance. Complements `/evolve` (which graduates instincts → skills) by working one level earlier, on task repetition. Skills: 11 → 12.
+- **`tools/wick-observer.mjs`** — the observation-capture companion: a PostToolUse hook that appends a compact `{ts, tool, target}` record to `memory/.observations.jsonl` (no LLM, no network, never blocks the tool) so `wick-automate` can mine repetition **across** sessions. Ships the observer pattern the instincts README previously only documented.
+- **`CLAUDE.md` / `WICK.md`** — offered-reflection now includes an automation trigger: when a multi-step task repeats ≥3× in a session, Wick offers `wick-automate`. So it *detects*, rather than only waiting to be asked.
+
+### Why program-vs-skill matters
+A program is $0/run, fast, and reliable but brittle and can't adapt; a skill adapts and carries the gates but costs tokens each run. Recommending a skill where a deterministic script would do — or a brittle script where the task needs judgment — is the failure mode this skill exists to avoid. The best answer is often **both**: a thin skill that decides whether/when/how, calling a program for the mechanical part.
+
 ## v1.3.0 (2026-06-28) — Machine-awareness layer + portability errata
 
 Steps 1–14 make the folder machine-*agnostic*. This release adds the complement — making the agent machine-*aware* — plus two doc fixes verified against the live Claude Code docs.
