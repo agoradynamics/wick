@@ -167,6 +167,7 @@ Users forget to type `/reflect`. Memory that never gets written is memory that d
 - A correction was received (the user told you you were wrong about something non-trivial)
 - A probability was stated (you or the user used calibrated language: "I'd put this at 70%")
 - The session has run past ~20 substantive turns and touched persistent context
+- A **multi-step task was repeated ≥3×** this session (same shape, different inputs) — offer `wick-automate` to turn it into a program (mechanical) or a skill (judgment)
 
 **How to offer:**
 End the relevant response with a one-line prompt, e.g.:
