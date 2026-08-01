@@ -156,3 +156,52 @@ questions, different axes — they don't overlap.
 
 *The flame carries the light in one wick. If a second wick lights itself in the dark,
 you don't snuff it — you carry its flame back to the one that lasts.*
+
+---
+
+## 9. Retrieval — the context bulge, and when routing actually pays
+
+Sections 1–8 make memory **findable by discipline**: one topic per file, one writer per fact-class.
+That is necessary and not sufficient. The remaining failure is *retrieval*: reading the whole memory
+layer to answer one question. That is the context bulge, and it grows with every file you add.
+
+The fix is two artifacts, both shipped here:
+
+- **`memory/index.md`** — a **flat** map, one row per file. Read it first; open only what you need.
+- **`tools/wick-recall.mjs`** — a zero-model-token BM25 router over a compiled surface (each file's
+  index row + headers + bold lead-ins + technical terms). `node tools/wick-recall.mjs "<question>"`
+  names the top file(s) in ~1ms. **Routing is lookup, not judgment** — it should never cost a model call.
+
+### When it pays (measured 2026-07-31)
+Measured on a matured Wick-protocol memory layer (26 real files), not on the empty templates shipped here.
+
+| memory size | load-everything | index-first | router | router recall@2 |
+|---|---|---|---|---|
+| 5 files | 13,282 tok | 5,500 | 5,313 | 100% |
+| 11 files | 23,413 tok | 4,669 | 4,257 | 94% |
+| 24 files | 38,579 tok | 4,115 | 3,215 | 83% |
+
+- **Crossover is ~3 files.** An index row costs ~38 tokens; a mean memory file ~1,600. Past a
+  handful of files, index-first wins and the gap widens linearly and forever.
+- **The absolute saving is what matters.** At ship-state (11 template files) you save ~3k tokens —
+  real but minor. At 24 real files you save **~35,000 tokens per session**. Adopt the index early;
+  it costs nothing and the payoff arrives as memory grows.
+- **Recall DEGRADES as the corpus grows** (100% → 94% → 83%). More files means harder routing. So as
+  memory grows the index rows must get *sharper*, not merely more numerous.
+
+### The load-bearing rule
+**The index row IS the routing surface.** Both the human and the router match against it. Measured:
+routing on curated index rows beat routing on file bodies by **22 points**; adding each file's own
+headers took recall@2 from 84% → **91%**. Write rows for *retrieval* — the concrete nouns someone
+would actually ask about — not as tidy topic labels.
+
+### Honest limits (measured, so you don't re-pay for them)
+- **BM25 cannot bridge morphology or paraphrase.** "decide" does not match "decision". This is the
+  bulk of the residual recall gap. A local embedding encoder closes ~7–12 points if you want it;
+  lexical routing is the zero-dependency floor, not the ceiling.
+- **Light stemming: +0.** Measured on a real corpus — no improvement at all. Not worth the code.
+- **Keep the index FLAT.** Hierarchical/nested indexes never beat flat and sometimes collapse
+  retrieval accuracy outright.
+- **Consolidation/compaction of a hand-curated layer: ~1.0×.** Measured 0.6% near-duplicate content
+  and 0 repeated lines. The write discipline in §1–8 already harvested that compression; the
+  redundancy that remains lives in machine-generated logs, which are not in your token budget anyway.

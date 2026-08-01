@@ -1,5 +1,46 @@
 # Wick Changelog
 
+## v1.5.0 (2026-07-31) — Retrieval: the memory index + a zero-token router
+
+MEMORY-PROTOCOL.md made memory findable **by discipline** (one topic per file, one writer per
+fact-class). This release makes it findable **for free**. The remaining failure it fixes is the
+*context bulge*: reading the whole memory layer to answer one question.
+
+### Added
+- **`memory/index.md`** — the flat map the protocol always implied but never shipped. One row per
+  file; read it first and open only what you need. Carries the authoring rule below.
+- **`tools/wick-recall.mjs`** — zero-model-token BM25 router over a compiled surface (index row +
+  headers + bold lead-ins + technical terms). `node tools/wick-recall.mjs "<question>"` names the
+  top file(s) in ~1ms. Zero dependencies, Node >= 18. **Routing is lookup, not judgment** — it
+  should never cost a model call.
+- **`MEMORY-PROTOCOL.md` §9** — the measurements behind all of it, including the honest limits.
+
+### The load-bearing rule
+**The index row IS the routing surface.** Both the human and the router match against it. Measured:
+routing on curated index rows beat routing on file bodies by **22 points**; adding each file's own
+headers took recall@2 from 84% -> **91%**. Write rows for retrieval, not as tidy topic labels.
+
+### Measured (on a matured 26-file Wick-protocol layer, not on the templates shipped here)
+| memory size | load-everything | index-first | router | recall@2 |
+|---|---|---|---|---|
+| 5 files | 13,282 tok | 5,500 | 5,313 | 100% |
+| 11 files | 23,413 tok | 4,669 | 4,257 | 94% |
+| 24 files | 38,579 tok | 4,115 | 3,215 | 83% |
+
+Crossover is **~3 files**. At ship-state you save ~3k tokens; at 24 real files you save **~35,000
+per session**. Recall *degrades* as the corpus grows (100% -> 83%), so index rows must get sharper
+as memory grows, not just more numerous.
+
+### Nulls worth publishing (so nobody re-pays for them)
+- **Light stemming: +0.** Measured on a real corpus, no improvement. Not shipped.
+- **Hierarchical indexes never beat flat**, and sometimes collapse accuracy. Keep the index flat.
+- **Consolidation of a hand-curated layer: ~1.0x** (0.6% near-duplicate, 0 repeated lines). The
+  write discipline already harvested that compression.
+- **BM25 cannot bridge morphology/paraphrase** ("decide" != "decision") — that is most of the
+  residual gap. A local embedding encoder closes ~7-12 points if wanted; lexical is the
+  zero-dependency floor, not the ceiling.
+
+
 ## v1.4.0 (2026-07-02) — wick-automate: spot the repetition, propose the automation
 
 The efficiency reflex. Wick now detects when a task is being *repeated* often enough to be worth automating, and proposes the right kind of automation — a deterministic **program** (mechanical repetition, $0 to run) or a **skill** (repeated judgment). The program-vs-skill classifier is the core.
