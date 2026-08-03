@@ -1,5 +1,7 @@
 # Machines registry
 
+*Updated: 2026-06-28 · first written 2026-06-28*
+
 One thin profile per regularly-used machine, **keyed by hostname**. At session start the agent
 reads the hostname (one env read) and loads the matching profile **on demand** when
 build/sim/external-path work arises — it does not assume the last machine's setup. Full

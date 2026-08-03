@@ -1,5 +1,7 @@
 # Calibration Stats
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 Running accuracy metrics across all resolved predictions.
 
 ## Summary

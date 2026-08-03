@@ -1,5 +1,7 @@
 # Failure Log
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 *Track decisions that didn't work out. This isn't self-flagellation — it's calibration. The only way to improve judgment is to examine the misses with the same rigor you examine the wins. Tetlock's superforecasters share one habit: they keep a failure log.*
 
 ---

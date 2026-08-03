@@ -1,5 +1,73 @@
 # Wick Changelog
 
+## v1.6.0 (2026-08-03) — Timestamps: what, when, where
+
+v1.1 gave memory an owner. v1.2 made it portable. v1.5 made it findable. This release makes it
+**orderable** — the one thing a memory layer silently loses as it grows.
+
+The failure is quiet. A preference captured in March and one captured last week read as equally
+current. A "current focus" from six months ago still reads as current. Two entries conflict and
+nothing on the page says which came later. On a multi-machine agent it gets worse: nothing records
+*which host* learned a thing, so a fact discovered on a GPU box and one discovered on a laptop are
+indistinguishable — even though only one of them is likely to still be true on the other machine.
+`CLAUDE.md` has said *"Date everything"* since v1.0. It was prose, and prose does not enforce.
+
+### Added
+- **`tools/wick-freshness-audit.mjs`** — the fifth CI scanner, alongside `wick-scrub` (credentials),
+  `wick-public-readiness` (internal vocabulary), `wick-identity-audit` (confabulation anchors), and
+  `wick-path-audit` (portability). Checks that every memory file carries a stamp, that the dates
+  parse and are ordered and are not in the future, that every `index.md` row is dated, and — the one
+  that actually bites — that **the index agrees with the files it indexes**.
+- **`--fix`** — backfills a whole layer **from `git log`, never from today's clock.** Adopting this
+  on a mature memory layer must not flatten forty files to a single date; that would destroy the
+  exact ordering the stamp exists to provide. A file git cannot date is *reported*, never silently
+  given today's. It backfills **only what is missing** and never overwrites an existing stamp —
+  because once the stamping commit lands, git reports *it* as every stamped file's last change, so
+  an overwriting re-run would silently re-date the whole layer to adoption day. (Found in
+  dogfooding, on this repo, after the first version did exactly that.) `--refresh` overwrites
+  deliberately.
+- **`MEMORY-PROTOCOL.md` §10** — temporal + provenance discipline, the measurements, and the boundary.
+
+### Changed
+- Every shipped `memory/` template now carries `*Updated: <date> · <HOST> · first written <date>*`
+  under its H1. The host segment is **optional** — a single-machine agent has no "where" worth
+  inventing, and the scanner treats a missing host as advisory, not blocking.
+- Entry-level date conventions added where they were missing: `learning-journal.md` (the file the
+  old rule cared most about, and the one that had none), `about-you.md` current-focus,
+  `domain-knowledge.md` concepts, `toolchain.md` rows.
+- `CLAUDE.md` / `WICK.md` — *"Date everything"* expanded from one line into the actual rule.
+- **CI wiring is still pending** for both `wick-path-audit` (written in v1.1, never wired) and
+  `wick-freshness-audit`. Adding a step to `.github/workflows/` needs the `workflow` OAuth scope,
+  which the release tooling does not hold — the two steps are a UI paste, tracked as a follow-up.
+  Both scanners run clean locally and are pre-commit-ready today.
+- `memory/instincts/*.yaml` already had this right — `created` **and** `last_reinforced`. That is
+  the model the rest of the layer now follows; birth and last-touch are different questions.
+
+### Measured — the stamp is free (2026-08-03)
+§9 established that the index row **is** the routing surface, so adding anything to it is a
+retrieval change, not a cosmetic one. Measured before shipping on a matured 31-file layer:
+**6 arms** (baseline · body stamp · body stamp without hostname · index dates · both · both without
+hostname) × **44 labelled queries** (32 synthetic session-openers + 12 real ones), live-compiled
+surface, real per-file git dates rather than one repeated literal.
+
+**Zero flips. Every arm, both eval sets — no query gained, none lost.**
+
+The manipulation was verified independently rather than inferred from the flat result: the body
+stamp doubles the hostname's document frequency (29 → 60 term-slots) and changes nothing. That is
+the arm worth watching — the hostname is the only token in the stamp that meaningfully enters a
+lexical routing surface. **Honest limit:** measured at 31 files, not proven at 100.
+
+### The boundary
+A date is a **recall aid, never an expiry.** Nothing auto-expires, auto-archives, or down-ranks a
+memory for being old. `wick-consolidate-memory` still judges staleness by *content*. The stamp
+exists so you can order, attribute, and age what you know — not so a tool can decide what you have
+outgrown.
+
+### Housekeeping
+v1.5.0 shipped to `main` and `CHANGELOG.md` but never reached three of its six version surfaces —
+`wick-meta.json` still read 1.4.0, `README.md` still read 1.3.0, and there was no v1.5.0 tag or
+GitHub release. All corrected here, and v1.5.0's features are backfilled into `wick-meta.json`.
+
 ## v1.5.0 (2026-07-31) — Retrieval: the memory index + a zero-token router
 
 MEMORY-PROTOCOL.md made memory findable **by discipline** (one topic per file, one writer per

@@ -1,8 +1,8 @@
 {
   "meta_schema_version": "wick-meta/1.0",
-  "version": "1.4.0",
+  "version": "1.6.0",
   "release_channel": "alpha",
-  "released_at": "2026-07-02",
+  "released_at": "2026-08-03",
   "license": "MIT",
   "publisher": "Agora Dynamics LLC",
   "training_pairs": 26,
@@ -31,6 +31,8 @@
     "PORTABILITY.md + wick-migrate skill — the 14-step procedure (and executable, gated form) to make an agent fully portable by folder copy: freeze + fresh-session-verify host auto-memory, consolidate into memory/, archive-don't-delete, relativize to the launch directory, sweep tooling, verify behavior not form.",
     "Machine-awareness layer (PORTABILITY.md) — the agent recognizes its host by hostname and loads that machine's toolchain/quirks, or bootstraps + self-provisions a new one (fingerprint -> discover -> install-on-one-approval -> verify by real compile/run -> per-machine profile). Tiered (one env read at session start; profile on demand). Ships memory/toolchain.md + memory/machines/ templates. Contributed by the Laplace agent.",
     "wick-automate skill + tools/wick-observer.mjs — detect task repetition in the work stream and propose the right automation: a deterministic PROGRAM or a judgment SKILL (or both). Stability gate + payoff estimate + program-vs-skill classifier; proposes, never auto-builds. Observer PostToolUse hook logs to memory/.observations.jsonl for cross-session mining. Offered proactively via CLAUDE.md when a task repeats >=3x.",
+    "memory/index.md + tools/wick-recall.mjs (v1.5.0) — the retrieval half: a flat one-row-per-file map read first so only the needed files are opened, plus a zero-model-token BM25 router over a compiled surface (index row + headers + bold lead-ins + technical terms) that names the top file(s) in ~1ms. Crossover at ~3 files; ~35,000 tokens/session saved at 24 files. The load-bearing rule: the index row IS the routing surface. MEMORY-PROTOCOL.md §9.",
+    "tools/wick-freshness-audit.mjs + MEMORY-PROTOCOL.md §10 (v1.6.0) — fifth scanner: temporal + provenance discipline. Every memory file stamped `*Updated: <date> · <HOST> · first written <date>*` under its H1, every index row carrying its file's date, multi-entry files dating each entry, and the index cross-checked against the files it indexes (index drift is the failure that bites). --fix backfills a whole layer from `git log`, never from today's clock, so adopting the discipline on a mature layer does not flatten its history to one date. Measured recall-neutral: 6 arms × 44 labelled queries, zero flips, manipulation independently verified. A date is a recall aid, never an expiry.",
     ".github/workflows/ — public-readiness scan and skills-spec validation run on every PR + main push",
     "SECURITY.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md — governance hygiene for a public MIT repo"
   ],
@@ -42,7 +44,8 @@
     "skill_spec_validation": "clean (skills-ref v0.1.5 validate, 11/11 skills pass agentskills.io/specification)",
     "public_readiness_scan": "clean (wick-public-readiness scanner, default .wick-blocklist.json, 66 files scanned 0 findings)",
     "identity_claim_audit": "clean (wick-identity-audit scanner, 56 .md files scanned 0 matches across HIGH/MED/LOW severity)",
-    "path_audit": "clean (wick-path-audit, default scope memory/ + loaded config, 18 files scanned 0 findings)"
+    "path_audit": "clean (wick-path-audit, default scope memory/ + loaded config, 18 files scanned 0 findings)",
+    "freshness_audit": "clean (wick-freshness-audit, memory/ scope, 17 files scanned, 0 blocking findings; 12 advisory stamp-no-host notes are expected in shipped templates, which carry no hostname)"
   },
   "links": {
     "source": "https://github.com/agoradynamics/wick",

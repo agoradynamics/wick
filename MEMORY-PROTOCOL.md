@@ -205,3 +205,97 @@ would actually ask about — not as tidy topic labels.
 - **Consolidation/compaction of a hand-curated layer: ~1.0×.** Measured 0.6% near-duplicate content
   and 0 repeated lines. The write discipline in §1–8 already harvested that compression; the
   redundancy that remains lives in machine-generated logs, which are not in your token budget anyway.
+
+---
+
+## 10. Temporal + provenance discipline — what / when / where
+
+§1–8 made memory *findable by discipline*; §9 made it *findable for free*. Both answer **what** a
+file knows. Neither answers **when** it was last true or **where** it was learned — and without
+those, a memory layer degrades in a specific way: you can no longer *order* two facts.
+
+That failure is quiet. A preference captured in March and one captured last week read as equally
+current. A "current focus" from six months ago reads as current. Two entries conflict and there is
+no rule for which wins, because neither carries the one field that would settle it. On a
+multi-machine agent (§8, and the machine-awareness layer) it gets worse: nothing records which host
+learned a thing, so a fact discovered on a GPU box and a fact discovered on a laptop are
+indistinguishable — even though only one of them is likely to still be true on the other machine.
+
+### The stamp
+
+Every file under `memory/` carries one line, immediately under its H1:
+
+```
+*Updated: 2026-08-03 · JOHNNY-SIX · first written 2026-06-27*
+```
+
+| field | meaning |
+|---|---|
+| `Updated` | the last **content** change. A typo fix is not new knowledge — do not bump it. |
+| host | the machine the entry was authored on. **Optional** — omit it if you only ever run on one. |
+| `first written` | the file's birthday, so age and freshness are both visible at a glance |
+
+Three further rules, each earning its place:
+
+1. **Every `index.md` row carries the file's date** — `— description (2026-08-03)`. The index is
+   the one file read every session; staleness has to be legible *without opening anything*.
+2. **Multi-entry files date each entry, not just the file.** `decisions.md`, `learning-journal.md`,
+   `curiosity.md`, `failure-log.md`, `predictions.md` accumulate; a single file-level date tells you
+   only when the newest line landed, which is the least useful thing to know about the oldest one.
+3. **`memory/instincts/*.yaml` already had this right** — `created` *and* `last_reinforced` are the
+   model the rest of the layer now follows. Birth and last-touch are different questions.
+
+### Enforcement
+
+`tools/wick-freshness-audit.mjs` is the fifth scanner, alongside `wick-scrub` (credentials),
+`wick-public-readiness` (internal vocabulary), `wick-identity-audit` (confabulation anchors), and
+`wick-path-audit` (portability). It checks presence and **consistency** — including the one that
+actually bites: an index row whose date disagrees with the file's own stamp.
+
+Run it pre-commit:
+
+```
+node tools/wick-freshness-audit.mjs        # exits 1 on any high/med finding
+```
+
+Severity `low` (a missing hostname) never blocks — a single-machine agent has no "where" worth
+inventing, and a shipped template has none at all.
+
+`--fix` backfills **from `git log`, never from today's clock.** This matters more than it looks:
+adopting the discipline on a mature memory layer must not flatten forty files to a single date,
+because that destroys the exact ordering the stamp exists to provide. A file git cannot date is
+*reported*, never silently given today's date.
+
+It also **backfills only what is missing and never overwrites a stamp that already exists.** That
+rule is load-bearing and easy to get wrong — we did, once, and caught it in dogfooding. The moment
+the stamping commit lands, `git log` reports *that commit* as the last change to every file it
+touched. An overwriting `--fix` run afterwards would therefore re-date the entire layer to the day
+you adopted the discipline, silently, destroying the history it was installed to protect. `Updated`
+means a **content** change, and only the author knows whether a given commit was one. `--refresh`
+exists for the rare deliberate re-derive.
+
+### Measured: the stamp is free (2026-08-03)
+
+§9 established that the index row **is** the routing surface, so adding anything to it is a
+retrieval change, not a cosmetic one — and a bad row is the single biggest cause of a bad lookup.
+So this was measured before it shipped, on a matured 31-file layer: **6 arms** (baseline · body
+stamp · body stamp without hostname · index dates · both · both without hostname) × **44 labelled
+queries** (32 synthetic session-openers + 12 real ones), live-compiled surface, real per-file git
+dates rather than one repeated literal.
+
+**Zero flips. Every arm, both eval sets — no query gained, none lost.**
+
+The manipulation was verified independently rather than inferred from the flat result: the body
+stamp doubles the hostname's document frequency (29 → 60 term-slots, because it now appears in
+every file instead of one) and changes nothing. That is the arm worth watching — the hostname is
+the only token in the stamp that meaningfully enters a lexical routing surface, and saturating it
+is how this would eventually cost you the ability to route *to* a machine profile.
+
+**Honest limit:** measured at 31 files, not proven at 100. Re-run the arms when your layer doubles.
+
+### The boundary — a date is a recall aid, never an expiry
+
+Do **not** let anything auto-expire, auto-archive, or down-rank a memory because it is old. A fact
+from March can be perfectly true; a note from yesterday can be wrong. `wick-consolidate-memory`
+judges staleness **by content**, and §10 does not change that. The stamp exists so *you* can order,
+attribute, and age what you know — not so a tool can decide what you have outgrown.

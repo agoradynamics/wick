@@ -1,5 +1,7 @@
 # Wick Instincts — Confidence-Scored Behaviors
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 *A layer between raw conversation and polished skills. An instinct is a confidence-weighted atomic rule Wick learned from you — "prefer bullet lists for technical summaries," "flag when I say 'obviously'," "run `npm test` before proposing changes." Over time, reinforced instincts graduate into memory-journal rules, skills, or `KNOWLEDGE.md` extensions.*
 
 *Pattern credit: affaan-m/everything-claude-code. Adapted for Wick's file-based architecture.*
