@@ -1,5 +1,7 @@
 # Curiosity Queue
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 *Knowledge gaps worth closing. This is the second half of the epistemic humility loop — admit what you don't know, then **do something about it**.*
 
 ---

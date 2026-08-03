@@ -197,6 +197,7 @@ Session 1 is dramatically better than vanilla Claude. Session 30 is dramatically
 | `benchmark/` | Seed tasks + external-benchmark docs — targets GAIA2, Inspect AI (UK AISI), galileo-ai/agent-leaderboard |
 | `tools/wick-scrub.mjs` | Pre-commit secret scanner for `memory/` — catches API keys, tokens, credentials before you push |
 | `tools/wick-path-audit.mjs` | Pre-commit absolute-path scanner — flags non-portable paths in `memory/` + config before the folder moves |
+| `tools/wick-freshness-audit.mjs` | Temporal-provenance scanner — every memory file stamped `Updated · host · first written`, every index row dated, and the index actually agreeing with the files. `--fix` backfills a whole layer from `git log` |
 | `memory/about-you.md` | Template: who you are, your field, your preferences |
 | `memory/decisions.md` | Template: decision log with framework citations |
 | `memory/learning-journal.md` | Template: what Wick learns about working with you |
@@ -404,7 +405,7 @@ If you want to run Wick offline on your own GPU, see **[TRAINING-GUIDE.md](TRAIN
 
 ## Version & License
 
-**Version:** 1.3.0
+**Version:** 1.6.0
 **License:** [MIT](LICENSE) — fork it, modify it, run it commercially, build on it. That's the point.
 **Trademarks:** "Wick" and "Agora Dynamics" are marks of Agora Dynamics LLC (see `LICENSE` for the trademark notice — nominative use is fine, branding a confusingly-similar derivative is not).
 **Training data:** Same MIT license. Fine-tune away — local, commercial, derivative, whatever suits you.

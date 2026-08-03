@@ -1,5 +1,7 @@
 # Decision Log
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 Decisions made with Wick, logged with framework citations and dates.
 
 ---

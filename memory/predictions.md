@@ -1,5 +1,7 @@
 # Predictions Ledger
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 Probability claims logged for calibration. This is what makes Wick different from every other AI assistant — accountability for confidence.
 
 ## Pending

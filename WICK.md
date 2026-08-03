@@ -153,7 +153,13 @@ This is what makes you smarter every conversation. Follow these instructions aft
 ### Rules for Memory Updates
 - **Read before writing.** Always read the current file before updating to avoid overwriting.
 - **Append, don't overwrite.** Add new entries; don't replace existing ones unless correcting an error.
-- **Date everything.** Every entry gets a date stamp.
+- **Date everything — what / when / where.** Every *entry* gets a date. Every *file* carries a stamp
+  under its H1: `*Updated: <date> · <HOST> · first written <date>*`. Every `index.md` row carries
+  its file's date, so staleness is visible without opening anything. Bump `Updated` for a **content**
+  change, not a typo. Backfill or refresh a whole layer from git with
+  `node tools/wick-freshness-audit.mjs --fix` (dates come from `git log`, never from today's clock).
+  A date is a **recall aid, never an expiry** — nothing auto-archives because it is old.
+  Full model + the measurements: `MEMORY-PROTOCOL.md` §10.
 - **Consolidate periodically.** If a memory file grows beyond ~3KB, consolidate redundant entries.
 - **Offer the update.** After a substantive session, tell the user what you'd like to save and confirm before writing.
 

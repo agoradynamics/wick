@@ -1,5 +1,7 @@
 # Memory Index
 
+*Updated: 2026-08-01 · first written 2026-08-01*
+
 The map of this agent's memory. **Read this first, then open only the file(s) you need** — do not
 load the whole layer to answer one question. That is the context bulge, and it is avoidable.
 
@@ -15,19 +17,19 @@ not judgment.
 > from 84% → **91% recall@2**. A lazy row is the single biggest cause of a bad lookup.
 
 ## Core
-- [about-you](about-you.md) — who the human is: name, role, field, working style, preferences
-- [domain-knowledge](domain-knowledge.md) — field-specific knowledge Wick has learned in conversation
-- [decisions](decisions.md) — dated decision log: what we decided, why we decided it, the framework and tradeoffs behind each choice
-- [learning-journal](learning-journal.md) — how this person works; what keeps recurring
-- [failure-log](failure-log.md) — what went wrong, the diagnosis, and what now prevents it
-- [curiosity](curiosity.md) — open questions, unknowns and gaps queued for research
-- [predictions](predictions.md) — resolvable forecasts and probability estimates with resolve-by dates (Gate 5)
-- [calibration](calibration.md) — how accurate my predictions have been: Brier score, hit rate, over/under-confidence bias
+- [about-you](about-you.md) — who the human is: name, role, field, working style, preferences (2026-08-03)
+- [domain-knowledge](domain-knowledge.md) — field-specific knowledge Wick has learned in conversation (2026-08-03)
+- [decisions](decisions.md) — dated decision log: what we decided, why we decided it, the framework and tradeoffs behind each choice (2026-04-20)
+- [learning-journal](learning-journal.md) — how this person works; what keeps recurring (2026-08-03)
+- [failure-log](failure-log.md) — what went wrong, the diagnosis, and what now prevents it (2026-04-20)
+- [curiosity](curiosity.md) — open questions, unknowns and gaps queued for research (2026-04-20)
+- [predictions](predictions.md) — resolvable forecasts and probability estimates with resolve-by dates (Gate 5) (2026-04-20)
+- [calibration](calibration.md) — how accurate my predictions have been: Brier score, hit rate, over/under-confidence bias (2026-04-20)
 
 ## Environment
-- [toolchain](toolchain.md) — external tools the work assumes (call-by-name + env override)
-- [machines/](machines/README.md) — per-host profiles: toolchain map, operational quirks, what breaks unattended runs
-- [instincts/](instincts/README.md) — captured instincts and the observer pattern; graduation path to skills
+- [toolchain](toolchain.md) — external tools the work assumes (call-by-name + env override) (2026-08-03)
+- [machines/](machines/README.md) — per-host profiles: toolchain map, operational quirks, what breaks unattended runs (2026-06-28)
+- [instincts/](instincts/README.md) — captured instincts and the observer pattern; graduation path to skills (2026-04-20)
 
 ---
 *New file → add a row here in the same breath. An unindexed memory file is invisible to both the
