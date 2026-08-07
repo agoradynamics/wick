@@ -299,3 +299,117 @@ Do **not** let anything auto-expire, auto-archive, or down-rank a memory because
 from March can be perfectly true; a note from yesterday can be wrong. `wick-consolidate-memory`
 judges staleness **by content**, and §10 does not change that. The stamp exists so *you* can order,
 attribute, and age what you know — not so a tool can decide what you have outgrown.
+
+---
+
+## 11. Decay class — the one field that legitimately expires a memory
+
+§10 ends by refusing to let age expire anything, and that refusal is correct. But it leaves a real
+question unanswered: **something in a memory layer genuinely does go stale when a model ships — so
+what is it, and how do you find it without deleting the rest?**
+
+There is live advice, including from model vendors, to delete your `.md` files and skills every
+~6 months because they rot as models update. That advice is **right about the failure mode and wrong
+about the remedy.**
+
+### The failure mode is real
+
+An instruction written to patch a model's weakness becomes dead weight once the weakness is fixed —
+and can actively **cage** a better model. "Always re-read the file before editing" on a model that
+now tracks state. A rigid output template on a model that reasons better without one. "Think step by
+step" on one that already does.
+
+The diagnostic is sharper than age: **if your agent's behaviour DEGRADES when the model improves,
+the file was compensating rather than describing.** Scaffolding built around a deficiency becomes a
+cage the moment the deficiency is gone. That is what "our agents went astray on the new model"
+usually means — not that the files rotted, but that they were load-bearing on something that got
+fixed.
+
+### The remedy is wrong because markdown holds two different things
+
+| class | what it is | decays when? |
+|---|---|---|
+| **world** | measurements, decisions, machine facts, people, domain knowledge | **never, by policy** — only content review retires it |
+| **patch** | a workaround for a **specific model's** behaviour | on a **model change** — never on a calendar |
+
+*"The HF cache lives in WSL, not Windows."* *"Corpus-union beat distillation, +0.150 [+0.111,
++0.188]."* *"Never trust an exit status for a job that produces an artefact."* None of that is
+model-scoped. A new model does not make a pipeline's exit semantics different.
+
+**Measured on a mature layer (2026-08-06, 2,594 substantive lines): 48 lines mentioned a model at
+all — and on reading, essentially none were prompting workarounds.** They were findings where a
+model was the *subject*, architecture notes, and citations. Time-based deletion would have destroyed
+~2,500 lines of measurement history to clean up a handful of patches. **Deleting the container to
+expire one class destroys the other.**
+
+### The load-bearing rule: a patch must state its TRIGGER
+
+An instruction that says *"always X"* is unfalsifiable. You can only trust it or delete it — and
+**blanket deletion is the only available remedy precisely because the rule carries no reason.**
+
+*"X, because Y, observed Z"* can be **re-tested**. If Y no longer holds, X goes today. If Y still
+holds, X stays indefinitely. **Reasons, not calendars.** The 6-month rule is a crude proxy for a
+maintenance practice nobody wants to do; provenance makes the real practice cheap.
+
+### The tag — and why only the exception carries one
+
+`world` is the **unmarked default**. A discipline that demands tagging 98% of a layer to find the 2%
+will not be adopted, and the noise would drown the signal. Tag the exception only:
+
+```markdown
+- Pin thinking-disabled on API calls.
+  [patch: sonnet-5 thinks by default; 9/13 generations returned EMPTY at max_tokens.
+   Re-test by generating without the pin.]
+```
+
+The tag is **inline on the entry, not on the file** — one file routinely holds both classes, and the
+`Updated` stamp (§10) is already the file-level field.
+
+### Enforcement
+
+`tools/wick-decay-audit.mjs` is the sixth scanner. It checks one thing mechanically and advises on
+one thing it cannot:
+
+```
+node tools/wick-decay-audit.mjs          # HIGH: any [patch:] with no stated trigger
+node tools/wick-decay-audit.mjs --list   # the patch inventory = your model-upgrade re-test list
+```
+
+- **HIGH — `patch-without-trigger`.** Mechanically checkable, and blocking. A patch you cannot
+  re-test is the unfalsifiable rule this section exists to prevent.
+- **LOW — `possible-untagged-patch`.** Names a model *and* gives a directive *and* is not obviously
+  reporting. **Never blocks.** On a real layer this is mostly false positives, because a finding
+  about a model is not a patch — so it is a prompt for judgement, deliberately not a
+  classification. A scanner that auto-classified here would produce a plausible answer where a
+  judgement call belongs, which is the exact failure the whole section is about.
+
+### The model-upgrade ritual — re-test, don't purge
+
+When you move models, run `--list`. That is your entire exposure. On our layer it is a handful of
+entries: **an afternoon, not a rebuild.** For each one, re-test the stated trigger — still true,
+keep it; gone, delete it *and say so in the commit*.
+
+### The boundary holds
+
+This section **adds a field that makes a re-test possible. It does not decide the outcome.** The
+tool never deletes, archives, or down-ranks anything, and `world` entries are never expired by any
+rule at all. §10's boundary is unchanged: a tool reports; a human retires.
+
+### Honest limits
+
+- **The LOW heuristic is low-precision by design, and here is the number.** Dogfooded on a 32-file
+  layer: **8 candidates, 1 clear true positive, 1 borderline, 6 false positives** (≈12–25%
+  precision). Tightening two flaws found in that run — dropping `"the model"` as a trigger term, and
+  hyphen-guarding the directive words so `don't` stops matching inside *verify-don't-assert* —
+  brought it to **4 candidates with the true positive retained** (≈25–50%).
+  **That is the intended operating point, not a defect.** The heuristic's job is not precision; it
+  is producing a candidate set small enough that a human reads every line in two minutes. Four
+  candidates on a 2,594-line layer found the single genuine patch in it. A higher-precision filter
+  that missed that entry would be worse.
+- Also checked against a **6-case fixture** (a wrapped well-formed patch, a triggerless one, a
+  genuine untagged directive, and three world-facts that must *not* fire) — not against a corpus of
+  labelled examples.
+- The measured 2%-patch figure is **one layer, one team's writing habits.** A layer full of
+  hand-tuned prompt scaffolding would have a very different ratio — and would benefit far more.
+- Nothing here detects the *third* rot: an instruction that was always wrong. That is
+  `wick-consolidate-memory`'s job, and it remains a content judgement.

@@ -405,7 +405,7 @@ If you want to run Wick offline on your own GPU, see **[TRAINING-GUIDE.md](TRAIN
 
 ## Version & License
 
-**Version:** 1.6.0
+**Version:** 1.7.0
 **License:** [MIT](LICENSE) — fork it, modify it, run it commercially, build on it. That's the point.
 **Trademarks:** "Wick" and "Agora Dynamics" are marks of Agora Dynamics LLC (see `LICENSE` for the trademark notice — nominative use is fine, branding a confusingly-similar derivative is not).
 **Training data:** Same MIT license. Fine-tune away — local, commercial, derivative, whatever suits you.

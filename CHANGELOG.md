@@ -1,5 +1,55 @@
 # Wick Changelog
 
+## v1.7.0 (2026-08-06) — Decay class: what actually goes stale when a model ships
+
+v1.6 made memory **orderable**. This release answers the question that ordering leaves open: §10
+refuses to let age expire anything — correctly — but *something* in a memory layer really does go
+stale when a model ships. What is it, and how do you find it without deleting the rest?
+
+There is live advice, including from model vendors, to delete your `.md` files and skills every
+~6 months. It is **right about the failure mode and wrong about the remedy.** The failure mode is
+real: an instruction written to patch a model's weakness becomes dead weight when the weakness is
+fixed, and can actively cage a better model. The sharp diagnostic is not age — it is that **if your
+agent's behaviour DEGRADES when the model improves, the file was compensating rather than
+describing.**
+
+The remedy is wrong because markdown holds two different things. **world** — measurements,
+decisions, machine facts, people — never decays when a model ships; a new model does not change a
+pipeline's exit semantics. **patch** — a workaround for a specific model's behaviour — is the only
+class with a genuine expiry, and its expiry is a *model change*, not a calendar date.
+
+Measured on a mature layer (2,594 substantive lines): **48 lines mentioned a model at all, and on
+reading, essentially none were prompting workarounds** — they were findings where a model was the
+subject, architecture notes, and citations. Blanket deletion would have destroyed ~2,500 lines of
+measurement history to clean up a handful of patches.
+
+### Added
+- **`tools/wick-decay-audit.mjs`** — the sixth CI scanner. Checks one thing mechanically and advises
+  on one thing it cannot. **HIGH `patch-without-trigger`** (blocking): a `[patch:]` with no stated
+  trigger cannot be re-tested, which is the unfalsifiable rule the whole section exists to prevent.
+  **LOW `possible-untagged-patch`** (never blocks): names a model *and* gives a directive *and* is
+  not obviously reporting — a prompt for judgement, deliberately not a classification, because on a
+  real layer it is mostly false positives.
+- **`--list`** — the patch inventory, which *is* the model-upgrade re-test list. Re-test the trigger:
+  still true, keep; gone, delete. An afternoon, not a rebuild.
+- **`MEMORY-PROTOCOL.md` §11** — the class model, the load-bearing trigger rule, the ritual, and the
+  honest limits.
+
+### The load-bearing rule
+A patch must state its **trigger** — the observed behaviour that justifies it. `"always X"` is
+unfalsifiable; you can only trust it or delete it, and **blanket deletion is the only available
+remedy precisely because the rule carries no reason.** `"X because Y, observed Z"` can be re-tested.
+Reasons, not calendars.
+
+### Design note — tag only the exception
+`world` is the **unmarked default**. A discipline that demands tagging 98% of a layer to find the 2%
+will not be adopted, and the noise would drown the signal.
+
+### Unchanged
+§10's boundary holds. This adds a field that makes a re-test *possible*; it does not decide the
+outcome. The tool never deletes, archives, or down-ranks anything, and `world` entries are never
+expired by any rule at all.
+
 ## v1.6.0 (2026-08-03) — Timestamps: what, when, where
 
 v1.1 gave memory an owner. v1.2 made it portable. v1.5 made it findable. This release makes it

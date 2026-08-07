@@ -1,6 +1,6 @@
 {
   "meta_schema_version": "wick-meta/1.0",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "release_channel": "alpha",
   "released_at": "2026-08-03",
   "license": "MIT",
@@ -34,7 +34,8 @@
     "memory/index.md + tools/wick-recall.mjs (v1.5.0) — the retrieval half: a flat one-row-per-file map read first so only the needed files are opened, plus a zero-model-token BM25 router over a compiled surface (index row + headers + bold lead-ins + technical terms) that names the top file(s) in ~1ms. Crossover at ~3 files; ~35,000 tokens/session saved at 24 files. The load-bearing rule: the index row IS the routing surface. MEMORY-PROTOCOL.md §9.",
     "tools/wick-freshness-audit.mjs + MEMORY-PROTOCOL.md §10 (v1.6.0) — fifth scanner: temporal + provenance discipline. Every memory file stamped `*Updated: <date> · <HOST> · first written <date>*` under its H1, every index row carrying its file's date, multi-entry files dating each entry, and the index cross-checked against the files it indexes (index drift is the failure that bites). --fix backfills a whole layer from `git log`, never from today's clock, so adopting the discipline on a mature layer does not flatten its history to one date. Measured recall-neutral: 6 arms × 44 labelled queries, zero flips, manipulation independently verified. A date is a recall aid, never an expiry.",
     ".github/workflows/ — public-readiness scan and skills-spec validation run on every PR + main push",
-    "SECURITY.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md — governance hygiene for a public MIT repo"
+    "SECURITY.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md — governance hygiene for a public MIT repo",
+    "tools/wick-decay-audit.mjs + MEMORY-PROTOCOL.md §11 (v1.7.0) — sixth scanner: decay class. Separates memory that describes THE WORLD (measurements, decisions, machine facts — never expires by policy) from memory that describes HOW TO BE A MODEL (a workaround for a specific model's behaviour — expires on a MODEL CHANGE, never on a calendar). Answers the live advice to delete .md files every ~6 months: right about the failure mode, wrong about the remedy. Measured on a 2594-line layer, 48 lines mentioned a model and essentially none were workarounds, so blanket deletion would destroy ~2500 lines of measurement history to clean up a handful of patches. Load-bearing rule: a [patch:] must state its TRIGGER, because 'always X' is unfalsifiable and blanket deletion is the only remedy for a rule that carries no reason. world is the unmarked default — tag only the exception. --list is the model-upgrade re-test list. Never deletes, archives, or down-ranks anything."
   ],
   "audit_status": {
     "identity_claims": "clean",

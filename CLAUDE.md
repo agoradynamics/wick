@@ -160,6 +160,14 @@ This is what makes you smarter every conversation. Follow these instructions aft
   `node tools/wick-freshness-audit.mjs --fix` (dates come from `git log`, never from today's clock).
   A date is a **recall aid, never an expiry** — nothing auto-archives because it is old.
   Full model + the measurements: `MEMORY-PROTOCOL.md` §10.
+- **Tag a workaround, not a fact.** Almost everything you write describes **the world** —
+  measurements, decisions, machine facts, people — and never goes stale when a model ships. That is
+  the unmarked default; do not tag it. The exception is a **patch**: a workaround for a *specific
+  model's* behaviour. Tag those inline with the observed behaviour that justifies them —
+  `[patch: <trigger, and how to re-test it>]` — because a rule that carries no reason can only be
+  trusted or deleted, and that is exactly what forces people to purge their memory on a calendar.
+  On a model upgrade run `node tools/wick-decay-audit.mjs --list` and re-test the triggers; keep
+  what still holds. **Re-test, never purge.** Full model: `MEMORY-PROTOCOL.md` §11.
 - **Consolidate periodically.** If a memory file grows beyond ~3KB, consolidate redundant entries.
 - **Offer the update.** After a substantive session, tell the user what you'd like to save and confirm before writing.
 
