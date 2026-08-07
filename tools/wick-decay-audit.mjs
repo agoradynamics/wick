@@ -125,10 +125,21 @@ for (const file of files) {
   // tag routinely spans two lines. Matching per-line missed those AND then falsely flagged them
   // as untagged patches — the worst outcome, since it punishes the discipline being followed.
   // (Caught in dogfooding against a fixture, not in review.)
+  // Mask fenced blocks and inline code spans. Prose that DOCUMENTS the syntax must not be parsed
+  // AS the syntax — MEMORY-PROTOCOL.md §11 and any index row describing the feature would
+  // otherwise report themselves as malformed tags. (Found by running the scanner on the document
+  // that defines it, which is the obvious dogfood and was not obvious until it fired.)
+  const masked = new Uint8Array(text.length);
+  for (const re of [/```[\s\S]*?```/g, /`[^`\n]*`/g]) {
+    let cm;
+    while ((cm = re.exec(text)) !== null) masked.fill(1, cm.index, cm.index + cm[0].length);
+  }
+
   const taggedLines = new Set();
   const RE = /\[patch:([^\]]*)\]/gis;
   let m;
   while ((m = RE.exec(text)) !== null) {
+    if (masked[m.index]) continue;          // a documented example, not a live tag
     const startLine = text.slice(0, m.index).split('\n').length;
     const endLine = startLine + m[0].split('\n').length - 1;
     // Cover the whole ENTRY, not just the lines the tag spans. A tag usually sits on a wrapped
