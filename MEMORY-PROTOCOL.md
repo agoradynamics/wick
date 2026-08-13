@@ -301,9 +301,9 @@ never gathered. The true statement was *I could not open it.*
 
 It now exits **2** with an explicit message and refuses to report a match count at all.
 
-This is the same defect the Agora spent a week measuring in its models: **asserting an absence you
-have not established.** A model handed sources that don't support an answer should say so rather
-than answer anyway; a tool that cannot read its corpus should say so rather than report zero hits.
+This is the same defect that shows up in retrieval-grounded models: **asserting an absence you have
+not established.** A model handed sources that don't support an answer should say so rather than
+answer anyway; a tool that cannot read its corpus should say so rather than report zero hits.
 **Grounded honesty has to hold for our own I/O or it is a slogan.** Applies to every scanner too —
 a read failure must never be reported as a clean scan.
 

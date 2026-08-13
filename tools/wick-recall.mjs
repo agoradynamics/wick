@@ -57,7 +57,7 @@ function walk(dir) {
 function load() {
   // DO NOT return [] here. An empty corpus and an unreadable one are different facts, and this
   // function's caller cannot tell them apart once both become "(no match)". That is the same
-  // defect the Agora spent a week measuring in its models: asserting an absence you have not
+  // defect that shows up in retrieval-grounded models: asserting an absence you have not
   // established. Grounded honesty has to apply to our own I/O or it is a slogan.
   if (!fs.existsSync(MEM)) {
     console.error(`wick-recall: cannot read ${MEM} — memory is UNREACHABLE, not empty.`);
