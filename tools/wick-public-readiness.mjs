@@ -135,6 +135,38 @@ const files = walk(root);
 const allFindings = [];
 for (const f of files) allFindings.push(...scanFile(f, config.categories));
 
+// ─── Required terms: assert a clause is still PRESENT ────────────────────
+// Every scanner in this suite — all six — checks for something FORBIDDEN, or for a structural
+// property. Not one of them asserts that a specific clause is still THERE. So an edit that
+// silently deletes the First Law, the append-only rule, or the no-spend clause passes the entire
+// suite clean. That is a real regression class with nothing watching it.
+//
+// The failure message names the BEHAVIOURAL DEFECT the clause prevents, not the missing string.
+// "required term absent" tells you what broke; "the perimeter no longer forbids unreviewed spend"
+// tells you why it matters — and the second is what makes someone restore it correctly rather than
+// paste the words back to silence a scanner.
+for (const req of config.required_terms || []) {
+  const target = path.join(root, req.file);
+  if (!fs.existsSync(target)) {
+    allFindings.push({
+      file: req.file, line: 0, severity: 'critical', category: 'required-term',
+      match: '(file missing)',
+      reason: `${req.defect_if_absent} — the file itself is gone.`,
+    });
+    continue;
+  }
+  const body = fs.readFileSync(target, 'utf8');
+  for (const term of req.terms) {
+    if (!body.includes(term)) {
+      allFindings.push({
+        file: req.file, line: 0, severity: 'critical', category: 'required-term',
+        match: term,
+        reason: req.defect_if_absent,
+      });
+    }
+  }
+}
+
 // ─── Report ─────────────────────────────────────────────────────────────
 if (opts.json) {
   console.log(JSON.stringify({

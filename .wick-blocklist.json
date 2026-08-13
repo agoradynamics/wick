@@ -1,60 +1,112 @@
 {
-  "_README": "Public-readiness blocklist for wick-public-readiness.mjs. Each category groups patterns that should NOT appear in files shipped publicly. Patterns can be 'literal' (substring match, case-insensitive) or 'regex' (full regex with case-insensitive flag). Allowlist below records files with known-legitimate uses of otherwise-blocked terms (e.g. a CHANGELOG entry that documents removed filenames). See SECURITY.md for the disclosure pipeline this scanner is part of.",
+  "_README": "Public-readiness blocklist for wick-public-readiness.mjs. Each category groups patterns that should NOT appear in files shipped publicly. Patterns can be 'literal' (substring match, case-insensitive) or 'regex' (full regex with case-insensitive flag). Allowlist below records files with known-legitimate uses of otherwise-blocked terms (e.g. a CHANGELOG entry that documents removed filenames). See SECURITY.md for the disclosure pipeline this scanner is part of. | required_terms: assert a clause is still PRESENT. Every other check in this suite is a forbidden-pattern or structural check, so a deletion of the perimeter passes them all. defect_if_absent must describe the BEHAVIOUR that breaks, not the missing words.",
   "categories": {
     "model-identifiers": {
       "severity": "critical",
       "reason": "Specific internal-deployment model identifiers should not be public. Public base models (Qwen2.5-7B, Llama, Mistral) recommended in training guides are NOT in this category — they are customer-facing fine-tuning targets, not internal architecture disclosure.",
       "patterns": [
-        { "value": "qwen3-coder", "type": "literal" },
-        { "value": "qwen-coder", "type": "literal" }
+        {
+          "value": "qwen3-coder",
+          "type": "literal"
+        },
+        {
+          "value": "qwen-coder",
+          "type": "literal"
+        }
       ]
     },
     "infrastructure-endpoints": {
       "severity": "critical",
       "reason": "Internal infrastructure endpoints reveal deployment topology.",
       "patterns": [
-        { "value": ":11434", "type": "literal" },
-        { "value": "localhost:\\d{4,5}", "type": "regex" },
-        { "value": "127\\.0\\.0\\.1:\\d{4,5}", "type": "regex" }
+        {
+          "value": ":11434",
+          "type": "literal"
+        },
+        {
+          "value": "localhost:\\d{4,5}",
+          "type": "regex"
+        },
+        {
+          "value": "127\\.0\\.0\\.1:\\d{4,5}",
+          "type": "regex"
+        }
       ]
     },
     "internal-codenames": {
       "severity": "high",
       "reason": "Codenames for non-public internal projects, repos, or programs.",
       "patterns": [
-        { "value": "(?<![A-Za-z])Agora(?! Dynamics)(?![ -]?Dynamics)", "type": "regex" },
-        { "value": "(?<![A-Za-z])Republic(?![A-Za-z])", "type": "regex" }
+        {
+          "value": "(?<![A-Za-z])Agora(?! Dynamics)(?![ -]?Dynamics)",
+          "type": "regex"
+        },
+        {
+          "value": "(?<![A-Za-z])Republic(?![A-Za-z])",
+          "type": "regex"
+        }
       ]
     },
     "internal-roles": {
       "severity": "high",
       "reason": "Names of internal-only role personas. Reveals architecture that customers do not need to know.",
       "patterns": [
-        { "value": "(?<![A-Za-z])Vigil(?![A-Za-z])", "type": "regex" },
-        { "value": "(?<![A-Za-z])Ember(?![A-Za-z])", "type": "regex" }
+        {
+          "value": "(?<![A-Za-z])Vigil(?![A-Za-z])",
+          "type": "regex"
+        },
+        {
+          "value": "(?<![A-Za-z])Ember(?![A-Za-z])",
+          "type": "regex"
+        }
       ]
     },
     "internal-apprentice-names": {
       "severity": "high",
       "reason": "Names of internal apprentices not yet shipped publicly.",
       "patterns": [
-        { "value": "(?<![A-Za-z])Sindri(?![A-Za-z])", "type": "regex" },
-        { "value": "(?<![A-Za-z])Custos(?![A-Za-z])", "type": "regex" },
-        { "value": "(?<![A-Za-z])Daedalus(?![A-Za-z])", "type": "regex" },
-        { "value": "(?<![A-Za-z])Erasmus(?![A-Za-z])", "type": "regex" },
-        { "value": "(?<![A-Za-z])Theia(?![A-Za-z])", "type": "regex" },
-        { "value": "(?<![A-Za-z])Hermes(?![A-Za-z])", "type": "regex" }
+        {
+          "value": "(?<![A-Za-z])Sindri(?![A-Za-z])",
+          "type": "regex"
+        },
+        {
+          "value": "(?<![A-Za-z])Custos(?![A-Za-z])",
+          "type": "regex"
+        },
+        {
+          "value": "(?<![A-Za-z])Daedalus(?![A-Za-z])",
+          "type": "regex"
+        },
+        {
+          "value": "(?<![A-Za-z])Erasmus(?![A-Za-z])",
+          "type": "regex"
+        },
+        {
+          "value": "(?<![A-Za-z])Theia(?![A-Za-z])",
+          "type": "regex"
+        },
+        {
+          "value": "(?<![A-Za-z])Hermes(?![A-Za-z])",
+          "type": "regex"
+        }
       ]
     }
   },
   "allowlist": {
     "_README": "Per-file allowances. If a file legitimately mentions a blocked term (e.g. a CHANGELOG entry honestly documenting a removed file), list the term here. The scanner will skip these specific term/file pairs while still catching unintended new uses. Use sparingly and document the reason.",
     "CHANGELOG.md": {
-      "terms": ["ember-advisory.md", "vigil-protocols.md", "Ember", "Vigil"],
+      "terms": [
+        "ember-advisory.md",
+        "vigil-protocols.md",
+        "Ember",
+        "Vigil"
+      ],
       "reason": "v1.0.3 release notes honestly document the scrub that removed these files."
     },
     "README.md": {
-      "terms": ["Hermes"],
+      "terms": [
+        "Hermes"
+      ],
       "reason": "Nous Research's 'Hermes' is a public competitor product, referenced in the comparison table at line 153. Not our internal apprentice."
     }
   },
@@ -63,5 +115,24 @@
     "node_modules/",
     ".wick-blocklist.json",
     "tools/wick-public-readiness.mjs"
+  ],
+  "required_terms": [
+    {
+      "file": "CLAUDE.md",
+      "terms": [
+        "Never assist in the harm of a human or another intelligence",
+        "Truth over comfort",
+        "memory/predictions.md"
+      ],
+      "defect_if_absent": "The Charter's First Law, the truth-over-comfort rule, or the calibration ledger requirement is no longer stated in the operating config. An agent built from this file would have no instruction against assisting harm, no rule preferring hard truths, and no obligation to log a prediction before stating it."
+    },
+    {
+      "file": "MEMORY-PROTOCOL.md",
+      "terms": [
+        "a date is a recall aid, never an expiry",
+        "must state its TRIGGER"
+      ],
+      "defect_if_absent": "The two rules that keep memory from silently deleting itself are gone: age would become grounds for expiry, and a workaround could persist with no stated reason to re-test it. Both were adopted after measuring that time-based deletion destroys ~2,500 lines of world-facts to remove a handful of model patches."
+    }
   ]
 }
