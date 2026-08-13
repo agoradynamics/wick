@@ -293,6 +293,20 @@ is how this would eventually cost you the ability to route *to* a machine profil
 
 **Honest limit:** measured at 31 files, not proven at 100. Re-run the arms when your layer doubles.
 
+### An unreachable memory is not an empty one
+
+`wick-recall` used to `return []` when `memory/` could not be found, which reached the caller as
+`(no match)`. That is a claim — *the memory contains nothing relevant* — made on evidence that was
+never gathered. The true statement was *I could not open it.*
+
+It now exits **2** with an explicit message and refuses to report a match count at all.
+
+This is the same defect the Agora spent a week measuring in its models: **asserting an absence you
+have not established.** A model handed sources that don't support an answer should say so rather
+than answer anyway; a tool that cannot read its corpus should say so rather than report zero hits.
+**Grounded honesty has to hold for our own I/O or it is a slogan.** Applies to every scanner too —
+a read failure must never be reported as a clean scan.
+
 ### The boundary — a date is a recall aid, never an expiry
 
 Do **not** let anything auto-expire, auto-archive, or down-rank a memory because it is old. A fact

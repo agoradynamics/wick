@@ -55,7 +55,16 @@ function walk(dir) {
 }
 
 function load() {
-  if (!fs.existsSync(MEM)) return [];
+  // DO NOT return [] here. An empty corpus and an unreadable one are different facts, and this
+  // function's caller cannot tell them apart once both become "(no match)". That is the same
+  // defect the Agora spent a week measuring in its models: asserting an absence you have not
+  // established. Grounded honesty has to apply to our own I/O or it is a slogan.
+  if (!fs.existsSync(MEM)) {
+    console.error(`wick-recall: cannot read ${MEM} — memory is UNREACHABLE, not empty.`);
+    console.error('  Refusing to report "(no match)": that would claim the memory contains nothing');
+    console.error('  when what is true is that it could not be opened. Check the path and re-run.');
+    process.exit(2);
+  }
   const body = {};
   for (const p of walk(MEM)) body[path.relative(MEM, p).replace(/\\/g, '/')] = fs.readFileSync(p, 'utf8');
 
