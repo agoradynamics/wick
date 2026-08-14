@@ -1,5 +1,34 @@
 # Wick Changelog
 
+## Unreleased — §12 Epistemic provenance: was this measured, or inferred?
+
+**Docs only. No tool, no schema change, no version bump** — the release decision stays open.
+
+§10 stamps *when and where* a memory was written. §12 addresses a different axis that costs more
+when it is missing: **which claims inside a memory were measured and which were reasoned.** A file
+records both in the same voice and nothing marks the seam.
+
+Bought with a real one (2026-08-14). A memory read *"1,383 usable rows (47% lost in cleaning) —
+undertrained. Needs more data."* Three claims measured; the parenthetical invented. The
+processing step it blamed removes zero rows — it edits in place — and the missing rows were sitting
+on disk behind a stale export. **The cost was not the wrong fact but that a wrong cause reprices
+the fix:** "lost in processing" implies the data is gone, which implies an expensive blocked
+remedy, so the item sank down a ranked list for eleven days when the real remedy was one command.
+
+Two properties that generalise: it rode inside a **parenthetical of a true sentence** (subordinate
+clauses do not get audited), and the same wrong model had produced a *different* error a month
+earlier in another file — a percentage multiplied by a total and written down as a row count.
+
+The rule, and its mechanical half:
+
+> A memory that names a CAUSE must carry the measurement that ruled out the alternatives — or mark
+> itself as inference. **Write the operation next to any derived figure.**
+
+**Enforcement is deliberately none**, and that is part of the finding: telling a measured claim from
+an inferred one needs knowledge of what was actually run, which is not recoverable from the text.
+It ships as a capture-time writing habit, not a sixth scanner. Scoped to causal claims and derived
+figures only — a layer that cites a source for every number is a layer nobody reads.
+
 ## v1.7.0 (2026-08-06) — Decay class: what actually goes stale when a model ships
 
 v1.6 made memory **orderable**. This release answers the question that ordering leaves open: §10

@@ -427,3 +427,77 @@ rule at all. §10's boundary is unchanged: a tool reports; a human retires.
   hand-tuned prompt scaffolding would have a very different ratio — and would benefit far more.
 - Nothing here detects the *third* rot: an instruction that was always wrong. That is
   `wick-consolidate-memory`'s job, and it remains a content judgement.
+
+---
+
+## 12. Epistemic provenance — was this MEASURED, or did you INFER it?
+
+§10 stamps **when and where** a memory was written. This section is about a different axis that
+costs more when it is missing: **which claims inside a memory were measured, and which were
+reasoned.** A file records both, in the same voice, and nothing marks the seam.
+
+### The failure mode, with the receipt
+
+A memory read: *"1,383 usable rows (47% lost in cleaning) — undertrained. Needs more data."*
+
+Three of those claims were measured. The parenthetical was **narrated** — a cause invented to
+explain a gap, never tested, written in the same register as the measurement beside it. The
+cleaning step removes **zero** rows; it edits text in place. The real cause was a stale data
+export, and the missing rows were already on disk.
+
+The cost was not the wrong fact. It was that **a wrong cause reprices the fix.** "Lost in
+processing" implies *the data is gone* → "needs more corpus" → new corpus is expensive and
+blocked → the item sinks down a ranked list behind a dependency nobody can clear. The true cause
+implied *run one command*. **A fix priced as blocked stops being attempted**, and this one sat for
+eleven days.
+
+Two aggravating properties, both general:
+
+- **It travelled inside a parenthetical of a true sentence.** The main clause was correct and
+  triple-checked. **Subordinate clauses do not get audited** — and this one decided what happened
+  next.
+- **It was reused.** The same wrong model of what a processing step does had produced a different
+  error a month earlier, in a different file, where a percentage was multiplied by a total and the
+  result was written down as a row count. That one changed a product model.
+
+### The rule
+
+> **A memory that names a CAUSE must carry the measurement that ruled out the alternatives — or
+> mark itself as inference.** Magnitude is not evidence of cause: two numbers of similar size are a
+> coincidence until one of them is traced.
+
+And the mechanical half, which is what actually catches it:
+
+> **Write the operation next to any derived figure.** `"29% edit rate = 1,267 clean rows"` never
+> states what turned a percentage into a count, so nobody could check it — not a reader, and not
+> the author a month later. `1,267 = 4,362 × 0.29` would have been self-refuting on sight.
+
+### Why this belongs in a memory protocol and not just a lab notebook
+
+A lab notebook is read once. **A memory layer is read by every future session as established
+fact**, and it has no tone of voice for "I think". Inference laundered as measurement is the one
+kind of rot §10 cannot see (the entry is current), §11 cannot see (it is a world-fact, not a
+patch), and consolidation cannot see (it is internally consistent and reads true).
+
+### Enforcement — deliberately none, and that is the finding
+
+There is no scanner for this and we do not propose one. Distinguishing a measured claim from an
+inferred one requires knowing what was actually run, which is not recoverable from the text.
+**The enforcement is a writing habit at capture time**, which is why it is stated as a rule rather
+than shipped as a sixth tool:
+
+- when banking a number, name the command or file it came from;
+- when banking a cause, name what you checked *instead* of it, or write "inferred";
+- prefer "X, because measured Y" over "X (Y)" — parentheses hide the seam.
+
+### Honest limits
+
+- **One team's failure, twice.** The pattern generalises in the way any reasoning failure does,
+  which is to say arguably. It is offered as a rule because both instances were expensive and both
+  were one shell command from being caught.
+- **This trades brevity for provenance**, and §4's whole thesis is that small files win. A layer
+  that cites a source for every number is a layer nobody reads. The rule is scoped to **causal
+  claims and derived figures** — not to every fact.
+- The stronger version — *hold every plausible explanation until the evidence discriminates* — is
+  older than any of this and is not ours. The contribution here is only the observation that a
+  **memory file is where a held explanation quietly becomes a settled one.**
