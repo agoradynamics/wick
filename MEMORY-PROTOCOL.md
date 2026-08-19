@@ -538,8 +538,26 @@ decile. **So moving entries to the top would have made things worse** — it rel
 material into a region that measured zero. The same facts that scored 0% buried scored 100% once the
 file was split, without being moved at all.
 
-> **Size, not order, is what buries a memory.** Past roughly 250 lines, SPLIT the file. Do not
-> reorder it.
+> **Size, not order, is what buries a memory.**
+
+### The threshold, and why it is not a flat line count
+
+A third measurement located it. At **150 lines** every probe was recoverable; at **268** the first
+fifth returned **0%** while the back half ran 50-100%; at **551** only the final decile survived.
+**The readable window is roughly CONSTANT, near the end** — so the file does not degrade gracefully
+as it grows, it accumulates a dead zone at the front.
+
+That means the rule is *fit the window*, and it bites differently depending on how a file is used:
+
+| access pattern | examples | rule |
+|---|---|---|
+| **Lookup** — you route to it and pull one fact | project files, logs, references | **must fit the window.** Split at the topical seam past ~250 lines. |
+| **Read-whole** — a checklist consumed top to bottom | canons, protocols, rule lists | may run longer, but **add a compact index of its own sections** so a lookup reader can take the item instead of the file. |
+| **Reference appendix** — explicitly load-on-demand | verified sweep output, raw trails | leave long; mark it in the index row so nobody loads it casually. |
+
+**Split at a topical seam, never at a line count.** Two halves of one topic route worse than one
+coherent file — each half loses the terms that made the whole findable. And give every split its own
+index row, or you have traded a buried section for an invisible file.
 
 ### The rules
 
