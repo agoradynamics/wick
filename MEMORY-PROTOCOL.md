@@ -501,3 +501,60 @@ than shipped as a sixth tool:
 - The stronger version — *hold every plausible explanation until the evidence discriminates* — is
   older than any of this and is not ours. The contribution here is only the observation that a
   **memory file is where a held explanation quietly becomes a settled one.**
+
+---
+
+## 13. File SIZE buries a memory. Append direction barely matters.
+
+A user asked whether entries should go at the top or the bottom of a memory file, after an agent
+reported its learnings were "impacted by where they were being stored." It is a reasonable question
+and the intuitive fix — put the newest first — is **wrong**, measurably.
+
+### What was actually broken
+
+**The retrieval surface was truncated.** The router built its index from the first 25 headings and
+first 25 bold lead-ins of each file. Files grow downward, so the surviving 25 were the *oldest*
+entries; one 551-line log carried 227 bold lead-ins and the router saw 25. Every recent finding was
+unroutable. **Removing the cap moved recall@2 from 79% to 88%** on the original labelled query set
+and **75% to 83%** on queries about recent content, with no regression. Caps of 50 or 100 changed
+nothing — the large files are far past both.
+
+**Worth naming separately:** the benchmarked router and the shipped router were *different
+implementations*. The published recall figure never described the tool in use. If you quote a
+retrieval number, quote it for the code that runs.
+
+### What the fix is NOT
+
+Probing real facts at known positions in a real 551-line file, graded on exact match:
+
+| condition | recall |
+|---|---|
+| 25-line window (control — proves the probes are answerable) | **79%** |
+| full 551-line file | **17%** |
+| **the same facts** in a 150-line slice | **100%** |
+
+Inside the full file, recall was **0% across the first 70%** and reached 100% only in the last
+decile. **So moving entries to the top would have made things worse** — it relocates the freshest
+material into a region that measured zero. The same facts that scored 0% buried scored 100% once the
+file was split, without being moved at all.
+
+> **Size, not order, is what buries a memory.** Past roughly 250 lines, SPLIT the file. Do not
+> reorder it.
+
+### The rules
+
+- **Keep files small.** This is the whole finding. §4's small-file discipline was already right; the
+  failure was not following it.
+- **Append to the bottom** for anything dated — the end is the one reliably-read region, and it
+  keeps the narrative in the order it happened. Do not flip existing files; the win is zero.
+- **Index descriptions carry more weight than file bodies** in a typical retrieval surface. That is
+  why routing kept working while bodies were invisible — and why a stale index row is worse than a
+  stale file.
+
+### Honest limits
+
+The position measurements used a local 7B reader, so the *magnitude* does not transfer to a
+frontier model with strong long-context recall. It transfers **downward** exactly: any agent running
+at that scale or smaller — which is most self-hosted deployments — is in this regime, not near it.
+The routing result has no such caveat: BM25 is a bag of words and cannot see position at all, so
+the cap was a pure defect for every reader.
