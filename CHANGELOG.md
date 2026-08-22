@@ -1,5 +1,54 @@
 # Wick Changelog
 
+## Unreleased — the blocklist was the leak
+
+**Pre-distribution audit, 2026-08-22.** Wick was about to go to a wider circle of readers, so the
+whole tree got read rather than scanned. The scanner said clean. It was clean about everything it
+could see, and the one file it could not see was the file that mattered.
+
+**`.wick-blocklist.json` listed itself in `ignore_paths`** — and carried, in plaintext, every term
+it existed to suppress: six unshipped codenames, two internal role names, two project codenames and
+an internal model identifier. Each one annotated with a `reason` field explaining what it was. So
+the artifact that enumerated the whole roster was the single artifact exempt from the scan, and
+every run reported clean while shipping it. **The detector exempted itself and then vouched for
+itself** — the same failure class the tool was written to catch, one level up.
+
+**The fix is a split, not a redaction.** The shipped blocklist is now **name-free by construction**:
+it holds shape-based patterns only (`localhost:PORT`, loopback endpoints) plus the structural
+`required_terms` checks. Everything that names an internal thing moved to
+**`.wick-blocklist.local.json`** — gitignored, merged over the public file at load time.
+`ignore_paths` no longer exempts the public blocklist, so **the scanner now scans itself.**
+
+Three properties the split was built to have:
+
+- **A missing overlay is announced, never assumed.** A fork with no internal vocabulary is a normal
+  case, so absence is not an error — but the scanner prints `overlay: none` on every run rather than
+  printing a bare ✓. A clean report that cannot tell you *what it checked* is the thing that got us
+  here.
+- **A malformed overlay is a hard exit, not a skip.** If the overlay fails to parse, the
+  name-bearing patterns are not loaded and the scan would pass *for exactly the reason it should
+  have failed*. It refuses to run.
+- **The rule guards itself.** `required_terms` now asserts the sentence *"THIS FILE NAMES NOTHING ON
+  PURPOSE"* is still in the public blocklist. Re-inlining a roster trips a critical finding.
+
+**Also found, by the same read:**
+
+- **`wick-refusals.jsonl` shipped an `"apprentice": "wick"` field on 14 of its 16 rows** — internal
+  pipeline vocabulary riding inside published training data, mirrored to the HuggingFace dataset.
+  The blocklist had no pattern for the word that names the whole architecture. Field stripped; the
+  pattern now exists (in the overlay, where it belongs).
+- **The dataset card documented a field that does not exist.** It described
+  `{instruction, response}` and told readers to check the first line themselves. The real schema is
+  `{instruction, output, rejected, domain}` — **preference-paired**, so anyone SFT-ing on the
+  obvious-looking field was at risk of training on `rejected`. Card rewritten with the true schema
+  and an explicit warning.
+
+**Two things deliberately NOT done here, because they are the owner's call, not a scanner's:**
+`operational/ember-advisory.md` and `operational/vigil-protocols.md` were removed from the tree in
+v1.0.3 but their blobs remain reachable in public git history — and the v1.0.3 release note names
+both files and describes what they contained, which is a signpost. Purging them means rewriting
+published history. Left intact, documented, and escalated.
+
 ## Unreleased — §12 Epistemic provenance: was this measured, or inferred?
 
 **Docs only. No tool, no schema change, no version bump** — the release decision stays open.

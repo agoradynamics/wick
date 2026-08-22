@@ -48,6 +48,44 @@ try {
   process.exit(2);
 }
 
+// ─── Local overlay ───────────────────────────────────────────────────────
+// The shipped blocklist names nothing on purpose. Patterns that NAME internal
+// things — codenames, role names, unshipped model identifiers — live in a
+// gitignored overlay and are merged here.
+//
+// Why this exists (found 2026-08-22): the blocklist used to carry the roster
+// inline AND list itself in ignore_paths. So the one file that enumerated every
+// internal name — annotated with what each one was — was the one file the
+// scanner could not see, and it reported clean on every run. The detector
+// exempted itself and then vouched for itself.
+//
+// Absence of the overlay is NOT an error: a fork with no internal vocabulary
+// has nothing to overlay. It is announced, not assumed.
+let overlayNote = null;
+{
+  const overlayPath = path.resolve(path.dirname(path.resolve(opts.configPath)), '.wick-blocklist.local.json');
+  if (fs.existsSync(overlayPath)) {
+    let overlay;
+    try {
+      overlay = JSON.parse(fs.readFileSync(overlayPath, 'utf8'));
+    } catch (e) {
+      // Hard failure, never a silent skip: a malformed overlay means the
+      // name-bearing patterns are NOT loaded, and the scan would pass for
+      // exactly the reason it should have failed.
+      console.error(`error: failed to parse local overlay ${overlayPath}: ${e.message}`);
+      console.error(`Refusing to scan without it — a scan missing the overlay reports clean by omission.`);
+      process.exit(2);
+    }
+    config.categories = { ...(config.categories || {}), ...(overlay.categories || {}) };
+    config.allowlist = { ...(config.allowlist || {}), ...(overlay.allowlist || {}) };
+    config.ignore_paths = [...(config.ignore_paths || []), ...(overlay.ignore_paths || [])];
+    const n = Object.keys(overlay.categories || {}).length;
+    overlayNote = `overlay: .wick-blocklist.local.json (+${n} categor${n === 1 ? 'y' : 'ies'})`;
+  } else {
+    overlayNote = `overlay: none (.wick-blocklist.local.json absent — only name-free categories active)`;
+  }
+}
+
 const SCAN_EXTENSIONS = new Set(['.md', '.txt', '.json', '.jsonl', '.yaml', '.yml', '.mjs', '.js', '.ts', '.tsx', '.html', '.sh', '.cff']);
 const ignorePaths = (config.ignore_paths || []).map(p => p.replace(/\\/g, '/'));
 
@@ -171,6 +209,7 @@ for (const req of config.required_terms || []) {
 if (opts.json) {
   console.log(JSON.stringify({
     scanned: files.length,
+    overlay: overlayNote,
     findings: allFindings.length,
     by_severity: allFindings.reduce((acc, f) => { acc[f.severity] = (acc[f.severity] || 0) + 1; return acc; }, {}),
     items: allFindings,
@@ -178,8 +217,10 @@ if (opts.json) {
 } else {
   if (allFindings.length === 0) {
     console.log(`✓ wick-public-readiness: scanned ${files.length} file(s), no findings.`);
+    console.log(`  ${overlayNote}`);
   } else {
-    console.log(`✗ wick-public-readiness: ${allFindings.length} finding(s) across ${files.length} scanned file(s).\n`);
+    console.log(`✗ wick-public-readiness: ${allFindings.length} finding(s) across ${files.length} scanned file(s).`);
+    console.log(`  ${overlayNote}\n`);
     const byCategory = {};
     for (const f of allFindings) {
       (byCategory[f.category] ||= []).push(f);

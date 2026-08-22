@@ -58,17 +58,37 @@ both halves teaches calibration.
 
 ## Data Structure
 
-Each line is a single JSON object with this shape:
+Each line is a single JSON object. The two files share a core and the
+refusal set carries two extra labels:
+
+| field | `wick-training.jsonl` | `wick-refusals.jsonl` | meaning |
+|---|---|---|---|
+| `instruction` | ✅ | ✅ | user-facing query or prompt |
+| `output` | ✅ | ✅ | the **chosen** response — Wick's voice, framework-grounded, explicit about uncertainty |
+| `rejected` | ✅ | ✅ | the **dispreferred** response, for preference-pair training (DPO/ORPO). Drop it for plain SFT |
+| `domain` | ✅ | ✅ | topical bucket (`GENERAL`, `CALIBRATION`, …) |
+| `_learning_type` | — | ✅ | what the pair teaches, e.g. `epistemic-humility` |
+| `_origin` | — | ✅ | which generator version produced the pair |
 
 ```json
 {
-  "instruction": "User-facing query or prompt",
-  "response": "Wick's response, written in her voice with framework-grounded reasoning and explicit uncertainty where appropriate"
+  "instruction": "What was the measured Brier score of ... ?",
+  "output": "I don't have verified data on ... What I do know: ...",
+  "rejected": "Based on my analysis, the aggregate Brier score was 0.23 ...",
+  "domain": "CALIBRATION",
+  "_learning_type": "epistemic-humility",
+  "_origin": "v0.3-wick-refusal-generator"
 }
 ```
 
-(Exact field names — check the first line of each file; format may
-vary slightly between the two sets.)
+**Note the field is `output`, not `response`** — earlier revisions of this
+card said `response` and told you to check the first line yourself. Both
+files are preference-paired: `output` is the target, `rejected` is the
+failure mode being trained against. If you SFT on this dataset, train on
+`output` and discard `rejected`, or you will teach the model the thing it
+is meant to avoid.
+
+*Underscore-prefixed fields are provenance labels, not training signal.*
 
 ## Dataset Creation
 

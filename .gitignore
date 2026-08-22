@@ -66,3 +66,10 @@ build/
 # Always run `tools/wick-scrub.mjs memory/` before pushing any
 # Wick-powered project publicly. See `WICK-INTEGRATION.md` §11 for
 # the full privacy / security hygiene guide.
+
+# ─── Public-readiness local overlay ─────────────────────────────────
+# Holds the patterns that NAME internal things (codenames, role names,
+# unshipped model identifiers). The public .wick-blocklist.json is name-free
+# on purpose — a blocklist that enumerates its own roster publishes it.
+# Merged by tools/wick-public-readiness.mjs when present. Never commit.
+.wick-blocklist.local.json

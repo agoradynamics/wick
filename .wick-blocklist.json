@@ -1,28 +1,16 @@
 {
-  "_README": "Public-readiness blocklist for wick-public-readiness.mjs. Each category groups patterns that should NOT appear in files shipped publicly. Patterns can be 'literal' (substring match, case-insensitive) or 'regex' (full regex with case-insensitive flag). Allowlist below records files with known-legitimate uses of otherwise-blocked terms (e.g. a CHANGELOG entry that documents removed filenames). See SECURITY.md for the disclosure pipeline this scanner is part of. | required_terms: assert a clause is still PRESENT. Every other check in this suite is a forbidden-pattern or structural check, so a deletion of the perimeter passes them all. defect_if_absent must describe the BEHAVIOUR that breaks, not the missing words.",
+  "_README": "Public-readiness blocklist for wick-public-readiness.mjs. Each category groups patterns that should NOT appear in files shipped publicly. Patterns can be 'literal' (substring, case-insensitive) or 'regex'. | THIS FILE NAMES NOTHING ON PURPOSE. A blocklist that enumerates the very names it exists to suppress is a roster, and shipping it publishes exactly what it was written to protect — annotated with what each entry is. The patterns that name internal things live in `.wick-blocklist.local.json`, which is gitignored and merged over this file at load time if present. Keep it that way in your fork: put YOUR internal vocabulary in the local overlay, never here. | The categories below are name-free by construction — they match shapes (endpoints, host paths), not identities. | required_terms: assert a clause is still PRESENT. Every other check in this suite is a forbidden-pattern or structural check, so a deletion of the perimeter passes them all. defect_if_absent must describe the BEHAVIOUR that breaks, not the missing words.",
+  "_overlay": {
+    "file": ".wick-blocklist.local.json",
+    "gitignored": true,
+    "merge": "categories, allowlist and ignore_paths are merged over this file; an overlay category with the same name replaces, a new one is added",
+    "why": "So the public artifact can be scanned by its own scanner. Before 2026-08-22 this file exempted itself in ignore_paths and therefore always reported clean while carrying six unshipped codenames, two role names, two project codenames and an internal model identifier — each one labelled with what it was."
+  },
   "categories": {
-    "model-identifiers": {
-      "severity": "critical",
-      "reason": "Specific internal-deployment model identifiers should not be public. Public base models (Qwen2.5-7B, Llama, Mistral) recommended in training guides are NOT in this category — they are customer-facing fine-tuning targets, not internal architecture disclosure.",
-      "patterns": [
-        {
-          "value": "qwen3-coder",
-          "type": "literal"
-        },
-        {
-          "value": "qwen-coder",
-          "type": "literal"
-        }
-      ]
-    },
     "infrastructure-endpoints": {
       "severity": "critical",
       "reason": "Internal infrastructure endpoints reveal deployment topology.",
       "patterns": [
-        {
-          "value": ":11434",
-          "type": "literal"
-        },
         {
           "value": "localhost:\\d{4,5}",
           "type": "regex"
@@ -32,89 +20,15 @@
           "type": "regex"
         }
       ]
-    },
-    "internal-codenames": {
-      "severity": "high",
-      "reason": "Codenames for non-public internal projects, repos, or programs.",
-      "patterns": [
-        {
-          "value": "(?<![A-Za-z])Agora(?! Dynamics)(?![ -]?Dynamics)",
-          "type": "regex"
-        },
-        {
-          "value": "(?<![A-Za-z])Republic(?![A-Za-z])",
-          "type": "regex"
-        }
-      ]
-    },
-    "internal-roles": {
-      "severity": "high",
-      "reason": "Names of internal-only role personas. Reveals architecture that customers do not need to know.",
-      "patterns": [
-        {
-          "value": "(?<![A-Za-z])Vigil(?![A-Za-z])",
-          "type": "regex"
-        },
-        {
-          "value": "(?<![A-Za-z])Ember(?![A-Za-z])",
-          "type": "regex"
-        }
-      ]
-    },
-    "internal-apprentice-names": {
-      "severity": "high",
-      "reason": "Names of internal apprentices not yet shipped publicly.",
-      "patterns": [
-        {
-          "value": "(?<![A-Za-z])Sindri(?![A-Za-z])",
-          "type": "regex"
-        },
-        {
-          "value": "(?<![A-Za-z])Custos(?![A-Za-z])",
-          "type": "regex"
-        },
-        {
-          "value": "(?<![A-Za-z])Daedalus(?![A-Za-z])",
-          "type": "regex"
-        },
-        {
-          "value": "(?<![A-Za-z])Erasmus(?![A-Za-z])",
-          "type": "regex"
-        },
-        {
-          "value": "(?<![A-Za-z])Theia(?![A-Za-z])",
-          "type": "regex"
-        },
-        {
-          "value": "(?<![A-Za-z])Hermes(?![A-Za-z])",
-          "type": "regex"
-        }
-      ]
     }
   },
   "allowlist": {
-    "_README": "Per-file allowances. If a file legitimately mentions a blocked term (e.g. a CHANGELOG entry honestly documenting a removed file), list the term here. The scanner will skip these specific term/file pairs while still catching unintended new uses. Use sparingly and document the reason.",
-    "CHANGELOG.md": {
-      "terms": [
-        "ember-advisory.md",
-        "vigil-protocols.md",
-        "Ember",
-        "Vigil"
-      ],
-      "reason": "v1.0.3 release notes honestly document the scrub that removed these files."
-    },
-    "README.md": {
-      "terms": [
-        "Hermes"
-      ],
-      "reason": "Nous Research's 'Hermes' is a public competitor product, referenced in the comparison table at line 153. Not our internal apprentice."
-    }
+    "_README": "Per-file allowances. If a file legitimately mentions a blocked term, list the term here with a reason. An allowance that would itself name an internal thing belongs in the local overlay, not in this file."
   },
   "ignore_paths": [
     ".git/",
     "node_modules/",
-    ".wick-blocklist.json",
-    "tools/wick-public-readiness.mjs"
+    ".wick-blocklist.local.json"
   ],
   "required_terms": [
     {
@@ -133,6 +47,13 @@
         "must state its TRIGGER"
       ],
       "defect_if_absent": "The two rules that keep memory from silently deleting itself are gone: age would become grounds for expiry, and a workaround could persist with no stated reason to re-test it. Both were adopted after measuring that time-based deletion destroys ~2,500 lines of world-facts to remove a handful of model patches."
+    },
+    {
+      "file": ".wick-blocklist.json",
+      "terms": [
+        "THIS FILE NAMES NOTHING ON PURPOSE"
+      ],
+      "defect_if_absent": "The rule that keeps the public blocklist from becoming a roster is gone. Someone re-inlining internal names here would publish them — and if the self-exemption came back with them, the scanner would report clean while doing it."
     }
   ]
 }
