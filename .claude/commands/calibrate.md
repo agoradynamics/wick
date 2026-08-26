@@ -2,6 +2,8 @@
 description: Log a prediction with probability and resolve-by date
 ---
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Log a prediction. Ask for:
 1. The specific, resolvable claim
 2. Probability (0-100%)

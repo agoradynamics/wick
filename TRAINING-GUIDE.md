@@ -1,4 +1,6 @@
 # Training a Local Wick Model
+
+*Updated: 2026-04-20 · first written 2026-04-20*
 ### Fine-tune Wick on Your Own GPU
 
 *This is the advanced path — full guide for users who want to run Wick offline via Ollama.*

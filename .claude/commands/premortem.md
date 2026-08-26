@@ -3,6 +3,8 @@ description: Imagine the project failed in 6 months — what broke, what we miss
 argument-hint: [project]
 ---
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Premortem analysis on: **$ARGUMENTS**
 
 Imagine it's six months from now and the project failed. Walk through:

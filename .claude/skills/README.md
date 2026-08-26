@@ -1,5 +1,7 @@
 # Wick Skills
 
+*Updated: 2026-06-28 · first written 2026-04-20*
+
 Skills are on-demand capabilities Wick can invoke without bloating the main prompt. They load when called, stay out of the way when not.
 
 ## Index

@@ -6,6 +6,8 @@ license: MIT
 
 # Wick — Base Rate
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 Tetlock-grade discipline applied to any probability claim. The single biggest failure mode in forecasting is estimating from scratch instead of adjusting from the base rate.
 
 ## When to invoke

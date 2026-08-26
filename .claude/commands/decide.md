@@ -3,6 +3,8 @@ description: Structured decision analysis through the gate chain
 argument-hint: [topic]
 ---
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Structured decision analysis on: **$ARGUMENTS**
 
 Run the full gate chain — **ask one question at a time, and for each question propose your own recommended answer** so the user can react rather than invent from a blank page:

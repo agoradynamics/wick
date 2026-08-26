@@ -3,6 +3,8 @@ description: Drain a host/buffer memory layer into Wick's canonical memory/ fold
 argument-hint: [source-path]
 ---
 
+*Updated: 2026-06-27 · first written 2026-06-27*
+
 Reconcile a buffer/host memory layer into your canonical `memory/` folder. Source:
 **$ARGUMENTS** if given, otherwise the host auto-memory layer found by `/checkup` (Claude
 Code: `~/.claude/projects/<path-encoded-folder>/memory/`).

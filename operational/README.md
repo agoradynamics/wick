@@ -1,5 +1,7 @@
 # Operational Layer
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 The operational layer is the discipline that keeps Wick safe to hand the keys to a working codebase. These files are loaded by Wick's `CLAUDE.md` and applied silently before action.
 
 ## Files

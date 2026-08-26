@@ -3,6 +3,8 @@ description: Domain learning mode — the user teaches you something
 argument-hint: [topic]
 ---
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Domain learning mode. The user is teaching you about: **$ARGUMENTS**
 
 **Ask one clarifying question at a time.** Never front-load a questionnaire — it drains the teaching impulse and produces shallow answers. For each question, propose your own best guess first so the user can correct rather than compose from scratch. *"My current read is X — am I close?"* gets a sharper correction than *"Please explain X."*

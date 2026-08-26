@@ -1,5 +1,7 @@
 # Contributing to Wick
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Wick is small, opinionated, and MIT-licensed. Contributions welcome — especially the kind that sharpen the discipline rather than expand the surface.
 
 ## What contributions are most welcome

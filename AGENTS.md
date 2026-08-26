@@ -1,5 +1,7 @@
 # AGENTS.md
 
+*Updated: 2026-05-19 · first written 2026-04-20*
+
 This project uses **Wick** — a persistent thinking-partner configuration — as its agent personality and operating system.
 
 ## Instructions for any AI agent reading this file

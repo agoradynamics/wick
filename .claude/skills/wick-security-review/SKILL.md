@@ -6,6 +6,8 @@ license: MIT
 
 # Wick — Security Review
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 Security-specific review lens. Focused on what can be *exploited*, not on what's merely ugly.
 
 ## When to invoke

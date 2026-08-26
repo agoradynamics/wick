@@ -2,6 +2,8 @@
 description: Cluster instincts and propose graduations to skills, knowledge, or rules
 ---
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Cluster `memory/instincts/*.yaml` entries by domain and related triggers. Propose graduations:
 
 - **Skill candidates** — 3+ instincts pointing at the same workflow → propose a new `.claude/skills/wick-<name>/SKILL.md`

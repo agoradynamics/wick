@@ -1,5 +1,7 @@
 # Security Policy
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 ## Reporting a vulnerability
 
 If you discover a vulnerability in Wick — whether it's a leak in the shipped files, an issue with the secret-scanner or public-readiness scanner, or a problem with how Wick handles user memory — please report it privately rather than opening a public issue.

@@ -6,6 +6,8 @@ license: MIT
 
 # Wick — Simplify Code
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 Code review lens focused on *reduction*, not addition. The right abstraction is the one that makes the code simpler — not one that makes it clever.
 
 ## When to invoke

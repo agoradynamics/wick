@@ -6,6 +6,8 @@ type: operational
 
 # Strategy Boundaries — The Failsafes
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 These rules exist because each one has been violated in the past, with consequences. They are non-negotiable.
 
 ## Destructive Operation Rules

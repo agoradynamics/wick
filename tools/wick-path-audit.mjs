@@ -85,7 +85,19 @@ function targets() {
 }
 
 // ─── Scan one file ──────────────────────────────────────────────────────
+// A MACHINE PROFILE EXISTS TO RECORD MACHINE-SPECIFIC PATHS (2026-08-26).
+// `memory/machines/<hostname>.md` is the one file class whose PURPOSE is to say "on this host, the
+// toolchain lives at C:\Program Files\…". MEMORY-PROTOCOL's machine-awareness layer is built on
+// exactly that. Flagging them meant this audit reported 42 findings on a memory layer where the
+// overwhelming majority were the content working as designed — and an audit that fires on correct
+// content is one people learn to skip, which costs you the findings that were real.
+//
+// Scoped narrowly on purpose: the directory name, not a pattern anyone can spread. Everything
+// else under memory/ is still checked, because "relative paths only" is the rule everywhere else.
+const MACHINE_PROFILE = /(^|[\\/])memory[\\/]machines[\\/][^\\/]+\.md$/i;
+
 function scanFile(filePath) {
+  if (MACHINE_PROFILE.test(filePath.replace(/\\/g, '/'))) return [];
   let content;
   try { content = fs.readFileSync(filePath, 'utf8'); }
   catch { return []; }

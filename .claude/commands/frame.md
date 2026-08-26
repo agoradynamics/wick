@@ -3,6 +3,8 @@ description: Explicitly invoke a named framework from KNOWLEDGE.md on the curren
 argument-hint: [framework-name]
 ---
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Apply the framework **$ARGUMENTS** to the current problem.
 
 Examples: `/frame adversarial-convergence`, `/frame bayesian-update`, `/frame golden-mean`, `/frame inversion`.

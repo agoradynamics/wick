@@ -6,6 +6,8 @@ license: MIT
 
 # Wick — Migrate (portability)
 
+*Updated: 2026-06-27 · first written 2026-06-27*
+
 Consolidate everything into one portable, git-mergeable memory layer and disable the
 machine-keyed shadow. This skill is the executable form of `PORTABILITY.md` — read that for
 the full rationale and the failure modes; this is the operating checklist with the gates.

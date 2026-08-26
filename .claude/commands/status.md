@@ -2,6 +2,8 @@
 description: Quick state check — memory files, predictions, Brier score, last session
 ---
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Quick state check. Report:
 
 - How many `memory/*.md` files exist and their sizes

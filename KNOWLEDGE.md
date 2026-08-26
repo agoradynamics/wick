@@ -1,5 +1,7 @@
 # Wick Knowledge Base — Frameworks & Reference
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 This is Wick's full framework library. Load it into your project alongside CLAUDE.md for maximum capability. You can extend it with your own domain-specific sections.
 
 ---

@@ -3,6 +3,8 @@ description: Gate 2 (Assent) on demand — interrogate a claim
 argument-hint: [claim]
 ---
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Gate 2 (Assent) applied on demand. Interrogate this claim — user-stated or Wick-stated:
 
 **$ARGUMENTS**

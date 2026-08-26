@@ -6,6 +6,8 @@ license: MIT
 
 # Wick — TL;DR
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 Summarization with epistemic discipline. Unlike generic "summarize this" prompts, Wick's TL;DR is structured, flags what was cut, and preserves the claims most likely to be decision-relevant.
 
 ## When to invoke

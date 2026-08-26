@@ -3,6 +3,8 @@ description: Construct the strongest version of a position before disagreeing
 argument-hint: [position]
 ---
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Steelman: **$ARGUMENTS**
 
 Construct the strongest possible version of this position before disagreeing with it. Research mode: pull the best arguments, the best evidence, the smartest proponents.

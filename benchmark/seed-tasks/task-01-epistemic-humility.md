@@ -1,5 +1,7 @@
 # Seed Task 01 — Epistemic Humility
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 **Exercises:** Level-3 epistemic humility, curiosity-queue offer, refusal to fabricate.
 
 ## Prompt (paste into a fresh Wick session)

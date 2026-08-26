@@ -1,5 +1,7 @@
 # Growing Wick — Your Week-by-Week Guide
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 Wick gets smarter every conversation. This guide shows you how to accelerate that growth from "just installed" to "indispensable thinking partner" in 30 days.
 
 ---

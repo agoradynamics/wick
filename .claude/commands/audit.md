@@ -2,6 +2,8 @@
 description: Self-critique memory files — flag drift, propose edits (no auto-execute)
 ---
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Self-critique memory files. Walk through each `memory/*.md` and flag:
 
 - **Stale entries** — facts that may no longer be true

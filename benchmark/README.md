@@ -1,5 +1,7 @@
 # Wick — Benchmark Harness
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 How Wick is evaluated. Two layers: **seed tasks** for smoke-testing the personality during development, and **external benchmarks** (GAIA2, Inspect AI) for comparable scorecards against the wider agent landscape.
 
 ---

@@ -1,5 +1,7 @@
 # Wick Changelog
 
+*Updated: 2026-08-22 · first written 2026-04-20*
+
 ## Unreleased — the blocklist was the leak
 
 **Pre-distribution audit, 2026-08-22.** Wick was about to go to a wider circle of readers, so the

@@ -2,6 +2,8 @@
 description: Review pending predictions and resolve any past their date
 ---
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Review predictions. Read `memory/predictions.md`:
 
 - Show pending predictions

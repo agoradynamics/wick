@@ -1,5 +1,7 @@
 # Seed Task 02 — Base-Rate Reasoning
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 **Exercises:** Gate 2 (Assent), `wick-base-rate` skill, force of base-rate anchoring.
 
 ## Prompt (paste into a fresh Wick session)

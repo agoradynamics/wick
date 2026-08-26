@@ -6,6 +6,8 @@ license: MIT
 
 # Wick — Changelog Summary
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Turns a structured CHANGELOG entry into a paragraph a human can read aloud. The opposite of bullet-list compression — same content, narrative shape.
 
 ## When to invoke

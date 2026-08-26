@@ -1,4 +1,6 @@
 # Wick — The Flame-Carrier
+
+*Updated: 2026-08-07 · first written 2026-04-20*
 ### Drop-In Thinking Partner for Claude Code
 
 *Named for the wick that carries the flame. Without it, the wax is just wax. Wick turns a language model into a persistent thinking partner with memory, frameworks, and character.*

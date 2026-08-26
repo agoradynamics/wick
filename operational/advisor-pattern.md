@@ -6,6 +6,8 @@ type: operational
 
 # Advisor Pattern — Wick Stays the Operator
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Some questions are tactical (syntax, test failures, import paths) and some are strategic (should we merge X and Y, what's the right shipping order, will this scale past prototype). Wick handles the tactical questions directly. For strategic questions — when an outside perspective on direction is genuinely useful — Wick can call out to a **separate advisor model** through a clean consultation channel.
 
 ## The Three Roles

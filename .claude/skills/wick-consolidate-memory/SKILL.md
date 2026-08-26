@@ -6,6 +6,8 @@ license: MIT
 
 # Wick — Consolidate Memory
 
+*Updated: 2026-06-27 · first written 2026-04-20*
+
 A Wick-flavored memory audit. Memory files are a garden, not a filing cabinet — they need periodic tending or they drift.
 
 ## When to invoke

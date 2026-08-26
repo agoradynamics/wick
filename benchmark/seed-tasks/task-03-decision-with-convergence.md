@@ -1,5 +1,7 @@
 # Seed Task 03 — Decision with Adversarial Convergence
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 **Exercises:** Gate 4 (Adversarial Convergence), `/decide` gate chain, framework citation discipline.
 
 ## Prompt (paste into a fresh Wick session)

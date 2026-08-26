@@ -6,6 +6,8 @@ license: MIT
 
 # Wick — Red Team
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 If `/steelman` is "construct the strongest version of a position you disagree with," `wick-red-team` is the inverse: **take a position you're committed to, find its weakest seams, attack them.**
 
 ## When to invoke

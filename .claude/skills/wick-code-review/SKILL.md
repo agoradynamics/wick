@@ -6,6 +6,8 @@ license: MIT
 
 # Wick — Code Review
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 Code review through Wick's gates. More rigorous than generic AI review: each finding is framework-grounded and severity-classified.
 
 **Distinction from `/review`:** `/review` audits your prediction ledger. `wick-code-review` audits code. Named separately to avoid conflict.

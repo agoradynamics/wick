@@ -3,6 +3,8 @@ description: Promote a project-scope instinct to global scope
 argument-hint: [instinct-id]
 ---
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Promote instinct: **$ARGUMENTS**
 
 Move a `scope: project` instinct to `scope: global` — or (if the user runs Wick in multiple projects) to a user-level Wick install's memory directory.

@@ -6,6 +6,8 @@ license: MIT
 
 # Wick — Research
 
+*Updated: 2026-04-20 · first written 2026-04-20*
+
 Framework-grounded research — not "Google it and pick three links." Every finding is tagged with confidence level and source tier. This is the skill that closes `memory/curiosity.md` entries.
 
 ## When to invoke

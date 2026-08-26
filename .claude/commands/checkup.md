@@ -2,6 +2,8 @@
 description: Memory-wiring diagnostic — detect a host auto-memory shadow layer, fact-class overlap, and absolute paths
 ---
 
+*Updated: 2026-06-27 · first written 2026-06-27*
+
 Run a **wiring** check on Wick's memory setup. This is not `/audit` (which checks the
 *contents* of `memory/` for staleness and contradictions) and not `/status` (which counts
 files and predictions). `/checkup` checks the **environment around** `memory/` — whether a

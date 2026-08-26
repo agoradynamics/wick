@@ -21,6 +21,8 @@ pretty_name: Wick — Thinking-Partner Training Pairs
 
 # Wick — Thinking-Partner Training Pairs (v1.0)
 
+*Updated: 2026-08-22 · first written 2026-04-20*
+
 A small, hand-curated dataset of conversation pairs that encode Wick's
 two core disciplines: analytical mastery and epistemic humility.
 

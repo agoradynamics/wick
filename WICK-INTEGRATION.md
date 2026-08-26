@@ -1,5 +1,7 @@
 # Wick Integration Guide — For Developers
 
+*Updated: 2026-06-28 · first written 2026-04-20*
+
 **For:** developers wiring Wick into a real project. You already read `README.md`. This is the layer below it — how the pieces fit, how to extend them, and how to keep Wick healthy over time.
 
 If `GROWING-WICK.md` is "how to become a power user," this is "how to set Wick up correctly so becoming a power user is even possible."

@@ -136,8 +136,24 @@ function runFix(mdFiles) {
     }
     else {
       const h1 = lines.findIndex(l => l.startsWith('# '));
-      if (h1 < 0) { undatable.push(path.relative(process.cwd(), f).replace(/\\/g, '/') + ' (no H1)'); continue; }
-      lines.splice(h1 + 1, 0, '', line);
+      if (h1 >= 0) {
+        lines.splice(h1 + 1, 0, '', line);
+      }
+      // FRONTMATTER-ONLY FILES (2026-08-26). Slash commands and SKILL.md open with a YAML block
+      // and no H1 at all, so "put the stamp under the H1" had nowhere to go and 18 of them were
+      // reported unstampable on every run. That made wick's own freshness gate UNABLE TO REACH
+      // exit 0 — and a gate that cannot pass is a gate people turn off, which costs you the
+      // findings that were real. These files are behaviour definitions; they drift like anything
+      // else and deserve a stamp, so it goes immediately after the closing `---`.
+      else if (lines[0]?.trim() === '---') {
+        const close = lines.findIndex((l, i) => i > 0 && l.trim() === '---');
+        if (close < 0) {
+          undatable.push(path.relative(process.cwd(), f).replace(/\\/g, '/') + ' (unterminated frontmatter)');
+          continue;
+        }
+        lines.splice(close + 1, 0, '', line);
+      }
+      else { undatable.push(path.relative(process.cwd(), f).replace(/\\/g, '/') + ' (no H1, no frontmatter)'); continue; }
     }
     fs.writeFileSync(f, lines.join('\n'));
     stamped++;
@@ -264,18 +280,35 @@ const root = path.join(process.cwd(), 'memory');
 
 if (opts.fix) runFix(mds);
 
+// THE WINDOW MUST SKIP FRONTMATTER (2026-08-26), and this was a FALSE POSITIVE of the worst kind.
+// The scan read a fixed first 12 lines. `huggingface/README.md` opens with 20 lines of YAML, so its
+// stamp — which is present, correctly placed under the H1 at line 24 — was outside the window and
+// reported MISSING. The obvious response to that report is to add a second stamp, so the check was
+// steering people to corrupt the very file it was auditing.
+//
+// A fixed window is a guess about document shape. Skip any leading `---` block, then take the
+// window from there.
+function headWindow(text, n = 12) {
+  const lines = text.split('\n');
+  if (lines[0]?.trim() !== '---') return lines.slice(0, n);
+  const close = lines.findIndex((l, i) => i > 0 && l.trim() === '---');
+  return close < 0 ? lines.slice(0, n) : lines.slice(close + 1, close + 1 + n);
+}
+
 // pass 1: stamps (populates stampOf, which pass 2 cross-checks the index against)
 for (const f of mds) {
   const rel = path.relative(root, f).replace(/\\/g, '/');
   if (path.basename(f) === 'index.md') continue;
   let text; try { text = fs.readFileSync(f, 'utf8'); } catch { continue; }
-  scanMarkdown(f, rel, text.split('\n').slice(0, 12));
+  scanMarkdown(f, rel, headWindow(text));
 }
 // pass 2: the index — its own stamp, its rows, and drift against pass 1
 for (const f of mds.filter(f => path.basename(f) === 'index.md')) {
   let text; try { text = fs.readFileSync(f, 'utf8'); } catch { continue; }
   const lines = text.split('\n');
-  scanMarkdown(f, path.relative(root, f).replace(/\\/g, '/'), lines.slice(0, 12));
+  // headWindow, not a fixed slice — identical for an index.md today (they carry no frontmatter),
+  // but leaving one call site on the old rule is how the two drift apart later.
+  scanMarkdown(f, path.relative(root, f).replace(/\\/g, '/'), headWindow(text));
   scanIndex(f, lines);
 }
 for (const f of files.filter(f => /\.ya?ml$/.test(f) && f.includes('instincts'))) {

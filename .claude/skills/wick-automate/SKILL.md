@@ -6,6 +6,8 @@ license: MIT
 
 # Wick — Automate (spot the repetition, propose the automation)
 
+*Updated: 2026-07-02 · first written 2026-07-02*
+
 The efficiency reflex: notice when work is being *repeated* and turn the repetition into an
 automation — so the third time you do a thing is the last time you do it by hand.
 

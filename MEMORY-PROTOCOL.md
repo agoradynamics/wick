@@ -1,5 +1,7 @@
 # Wick Memory Protocol — The Single-Writer Rule
 
+*Updated: 2026-08-19 · first written 2026-06-27*
+
 **For:** anyone running Wick inside a host that keeps its *own* memory (Claude Code's
 auto-memory, Cursor's memory, IDE-level "project memory"). This is the layer below
 `WICK-INTEGRATION.md` §4 (Memory Lifecycle) and §11 (Privacy) — it answers one

@@ -6,6 +6,8 @@ license: MIT
 
 # Wick — Catalog
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Extract, structure, save. The skill that turns "I read this once" into "I can find this in three seconds."
 
 `wick-research` finds. `wick-tldr` summarizes. `wick-catalog` **indexes** — pulls the load-bearing fields from a source and writes them to a queryable record in `memory/catalog/`. Domain-agnostic: papers, web pages, API docs, UI screenshots, tools you're evaluating, products you're comparing.

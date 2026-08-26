@@ -1,5 +1,7 @@
 # Wick Portability Procedure
 
+*Updated: 2026-06-28 · first written 2026-06-27*
+
 Make a Wick-based agent fully portable between machines by folder copy. This is the
 operational companion to `MEMORY-PROTOCOL.md`: the protocol states the single-writer
 *rule*; this states the *migration* that gets an existing agent there. Hand this document

@@ -1,5 +1,7 @@
 # Code of Conduct
 
+*Updated: 2026-05-06 · first written 2026-05-06*
+
 Wick is a thinking partner. The community around it should reflect that.
 
 ## The standard
