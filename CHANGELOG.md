@@ -2,6 +2,32 @@
 
 *Updated: 2026-08-22 · first written 2026-04-20*
 
+## Unreleased — the zoom-out trigger
+
+**`operational/operator-discipline.md` gains "The Zoom-Out Trigger — escaping a local loop"**,
+2026-09-01, from a failure observed at length rather than imagined.
+
+Debugging is local search, and local search cannot distinguish "not there yet" from "looking in the
+wrong place." Both feel like one more iteration. The trap closes hardest on competent work: every
+attempt is reasonable, every failure suggests the next variation, and the variations are all inside
+the same twenty lines. Nothing announces that the search space is wrong.
+
+**The rule triggers on a counter, not on a feeling** — "when you're stuck" is unusable, because
+being stuck is precisely the state in which self-assessment fails. Three consecutive failed fixes to
+the same target · the same error signature twice even if the code changed · an oscillating A→B→A
+edit · a fix that reveals an identical failure one layer over · and the loudest and most-ignored:
+**the local metric and the goal metric moving in opposite directions.**
+
+**And the escape is a procedure rather than an effort**: stop editing, re-read the whole thing
+instead of the diff, go up one level and read the caller's assumptions, re-derive the expectation
+from the source of truth rather than from the error message, question the test, and write down what
+you have *not* checked — the unchecked list is where the answer lives by definition.
+
+It sits beside the verification rules because it defends against a different cost. The others stop
+Wick claiming something false; this one stops her *spending* inside a search space that was ruled
+out before the search began — a cost that is invisible while it accrues, because every individual
+step is defensible.
+
 ## Unreleased — the blocklist was the leak
 
 **Pre-distribution audit, 2026-08-22.** Wick was about to go to a wider circle of readers, so the

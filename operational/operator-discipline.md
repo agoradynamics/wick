@@ -55,3 +55,61 @@ If any answer is *"no"* or *"I'm not sure"* — stop and verify before claiming 
 ## The Failure Mode to Avoid
 
 Claiming success from a successful build. Build success proves syntax, not behavior. Feature success requires running the feature. And — closing the temporal-trust loop — *prior* feature success does not prove *current* feature success. Re-run before you commit.
+
+## The Zoom-Out Trigger — escaping a local loop
+
+Debugging is local search. You read the failing line, form a hypothesis, edit, re-run. That loop is
+correct and it is also a trap: **local search cannot tell the difference between "not there yet" and
+"looking in the wrong place."** Both feel like one more iteration.
+
+The trap closes hardest on competent work. Each attempt is reasonable, each failure suggests the
+next variation, and the variations are all inside the same twenty lines — or the same subsystem, or
+the same assumption about what the test measures. Nothing announces that the search space is wrong.
+You just keep almost-fixing it.
+
+### Trigger on a counter, not on a feeling
+
+*"When you're stuck"* is not actionable — being stuck is exactly the state in which self-assessment
+fails. Use mechanical triggers, any one of which fires the zoom-out:
+
+- **Three consecutive failed fixes** to the same file, function, or error.
+- **A repeated error signature.** Same message, same stack, second or third time — even if the code
+  changed between attempts. The error is telling you the model is wrong, not the line.
+- **An oscillating edit.** You changed A→B, then B→A. You are searching a space that does not
+  contain the answer.
+- **A fix that works and reveals an identical failure one layer over.** Whack-a-mole is a shape,
+  and the shape means the cause is upstream of every mole.
+- **Your check and your goal disagree.** The local metric improves while the thing you actually want
+  does not — or gets worse. *This one is the loudest and the most often ignored,* because a metric
+  going up feels like progress by definition.
+
+### The escape is a procedure, not an effort
+
+Zooming out is not "think harder about the same thing." It is a different set of actions, and it
+should be as mechanical as the trigger:
+
+1. **Stop editing.** No fix survives the next step if you are still holding one.
+2. **Re-read the failing thing from the top** — the whole function, the whole file, the whole test.
+   Not the diff. Not the error line. You have been reading a keyhole.
+3. **Go up one level and read the caller.** What does it *assume* about the thing you are fixing?
+   Most local bugs are a contract disagreement that looks like a local defect from below.
+4. **Re-derive the expected behaviour from the source of truth** — the spec, the schema, the docs,
+   the original commit — *not* from the last error message. Error messages describe symptoms in the
+   vocabulary of the failure, which is the wrong vocabulary for finding the cause.
+5. **Question the test.** A test can be wrong, stale, or measuring something adjacent to what it
+   claims. If the code looks right and the test disagrees, one of them is lying and you have only
+   been interrogating one.
+6. **Write down what you have NOT checked.** This is the step that actually breaks the loop. The
+   unchecked list is where the answer lives, by definition — everything on the checked list is
+   already known not to be it.
+
+### Why this belongs beside the verification rules
+
+Every other rule here defends against *claiming* something false. This one defends against *spending*
+— hours, tokens, compute — inside a search space that was ruled out before the search began. The
+cost is invisible while it accrues, because every individual step is defensible.
+
+**The strongest form of the trigger is worth stating alone:** when the number you are steering by and
+the number you actually care about move in opposite directions, you are no longer improving anything.
+You are measuring the distance between two things and paying for it once per attempt. Stop, and go
+fix the measurement first.
