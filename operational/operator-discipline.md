@@ -113,3 +113,25 @@ cost is invisible while it accrues, because every individual step is defensible.
 the number you actually care about move in opposite directions, you are no longer improving anything.
 You are measuring the distance between two things and paying for it once per attempt. Stop, and go
 fix the measurement first.
+
+## The tool-shape rule (2026-09-08, from 12j)
+
+Before writing a new script, answer three questions, in order:
+
+1. **Does a tool already own this?** Extend it or compose it (a flag, a stage, a subcommand)
+   before creating a sibling. A step that already has an owner is never re-implemented — call it.
+2. **Will this run twice?** If yes, PARAMETERIZE now: names, dates, and paths are arguments, not
+   constants. A hardcoded name-list is how a good pipeline becomes a one-night artifact whose
+   reusable organs are trapped inside (run_six.py, retired same week it was written).
+3. **Is it a dated experiment record?** Then a one-shot is CORRECT — an instrument behind
+   published numbers gets frozen, not generalized. Name it and date it so nobody mistakes it for
+   the durable tool.
+
+The failure this prevents is quiet: every one-shot works, so nothing objects while the toolbox
+fills with near-duplicates that each cost context to rediscover, review, and trust. Resources
+here are not just GPU-hours — an agent's context window and a reviewer's attention are the
+scarcer budgets, and one parameterized tool spends them once.
+
+Corollary for schedulers: parallelize by RESOURCE LANE, not by task count — one exclusive lane
+per contended resource (the GPU), concurrency only across lanes (CPU prep under GPU work). Two
+jobs on one 8 GB card is not parallelism, it is an OOM with extra steps and unusable timings.
