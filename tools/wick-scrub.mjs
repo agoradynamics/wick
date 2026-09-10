@@ -26,8 +26,26 @@ const PATTERNS = [
   { name: 'Password assignment',      re: /(?:password|passwd|pwd)\s*[:=]\s*["'`][^"'`\s]{6,}["'`]/gi,        severity: 'high' },
   { name: 'Generic secret',           re: /(?:secret|api[_-]?key|auth[_-]?token|access[_-]?token)\s*[:=]\s*["'`][A-Za-z0-9_\-]{20,}["'`]/gi, severity: 'high' },
   { name: 'Bearer token',             re: /Bearer\s+[A-Za-z0-9_\-\.]{30,}/g,                                  severity: 'high' },
-  { name: 'Credit card (Visa/MC-ish)', re: /\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14})\b/g,                severity: 'high' },
+  // 2026-09-10: a bare 16-digit run is not a card number. Two guards — a negative lookbehind so the
+  // digits after a decimal point never match (`"loss": 1.4250510215759278` produced 113 HIGH findings
+  // on one repo of JSON results), and a Luhn checksum via `validate` (random digit runs pass it ~10%
+  // of the time; every real card passes it always).
+  { name: 'Credit card (Visa/MC-ish)', re: /(?<![\d.])(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14})\b/g,      severity: 'high', validate: luhn },
 ];
+
+// Luhn mod-10 (ISO/IEC 7812-1). A pattern may name a `validate(match) -> bool`; a match that
+// fails it is not a finding. Hoisted, so PATTERNS above may reference it.
+function luhn(s) {
+  const d = s.replace(/\D/g, '');
+  if (d.length < 13) return false;
+  let sum = 0, dbl = false;
+  for (let i = d.length - 1; i >= 0; i--) {
+    let n = d.charCodeAt(i) - 48;
+    if (dbl) { n *= 2; if (n > 9) n -= 9; }
+    sum += n; dbl = !dbl;
+  }
+  return sum % 10 === 0;
+}
 
 const ALLOW_FILES = new Set(['.md', '.txt', '.json', '.yaml', '.yml', '.jsonl']);
 
@@ -41,6 +59,7 @@ function scanFile(filePath) {
     lines.forEach((line, i) => {
       pat.re.lastIndex = 0;
       for (const m of line.matchAll(pat.re)) {
+        if (pat.validate && !pat.validate(m[0])) continue;   // pattern-specific checksum/shape gate
         findings.push({
           file: filePath,
           line: i + 1,
