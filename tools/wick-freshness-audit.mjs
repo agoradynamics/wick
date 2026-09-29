@@ -49,7 +49,12 @@ for (let i = 0; i < args.length; i++) {
     console.log(`wick-freshness-audit — flag memory files with missing or inconsistent timestamps.\n\nUsage:\n  node tools/wick-freshness-audit.mjs            Default: memory/\n  node tools/wick-freshness-audit.mjs <path>     Scan a specific file or directory\n  node tools/wick-freshness-audit.mjs --all      Scan the whole repo\n  node tools/wick-freshness-audit.mjs --json     Machine-readable output\n  node tools/wick-freshness-audit.mjs --warn     Report findings but exit 0\n  node tools/wick-freshness-audit.mjs --fix      Backfill stamps + index dates FROM GIT HISTORY\n  node tools/wick-freshness-audit.mjs --fix --host BOX-01   Record a hostname while fixing\n  node tools/wick-freshness-audit.mjs --help     This message\n\n--fix is mechanical, not editorial: dates come from git log, never from today's clock.\nIt BACKFILLS ONLY WHAT IS MISSING and never touches a stamp that already exists — once\nthe stamping commit is in history, git reports it as every stamped file's last change,\nso an overwriting --fix would silently re-date your whole layer to the day you adopted\nthe discipline. Pass --refresh to overwrite from git anyway.\n\nChecks presence + consistency of dates, never whether content is still true.\nExits 0 clean / 1 findings / 2 error. See MEMORY-PROTOCOL.md §10.`);
     process.exit(0);
   }
-  else if (!a.startsWith('-')) opts.path = a;
+  else if (!a.startsWith('-')) {
+    // One path per run (2026-09-29). A second path used to REPLACE the first silently, so `tool a b` reported on b
+    // alone and printed its verdict with a never opened. Refuse rather than scan a subset.
+    if (opts.path !== null) { console.error(`error: one path per run (got ${opts.path} and ${a}); the first would go unread. Run once per path.`); process.exit(2); }
+    opts.path = a;
+  }
 }
 
 // ─── The stamp ───────────────────────────────────────────────────────────

@@ -81,7 +81,12 @@ for (const a of args) {
       .split('\n').filter(l => l.startsWith('//')).map(l => l.slice(3)).join('\n'));
     process.exit(0);
   } else if (a.startsWith('-')) { console.error(`error: unknown flag ${a}`); process.exit(2); }
-  else opts.path = a;
+  else {
+    // One path per run (2026-09-29). A second path used to REPLACE the first silently, so `tool a b` reported on b
+    // alone and printed its verdict with a never opened. Refuse rather than scan a subset.
+    if (opts.path !== null) { console.error(`error: one path per run (got ${opts.path} and ${a}); the first would go unread. Run once per path.`); process.exit(2); }
+    opts.path = a;
+  }
 }
 
 const ROOT = process.cwd();

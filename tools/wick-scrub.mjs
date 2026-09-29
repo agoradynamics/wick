@@ -90,14 +90,21 @@ function walkDir(dir) {
   return out;
 }
 
-const target = process.argv[2] || 'memory/';
-if (!fs.existsSync(target)) {
-  console.error(`wick-scrub: target not found: ${target}`);
+// EVERY argument is a target (2026-09-29). This used to read only argv[2], so `wick-scrub a b c` scanned a, never
+// opened b or c, and still printed "clean". A pre-commit hook written the natural way,
+// `wick-scrub $(git diff --cached --name-only)`, passed every file after the first unread. A scanner that reports
+// clean on input it skipped is the defect this suite exists to catch, so a missing path is an error, not a skip.
+const targets = process.argv.slice(2);
+if (!targets.length) targets.push('memory/');
+const missing = targets.filter(t => !fs.existsSync(t));
+if (missing.length) {
+  console.error(`wick-scrub: target not found: ${missing.join(', ')}`);
   process.exit(2);
 }
 
-const stat = fs.statSync(target);
-const files = stat.isDirectory() ? walkDir(target) : [target];
+const files = [...new Map(targets.flatMap(t => fs.statSync(t).isDirectory() ? walkDir(t) : [t])
+  .map(f => [path.resolve(f), f])).values()];
+const target = targets.length === 1 ? targets[0] : `${targets.length} paths`;
 
 const sevRank = { critical: 0, high: 1, medium: 2 };
 let critical = 0, high = 0;

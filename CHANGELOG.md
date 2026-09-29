@@ -2,6 +2,18 @@
 
 *Updated: 2026-09-29 · first written 2026-04-20*
 
+## Unreleased — a scanner that says "clean" must have read everything it was given
+
+**`wick-scrub` scanned only its first argument.** `wick-scrub a b c` opened `a`, never opened `b` or `c`, and printed
+"clean", so the natural pre-commit hook, `wick-scrub $(git diff --cached --name-only)`, passed every staged file after
+the first unread. Found 2026-09-29 while scrubbing a commit file by file: the output said "1 file(s) scanned" for
+thirteen paths. Verified before the fix: an AWS key planted in the third of three files gave "clean", exit 0. Now every
+argument is scanned (deduplicated), and a missing path is an error (exit 2), not a skip.
+
+**The other four path-taking scanners** (`wick-path-audit`, `wick-freshness-audit`, `wick-decay-audit`,
+`wick-public-readiness`) kept only the LAST path, so `tool a b` reported on `b` alone. They now refuse a second path
+(exit 2) instead of scanning a subset. Defaults and single-path runs are unchanged.
+
 ## Unreleased — `wick-ask`: answers from your memory, measured before shipping
 
 **`tools/wick-ask.mjs` (new), 2026-09-29.** Ask the memory layer a question and get the answer *from it*, or a plain

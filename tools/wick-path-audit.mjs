@@ -32,7 +32,12 @@ for (let i = 0; i < args.length; i++) {
     console.log(`wick-path-audit — flag absolute paths in portable Wick files.\n\nUsage:\n  node tools/wick-path-audit.mjs            Default: memory/ + CLAUDE.md/WICK.md/KNOWLEDGE.md/AGENTS.md\n  node tools/wick-path-audit.mjs <path>     Scan a specific file or directory\n  node tools/wick-path-audit.mjs --all      Scan the whole repo (will flag doc examples)\n  node tools/wick-path-audit.mjs --json     Machine-readable output\n  node tools/wick-path-audit.mjs --help     This message\n\nExits 0 clean / 1 findings / 2 error.`);
     process.exit(0);
   }
-  else if (!a.startsWith('-')) opts.path = a;
+  else if (!a.startsWith('-')) {
+    // One path per run (2026-09-29). A second path used to REPLACE the first silently, so `tool a b` reported on b
+    // alone and printed its verdict with a never opened. Refuse rather than scan a subset.
+    if (opts.path !== null) { console.error(`error: one path per run (got ${opts.path} and ${a}); the first would go unread. Run once per path.`); process.exit(2); }
+    opts.path = a;
+  }
 }
 
 // ─── What counts as an absolute path ─────────────────────────────────────

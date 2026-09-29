@@ -30,7 +30,12 @@ for (let i = 0; i < args.length; i++) {
     console.log(`wick-public-readiness — scan for leak-prone vocabulary.\n\nUsage:\n  node tools/wick-public-readiness.mjs [path]\n  --config <file>  Custom blocklist (default: .wick-blocklist.json)\n  --json           Machine-readable output\n  --help           This message\n\nExits 0 clean / 1 findings / 2 error.`);
     process.exit(0);
   }
-  else if (!a.startsWith('-')) opts.path = a;
+  else if (!a.startsWith('-')) {
+    // One path per run (2026-09-29). A second path used to REPLACE the first silently, so `tool a b` reported on b
+    // alone and printed its verdict with a never opened. Refuse rather than scan a subset.
+    if (opts.pathGiven) { console.error(`error: one path per run (got ${opts.path} and ${a}); the first would go unread. Run once per path.`); process.exit(2); }
+    opts.path = a; opts.pathGiven = true;
+  }
 }
 
 // ─── Load config ─────────────────────────────────────────────────────────
