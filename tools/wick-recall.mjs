@@ -22,16 +22,18 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const MEM = path.resolve(HERE, '..', 'memory');
+// WICK_MEMORY points the router at another memory layer (a second agent's, or a frozen snapshot you are measuring
+// against). Default: the memory/ directory next to tools/, as always.
+const MEM = path.resolve(process.env.WICK_MEMORY || path.join(HERE, '..', 'memory'));
 
 const STOP = new Set(('the a an and or of to in for on is are was were be with as at by from this ' +
   'that it its not but we you our your they their has have had will would can could should how do ' +
   'i what when where which who why my me').split(' '));
 
-const tok = (s) => (s || '').toLowerCase().match(/[a-z0-9][a-z0-9\-_]+/g)?.filter(w => !STOP.has(w) && w.length > 2) ?? [];
+export const tok = (s) => (s || '').toLowerCase().match(/[a-z0-9][a-z0-9\-_]+/g)?.filter(w => !STOP.has(w) && w.length > 2) ?? [];
 
 function entities(txt) {
   const out = [];
@@ -54,7 +56,7 @@ function walk(dir) {
   return out;
 }
 
-function load() {
+export function load() {
   // DO NOT return [] here. An empty corpus and an unreadable one are different facts, and this
   // function's caller cannot tell them apart once both become "(no match)". That is the same
   // defect that shows up in retrieval-grounded models: asserting an absence you have not
@@ -81,8 +83,14 @@ function load() {
   for (const [rel, txt] of Object.entries(body)) {
     if (rel === 'index.md') continue;
     const [label, d] = desc[rel] || ['', ''];
-    const heads = (txt.match(/^#{1,4}\s*(.+)$/gm) || []).slice(0, 25).join(' ');
-    const bolds = [...txt.matchAll(/\*\*(.+?)\*\*/g)].slice(0, 25).map(m => m[1]).join(' ');
+    // NO CAP on headers or bold lead-ins (2026-09-29). This used to keep the first 25 of each. Memory files grow
+    // DOWNWARD, so the 25 that survived were the OLDEST entries and every recent finding was unroutable: a real
+    // 57-file layer had files carrying 227 and 339 bold lead-ins, of which the router saw 25. Removing the cap moved
+    // recall@2 from 79% to 88% on a labelled query set and from 75% to 83% on recent-content queries, with no
+    // regression; caps of 50 or 100 change nothing, because the big files are far past both. (Measured on a real 57-file
+    // memory layer, 2026-08-19; the same defect, the same fix.)
+    const heads = (txt.match(/^#{1,4}\s*(.+)$/gm) || []).join(' ');
+    const bolds = [...txt.matchAll(/\*\*(.+?)\*\*/g)].map(m => m[1]).join(' ');
     const surface = [label, d, label, d, label, d,
                      rel.replace(/[/\-]/g, ' ').replace('.md', ''),
                      rel.replace(/[/\-]/g, ' ').replace('.md', ''),
@@ -92,7 +100,7 @@ function load() {
   return docs;
 }
 
-function rank(query, docs, k = 2, k1 = 1.5, b = 0.75) {
+export function rank(query, docs, k = 2, k1 = 1.5, b = 0.75) {
   const N = docs.length, df = new Map();
   for (const d of docs) {
     d.tf = new Map();
@@ -113,19 +121,26 @@ function rank(query, docs, k = 2, k1 = 1.5, b = 0.75) {
   }).sort((a, b2) => b2.s - a.s).slice(0, k).filter(x => x.s > 0);
 }
 
-const args = process.argv.slice(2);
-let k = 2;
-const ki = args.indexOf('-k');
-if (ki !== -1) { k = parseInt(args[ki + 1], 10); args.splice(ki, 2); }
-const query = args.join(' ');
-if (!query) {
-  console.log('usage: node tools/wick-recall.mjs [-k N] "<what you are looking for>"');
-  process.exit(1);
+export { MEM };
+
+function main() {
+  const args = process.argv.slice(2);
+  let k = 2;
+  const ki = args.indexOf('-k');
+  if (ki !== -1) { k = parseInt(args[ki + 1], 10); args.splice(ki, 2); }
+  const query = args.join(' ');
+  if (!query) {
+    console.log('usage: node tools/wick-recall.mjs [-k N] "<what you are looking for>"');
+    process.exit(1);
+  }
+  const docs = load();
+  if (!docs.length) { console.log('(no memory/*.md files found)'); process.exit(0); }
+  const hits = rank(query, docs, k);
+  if (!hits.length) { console.log('(no match — read memory/index.md directly)'); process.exit(0); }
+  for (const { s, d } of hits) {
+    console.log(`  ${d.path.padEnd(38)} ${(d.bytes / 1024).toFixed(1).padStart(5)} KB  score ${s.toFixed(2).padStart(6)}  ${d.desc.slice(0, 60)}`);
+  }
 }
-const docs = load();
-if (!docs.length) { console.log('(no memory/*.md files found)'); process.exit(0); }
-const hits = rank(query, docs, k);
-if (!hits.length) { console.log('(no match — read memory/index.md directly)'); process.exit(0); }
-for (const { s, d } of hits) {
-  console.log(`  ${d.path.padEnd(38)} ${(d.bytes / 1024).toFixed(1).padStart(5)} KB  score ${s.toFixed(2).padStart(6)}  ${d.desc.slice(0, 60)}`);
-}
+
+// Run as a CLI only when invoked directly; `import { load, rank }` (wick-ask does) runs nothing.
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) main();

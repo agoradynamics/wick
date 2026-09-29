@@ -23,7 +23,13 @@
     }
   },
   "allowlist": {
-    "_README": "Per-file allowances. If a file legitimately mentions a blocked term, list the term here with a reason. An allowance that would itself name an internal thing belongs in the local overlay, not in this file."
+    "_README": "Per-file allowances. If a file legitimately mentions a blocked term, list the term here with a reason. An allowance that would itself name an internal thing belongs in the local overlay, not in this file.",
+    "tools/wick-ask.mjs": {
+      "terms": [
+        "127.0.0.1:"
+      ],
+      "reason": "A loopback endpoint: wick-ask's default is the local model server's documented address on the user's own machine (OLLAMA_HOST overrides it). That is the user's localhost, not our deployment topology. The term is the shape only, with no port, so this file carries no literal port."
+    }
   },
   "ignore_paths": [
     ".git/",

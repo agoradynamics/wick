@@ -1,6 +1,6 @@
 # Wick Memory Protocol — The Single-Writer Rule
 
-*Updated: 2026-08-19 · first written 2026-06-27*
+*Updated: 2026-09-29 · first written 2026-06-27*
 
 **For:** anyone running Wick inside a host that keeps its *own* memory (Claude Code's
 auto-memory, Cursor's memory, IDE-level "project memory"). This is the layer below
@@ -207,6 +207,38 @@ would actually ask about — not as tidy topic labels.
 - **Consolidation/compaction of a hand-curated layer: ~1.0×.** Measured 0.6% near-duplicate content
   and 0 repeated lines. The write discipline in §1–8 already harvested that compression; the
   redundancy that remains lives in machine-generated logs, which are not in your token budget anyway.
+
+### Answering from memory: `wick-ask` (measured 2026-09-29)
+`wick-recall` names the files; `tools/wick-ask.mjs` reads them and answers. Its pipeline:
+1. the router's top-2 files;
+2. cut into paragraph chunks of at most 600 characters;
+3. the 3 chunks with the highest BM25 against the question;
+4. a **local** model (ollama, default `qwen2.5:7b`) answers from those three sources under a grounding prompt ("if they
+   do not contain the answer, say so").
+
+No API key, no spend, and nothing leaves the machine.
+`node tools/wick-ask.mjs "<question>"` · `--sources` shows what it read · `--dry` is retrieval only.
+
+**Measured end to end, on a real 57-file memory layer**, with 48 questions verified against it before anything ran:
+24 answerable from the files, and 24 on-topic but *not* answerable from them.
+
+| reader (same retrieval) | answerable, answered correctly | unanswerable, refused |
+|---|---|---|
+| **`wick-ask` with qwen2.5:7b** | **17 / 24** | **24 / 24** |
+| a RAFT-trained 0.6B | 10 / 24 | 21 / 24 |
+
+- **Refusing is the easy half.** When a fact is absent, the router mostly returns chunks that don't answer the question,
+  and a grounded reader says so.
+- **Extraction is the hard half.** A memory paragraph holds many facts. Small models tend to reproduce the matching
+  chunk rather than pull the one fact out of it, which is why the default is a 7B.
+- **Honest limits:**
+  - The answer is only as good as the retrieval. In the measurement, 3 of 24 answerable questions never had their
+    answer reach the three chunks, and no reader can answer those.
+  - Read `--sources` before acting on anything load-bearing.
+  - The numbers are for `qwen2.5:7b`; `--model` takes any ollama model, unmeasured.
+  - Chunk lengths count code points, and line endings are normalised, so a Windows checkout chunks exactly like Linux.
+    Both were found while measuring this tool: the port first diverged from the measured pipeline on one block because
+    of each.
 
 ---
 

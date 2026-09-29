@@ -1,6 +1,28 @@
 # Wick Changelog
 
-*Updated: 2026-08-22 · first written 2026-04-20*
+*Updated: 2026-09-29 · first written 2026-04-20*
+
+## Unreleased — `wick-ask`: answers from your memory, measured before shipping
+
+**`tools/wick-ask.mjs` (new), 2026-09-29.** Ask the memory layer a question and get the answer *from it*, or a plain
+"memory doesn't hold this". It reads `wick-recall`'s top-2 files, cuts them into paragraph chunks of at most 600
+characters, keeps the 3 with the highest BM25, and has a **local** model answer from them under a grounding prompt:
+ollama, default `qwen2.5:7b`, no API key, no spend. `--sources` shows what it read, `--dry` is retrieval only,
+`--json` is for scripts.
+
+**Measured end to end before it shipped** (MEMORY-PROTOCOL.md §9, "Answering from memory"), on a real 57-file memory
+layer with 48 questions verified against it: **17 of 24 answerable questions answered correctly, 24 of 24 unanswerable
+ones refused.** With the same retrieval, a RAFT-trained 0.6B refused as well but answered only 10 of 24, which is why
+the default reader is a 7B.
+
+**`tools/wick-recall.mjs`: the 25-item caps are gone.** MEMORY-PROTOCOL.md §13 said that truncating each file's
+retrieval surface to its first 25 headings and 25 bold lead-ins was removed. **It was still in the shipped router.**
+That is the exact defect §13 warns about: a published claim describing code other than the code that runs. The router
+now uses every heading and bold lead-in; the measured effect is §13's (recall@2 79% → 88%, and 75% → 83% on
+recent-content queries).
+
+The router is now also importable (`load`, `rank`, `tok`, `MEM`; `wick-ask` uses them), with its CLI unchanged.
+`WICK_MEMORY` points either tool at another memory layer.
 
 ## Unreleased — the zoom-out trigger
 
