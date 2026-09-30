@@ -1,8 +1,17 @@
 # Wick Changelog
 
-*Updated: 2026-09-29 · first written 2026-04-20*
+*Updated: 2026-09-30 · first written 2026-04-20*
 
-## Unreleased — a scanner that says "clean" must have read everything it was given
+## v1.8.0 (2026-09-30) — Answers from memory, and scanners that read what they are given
+
+Five changes landed on `main` after v1.7.0, plus the check that would have caught this release's own drift.
+**`wick-ask`** answers a question from your memory with a local model. It was measured as the tool that ships: 17/24 answered right, 24/24 unanswerable refused. **The scanners now read every path they are given.** **§12** separates measured from inferred claims. **The zoom-out trigger** is an operator rule for escaping a local loop. **The public blocklist names nothing**; its internal vocabulary moved to a gitignored overlay.
+
+### Every surface that names the version must agree
+
+**`tools/wick-release-check.mjs` (new).** Wick's version lives on six surfaces, and twice (v1.1–v1.3, then v1.5.0) a release reached `main` and the CHANGELOG and stopped there. **This release was about to be the third:** `wick-meta.json` read 1.7.0 with v1.6.0's date, v1.7.0 was never tagged, the package build script read v1.6.0, and the download page linked v1.4.0 zips. The check reads `wick-meta.json`, the newest CHANGELOG release, the README's version line, and the git tag (`--tagged`); with `--site <dir>` it also reads the build script and every zip link and the version chip on the download page. It exits 1 on any disagreement. It found all four drifts above on its first run.
+
+### A scanner that says "clean" must have read everything it was given
 
 **`wick-scrub` scanned only its first argument.** `wick-scrub a b c` opened `a`, never opened `b` or `c`, and printed
 "clean", so the natural pre-commit hook, `wick-scrub $(git diff --cached --name-only)`, passed every staged file after
@@ -14,7 +23,7 @@ argument is scanned (deduplicated), and a missing path is an error (exit 2), not
 `wick-public-readiness`) kept only the LAST path, so `tool a b` reported on `b` alone. They now refuse a second path
 (exit 2) instead of scanning a subset. Defaults and single-path runs are unchanged.
 
-## Unreleased — `wick-ask`: answers from your memory, measured before shipping
+### `wick-ask`: answers from your memory, measured before shipping
 
 **`tools/wick-ask.mjs` (new), 2026-09-29.** Ask the memory layer a question and get the answer *from it*, or a plain
 "memory doesn't hold this". It reads `wick-recall`'s top-2 files, cuts them into paragraph chunks of at most 600
@@ -36,7 +45,7 @@ recent-content queries).
 The router is now also importable (`load`, `rank`, `tok`, `MEM`; `wick-ask` uses them), with its CLI unchanged.
 `WICK_MEMORY` points either tool at another memory layer.
 
-## Unreleased — the zoom-out trigger
+### The zoom-out trigger
 
 **`operational/operator-discipline.md` gains "The Zoom-Out Trigger — escaping a local loop"**,
 2026-09-01, from a failure observed at length rather than imagined.
@@ -62,7 +71,7 @@ Wick claiming something false; this one stops her *spending* inside a search spa
 out before the search began — a cost that is invisible while it accrues, because every individual
 step is defensible.
 
-## Unreleased — the blocklist was the leak
+### The blocklist was the leak
 
 **Pre-distribution audit, 2026-08-22.** Wick was about to go to a wider circle of readers, so the
 whole tree got read rather than scanned. The scanner said clean. It was clean about everything it
@@ -111,7 +120,7 @@ v1.0.3 but their blobs remain reachable in public git history — and the v1.0.3
 both files and describes what they contained, which is a signpost. Purging them means rewriting
 published history. Left intact, documented, and escalated.
 
-## Unreleased — §12 Epistemic provenance: was this measured, or inferred?
+### §12 Epistemic provenance: was this measured, or inferred?
 
 **Docs only. No tool, no schema change, no version bump** — the release decision stays open.
 

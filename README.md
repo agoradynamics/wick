@@ -1,6 +1,6 @@
 # Wick — The Flame-Carrier
 
-*Updated: 2026-09-29 · first written 2026-04-20*
+*Updated: 2026-09-30 · first written 2026-04-20*
 ### Drop-In Thinking Partner for Claude Code
 
 *Named for the wick that carries the flame. Without it, the wax is just wax. Wick turns a language model into a persistent thinking partner with memory, frameworks, and character.*
@@ -199,6 +199,7 @@ Session 1 is dramatically better than vanilla Claude. Session 30 is dramatically
 | `benchmark/` | Seed tasks + external-benchmark docs — targets GAIA2, Inspect AI (UK AISI), galileo-ai/agent-leaderboard |
 | `tools/wick-recall.mjs` | Zero-model-token memory router — names the 1–2 files that answer a question (BM25 over index rows + headers + bold lead-ins), ~1 ms |
 | `tools/wick-ask.mjs` | Ask your memory a question and get the answer *from it* — or a plain "memory doesn't hold this". Router → paragraph chunks → a local model via ollama; no API key, no spend. Measured: 17/24 answerable right, 24/24 unanswerable refused (MEMORY-PROTOCOL.md §9) |
+| `tools/wick-release-check.mjs` | Release gate — every surface that names the version (wick-meta, CHANGELOG, README, git tag; `--site` adds the build script + download page) must agree, or it exits 1 |
 | `tools/wick-scrub.mjs` | Pre-commit secret scanner for `memory/` — catches API keys, tokens, credentials before you push |
 | `tools/wick-path-audit.mjs` | Pre-commit absolute-path scanner — flags non-portable paths in `memory/` + config before the folder moves |
 | `tools/wick-freshness-audit.mjs` | Temporal-provenance scanner — every memory file stamped `Updated · host · first written`, every index row dated, and the index actually agreeing with the files. `--fix` backfills a whole layer from `git log` |
@@ -409,7 +410,7 @@ If you want to run Wick offline on your own GPU, see **[TRAINING-GUIDE.md](TRAIN
 
 ## Version & License
 
-**Version:** 1.7.0
+**Version:** 1.8.0
 **License:** [MIT](LICENSE) — fork it, modify it, run it commercially, build on it. That's the point.
 **Trademarks:** "Wick" and "Agora Dynamics" are marks of Agora Dynamics LLC (see `LICENSE` for the trademark notice — nominative use is fine, branding a confusingly-similar derivative is not).
 **Training data:** Same MIT license. Fine-tune away — local, commercial, derivative, whatever suits you.

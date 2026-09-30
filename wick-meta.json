@@ -1,8 +1,8 @@
 {
   "meta_schema_version": "wick-meta/1.0",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "release_channel": "alpha",
-  "released_at": "2026-08-03",
+  "released_at": "2026-09-30",
   "license": "MIT",
   "publisher": "Agora Dynamics LLC",
   "training_pairs": 26,
@@ -35,7 +35,10 @@
     "tools/wick-freshness-audit.mjs + MEMORY-PROTOCOL.md §10 (v1.6.0) — fifth scanner: temporal + provenance discipline. Every memory file stamped `*Updated: <date> · <HOST> · first written <date>*` under its H1, every index row carrying its file's date, multi-entry files dating each entry, and the index cross-checked against the files it indexes (index drift is the failure that bites). --fix backfills a whole layer from `git log`, never from today's clock, so adopting the discipline on a mature layer does not flatten its history to one date. Measured recall-neutral: 6 arms × 44 labelled queries, zero flips, manipulation independently verified. A date is a recall aid, never an expiry.",
     ".github/workflows/ — public-readiness scan and skills-spec validation run on every PR + main push",
     "SECURITY.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md — governance hygiene for a public MIT repo",
-    "tools/wick-decay-audit.mjs + MEMORY-PROTOCOL.md §11 (v1.7.0) — sixth scanner: decay class. Separates memory that describes THE WORLD (measurements, decisions, machine facts — never expires by policy) from memory that describes HOW TO BE A MODEL (a workaround for a specific model's behaviour — expires on a MODEL CHANGE, never on a calendar). Answers the live advice to delete .md files every ~6 months: right about the failure mode, wrong about the remedy. Measured on a 2594-line layer, 48 lines mentioned a model and essentially none were workarounds, so blanket deletion would destroy ~2500 lines of measurement history to clean up a handful of patches. Load-bearing rule: a [patch:] must state its TRIGGER, because 'always X' is unfalsifiable and blanket deletion is the only remedy for a rule that carries no reason. world is the unmarked default — tag only the exception. --list is the model-upgrade re-test list. Never deletes, archives, or down-ranks anything."
+    "tools/wick-decay-audit.mjs + MEMORY-PROTOCOL.md §11 (v1.7.0) — sixth scanner: decay class. Separates memory that describes THE WORLD (measurements, decisions, machine facts — never expires by policy) from memory that describes HOW TO BE A MODEL (a workaround for a specific model's behaviour — expires on a MODEL CHANGE, never on a calendar). Answers the live advice to delete .md files every ~6 months: right about the failure mode, wrong about the remedy. Measured on a 2594-line layer, 48 lines mentioned a model and essentially none were workarounds, so blanket deletion would destroy ~2500 lines of measurement history to clean up a handful of patches. Load-bearing rule: a [patch:] must state its TRIGGER, because 'always X' is unfalsifiable and blanket deletion is the only remedy for a rule that carries no reason. world is the unmarked default — tag only the exception. --list is the model-upgrade re-test list. Never deletes, archives, or down-ranks anything.",
+    "tools/wick-ask.mjs (v1.8.0) — ask the memory layer a question and get the answer FROM it, or a plain \"memory doesn't hold this\": wick-recall's top-2 files -> paragraph chunks -> BM25 top-3 -> a LOCAL model via ollama (no API key, no spend). Measured as the tool that ships, on a real 57-file memory layer: 17/24 answerable questions answered correctly, 24/24 unanswerable refused. MEMORY-PROTOCOL.md §9. wick-recall is now importable, and its 25-item surface caps are gone (§13 claimed they were; the shipped router still had them).",
+    "Scanners read every path they are given (v1.8.0): wick-scrub scanned only its first argument, so a pre-commit hook passing staged files passed every file after the first unread. Now every path is scanned and a missing path is an error; the path-taking scanners refuse a second path instead of reporting on a subset.",
+    "tools/wick-release-check.mjs (v1.8.0) — reads every surface that names the version (wick-meta, CHANGELOG, README, the git tag, and with --site the build script and download page) and refuses when they disagree. A release is not shipped until all of them name it."
   ],
   "audit_status": {
     "identity_claims": "clean",
@@ -43,9 +46,9 @@
     "truncation": "clean",
     "secret_scanner_pass": "clean (wick-scrub 16 patterns, all memory files)",
     "skill_spec_validation": "clean (skills-ref v0.1.5 validate, 11/11 skills pass agentskills.io/specification)",
-    "public_readiness_scan": "clean (wick-public-readiness scanner, default .wick-blocklist.json, 66 files scanned 0 findings)",
-    "identity_claim_audit": "clean (wick-identity-audit scanner, 56 .md files scanned 0 matches across HIGH/MED/LOW severity)",
-    "path_audit": "clean (wick-path-audit, default scope memory/ + loaded config, 18 files scanned 0 findings)",
+    "public_readiness_scan": "clean (wick-public-readiness scanner, default .wick-blocklist.json, 87 files scanned 0 findings)",
+    "identity_claim_audit": "clean (wick-identity-audit scanner, 65 .md files scanned 0 matches across HIGH/MED/LOW severity)",
+    "path_audit": "clean (wick-path-audit, default scope memory/ + loaded config, 22 files scanned 0 findings)",
     "freshness_audit": "clean (wick-freshness-audit, memory/ scope, 17 files scanned, 0 blocking findings; 12 advisory stamp-no-host notes are expected in shipped templates, which carry no hostname)"
   },
   "links": {
