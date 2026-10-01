@@ -12,7 +12,9 @@ import path from 'node:path';
 
 const PATTERNS = [
   { name: 'Anthropic API key',        re: /sk-ant-api\d{2}-[A-Za-z0-9_\-]{60,}/g,                              severity: 'critical' },
-  { name: 'OpenAI API key',           re: /sk-(?:proj-)?[A-Za-z0-9_\-]{40,}/g,                                severity: 'critical' },
+  // 2026-10-01: a key starts at a token boundary. Without the lookbehind the `sk-` inside "risk-" matched any
+  // long slug ("risk-perceptions-in-an-...": 11 CRITICAL findings on one corpus file, all false).
+  { name: 'OpenAI API key',           re: /(?<![A-Za-z0-9])sk-(?:proj-)?[A-Za-z0-9_\-]{40,}/g,                 severity: 'critical' },
   { name: 'GitHub PAT (classic)',     re: /gh[pousr]_[A-Za-z0-9]{36,}/g,                                      severity: 'critical' },
   { name: 'GitHub fine-grained PAT',  re: /github_pat_[A-Za-z0-9_]{60,}/g,                                    severity: 'critical' },
   { name: 'AWS access key',           re: /AKIA[0-9A-Z]{16}/g,                                                severity: 'critical' },

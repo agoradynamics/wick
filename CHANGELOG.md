@@ -2,6 +2,19 @@
 
 *Updated: 2026-09-30 · first written 2026-04-20*
 
+## Unreleased
+
+### `wick-scrub`: an OpenAI key starts at a token boundary
+
+**The OpenAI-key pattern matched the `sk-` inside "risk-".** Any slug longer than 40 characters that contained
+"risk-" ("risk-perceptions-in-an-...") was a CRITICAL finding. Across 1,534 files of one training repo's results and
+corpora, all 250 findings were this, every one in-word (231 "risk-", the rest "...sharedrisk-", "...globalrisk-").
+The pattern now requires that `sk-` not follow a letter or digit, the same class of guard as the decimal-point
+lookbehind on card numbers. Measured both ways before shipping: 15 real-shaped keys planted at every boundary a real
+file uses (line start, space, tab, quote, backtick, `=`, `: `, brackets, a query string, a comma, after `_`, plus
+`sk-proj-`) are all still found, while the 4 in-word look-alikes and all 250 corpus false positives are not. No other
+pattern's findings changed on that corpus.
+
 ## v1.8.0 (2026-09-30) — Answers from memory, and scanners that read what they are given
 
 Five changes landed on `main` after v1.7.0, plus the check that would have caught this release's own drift.
