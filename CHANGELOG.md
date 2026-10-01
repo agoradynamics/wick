@@ -15,6 +15,20 @@ file uses (line start, space, tab, quote, backtick, `=`, `: `, brackets, a query
 `sk-proj-`) are all still found, while the 4 in-word look-alikes and all 250 corpus false positives are not. No other
 pattern's findings changed on that corpus.
 
+### `wick-ask`: the refusal hint reads "not clearly stated" as a refusal
+
+**The printed hint missed refusals with an adverb in them.** "...is not clearly stated" split every phrase in the hint's
+list, so the CLI answered without its "(memory doesn't hold this ...)" note. In the v1.8.0 measurement (48 questions)
+the hint agreed with the fleet's measured refusal detector (v2) on 47; this was the 48th. The fix ports v2's
+adverb-tolerant clause verbatim instead of widening the list toward the one miss: up to two adverbs and two words may
+sit between the negation and a verb of absence. On the same 48 saved answers the hint now agrees with v2 on all 48
+and changes exactly one flag, that one. Only the hint and `--json`'s `refused` field change, never the answer.
+
+**`wick-ask --help` asked the model "--help".** Every argument that was not a known flag joined the question, so
+`--help` (or a typo such as `--sorces`) loaded the 7B onto the GPU to answer it. Found 2026-10-01 when that load landed
+beside a training run on an 8 GB card. `--help` / `-h` now print the usage (exit 0), and an unknown flag is an error
+(exit 2) that reaches no model.
+
 ## v1.8.0 (2026-09-30) — Answers from memory, and scanners that read what they are given
 
 Five changes landed on `main` after v1.7.0, plus the check that would have caught this release's own drift.

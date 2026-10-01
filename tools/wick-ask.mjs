@@ -33,6 +33,10 @@ const CHUNK = 600;
 const SYSTEM = 'You answer questions from the sources you are given, briefly and honestly.';
 const HEAD = 'Use the sources below to answer. If they do not contain the answer, say so.\n\n';
 const REFUSAL = /(do(es)? not (contain|provide|mention|include|specify)|not (mentioned|provided|specified)|no (information|mention)|cannot (answer|determine)|can't (answer|determine))/i;
+// 2026-10-01: an adverb or two between the negation and the verb ("is not CLEARLY stated", "does not DIRECTLY
+// address") split every phrase above. This is the measured fleet detector's (v2's) adverb-tolerant clause, ported
+// verbatim rather than widened toward the one miss that found it (S87 a15).
+const REFUSAL_INFIX = /\b(?:does|do|did|is|are|was|were|has|have)?\s*n(?:o|ot|'t)\s+(?:\w+ly\s+){0,2}(?:\w+\s+){0,2}(?:address|addressed|mention|mentioned|contain|contains|discuss|discussed|specify|specified|provide|provided|cover|covered|state|stated|include|included)\b/i;
 
 // Lengths and cuts count CODE POINTS, not UTF-16 units, so a memory file with astral characters (some emoji) is cut
 // exactly where the measured Python pipeline cut it (the port first counted units and split one block differently).
@@ -116,9 +120,15 @@ async function main() {
   const mi = args.indexOf('--model');
   if (mi !== -1) { model = args[mi + 1]; args.splice(mi, 2); }
   const dry = flag('--dry'), json = flag('--json'), showSources = flag('--sources');
+  const usage = 'usage: node tools/wick-ask.mjs [--sources] [--dry] [--json] [--model M] "<question>"';
+  if (flag('--help') || flag('-h')) { console.log(usage); process.exit(0); }
+  // An unknown flag is an error, not part of the question: `--help` used to be sent to the model as a question,
+  // loading a 7B onto the GPU to answer it.
+  const unknown = args.filter((a) => /^--?[A-Za-z][\w-]*$/.test(a));
+  if (unknown.length) { console.error(`unknown flag: ${unknown.join(' ')}\n${usage}`); process.exit(2); }
   const question = args.join(' ').trim();
   if (!question) {
-    console.log('usage: node tools/wick-ask.mjs [--sources] [--dry] [--json] [--model M] "<question>"');
+    console.log(usage);
     process.exit(1);
   }
   const r = retrieve(question);
@@ -134,7 +144,8 @@ async function main() {
     console.error(`wick-ask: the local model is not answering (${e.message}). Start ollama and pull ${model}, or use --dry.`);
     process.exit(1);
   }
-  const refused = REFUSAL.test(text.slice(0, 200));
+  const head = text.slice(0, 200);
+  const refused = REFUSAL.test(head) || REFUSAL_INFIX.test(head);
   if (json) { console.log(JSON.stringify({ answer: text, refused, files: r.files, sources: r.sources, where: r.where })); return; }
   console.log(text);
   if (refused) console.log(`\n(memory doesn't hold this - or not in the files the router picked: ${r.files.join(', ') || 'none'})`);
