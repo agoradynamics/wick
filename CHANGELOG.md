@@ -1,8 +1,13 @@
 # Wick Changelog
 
-*Updated: 2026-09-30 · first written 2026-04-20*
+*Updated: 2026-10-03 · first written 2026-04-20*
 
-## Unreleased
+## v1.8.1 (2026-10-03) — A secret scanner that reads words, and a CLI that knows its flags
+
+Three fixes, no new features. **`wick-scrub`** stopped reading the `sk-` inside "risk-" as an OpenAI key: that was
+all 250 CRITICAL findings on one real corpus, and every real-shaped key planted at a token boundary is still caught.
+**`wick-ask`'s refusal hint** now catches "is not clearly stated". **`wick-ask --help`** prints the usage instead
+of asking the model a question called "--help".
 
 ### `wick-scrub`: an OpenAI key starts at a token boundary
 

@@ -1,8 +1,8 @@
 {
   "meta_schema_version": "wick-meta/1.0",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "release_channel": "alpha",
-  "released_at": "2026-09-30",
+  "released_at": "2026-10-03",
   "license": "MIT",
   "publisher": "Agora Dynamics LLC",
   "training_pairs": 26,
