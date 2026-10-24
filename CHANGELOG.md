@@ -67,7 +67,6 @@ temp directory and runs the real CLIs against them. It covers backward compatibi
 flow (including every refusal leaving the disk byte-identical, and a CRLF file staying CRLF), hiding by default, and
 the step-1 size bound.
 
-
 ### Training data: four confidences were fractions printed as percents
 
 **Why.** Rows 1, 2, 3 and 7 of `wick-training.jsonl` gave their prediction's confidence as `0.78%`, `0.62%`,
@@ -79,7 +78,12 @@ a factor of 100.
 **What.** The four instructions now read 78%, 62%, 41% and 73%. Row 2's answer quotes 62%. The two sentences built on
 the misprint now describe the real numbers: row 3 "the below-even probability (41%)", row 7 "the high probability
 assigned (73%) suggests either overconfidence in current AI capabilities...", which is the reading that sentence
-already argued. No other row states a confidence.
+already argued.
+
+Row 4 carried the same number in another form. Its prediction text ended in a fragment of a model's tool-call
+markup, `</parameter name="probability">0.62`, and its confidence read `?%`. The fragment is gone and the
+confidence reads 62%, the number its answer already reasons from. No other row states a confidence, and no row
+carries markup.
 
 ## v1.8.1 (2026-10-03) — A secret scanner that reads words, and a CLI that knows its flags
 
