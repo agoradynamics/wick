@@ -1,13 +1,14 @@
 # Wick Changelog
 
-*Updated: 2026-10-23 · first written 2026-04-20*
+*Updated: 2026-10-26 · first written 2026-04-20*
 
-## Unreleased — Read a long memory one entry at a time; retire a fact without erasing it
+## v1.9.0 (2026-10-26) — Read a long memory one entry at a time; retire a fact without erasing it
 
 Two mechanisms, one new section (MEMORY-PROTOCOL.md §14). **`wick-recall --index` / `--get`** reads memory in two
 steps: a short list of matching entries, then the full text of only the ones chosen. **`[superseded: <date> → <id>]`**
 marks a fact that was true and stopped being true; every reader skips it by default and `--include-superseded` brings
 it back. **`tools/wick-supersede.mjs`** writes both halves. Memory with no tag in it reads byte for byte as before.
+Five training rows that stated a confidence 100 times too small, or behind leaked markup, now state it correctly.
 
 ### Stepwise retrieval: a small index, then only the entries you choose
 
@@ -52,7 +53,7 @@ an assertion.
 ### Compatibility
 
 - **Untagged memory is unchanged.** On three untagged layers (the shipped templates, a 4-file fixture, the 121-file
-  synthetic layer), v1.8.1's `wick-recall` and `wick-ask` and this branch's printed identical output in 90 of 90 runs:
+  synthetic layer), v1.8.1's `wick-recall` and `wick-ask` and v1.9.0's printed identical output in 90 of 90 runs:
   30 questions × `wick-recall -k 2`, `-k 3`, `wick-ask --dry`. `wick-ask`'s measured pipeline (§9) is untouched for
   such memory, and it was not re-measured on tagged memory.
 - **One behaviour change:** an unknown flag to `wick-recall` is now an error (exit 2) instead of a word of the query,
@@ -68,6 +69,8 @@ flow (including every refusal leaving the disk byte-identical, and a CRLF file s
 the step-1 size bound.
 
 ### Training data: four confidences were fractions printed as percents
+
+Found and fixed by Ramon Sosa ([@Rsosa13](https://github.com/Rsosa13)) in #9; row 4 followed in #10.
 
 **Why.** Rows 1, 2, 3 and 7 of `wick-training.jsonl` gave their prediction's confidence as `0.78%`, `0.62%`,
 `0.41%` and `0.73%`. The scale is 0 to 1 written with a percent sign: row 1's own answer proposes lowering the
