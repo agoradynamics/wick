@@ -1,6 +1,6 @@
 # Wick — The Flame-Carrier
 
-*Updated: 2026-10-20 · first written 2026-04-20*
+*Updated: 2026-11-13 · first written 2026-04-20*
 ### Drop-In Thinking Partner for Claude Code
 
 *Named for the wick that carries the flame. Without it, the wax is just wax. Wick turns a language model into a persistent thinking partner with memory, frameworks, and character.*
@@ -412,7 +412,7 @@ If you want to run Wick offline on your own GPU, see **[TRAINING-GUIDE.md](TRAIN
 
 ## Version & License
 
-**Version:** 1.9.0
+**Version:** 1.9.1
 **License:** [MIT](LICENSE) — fork it, modify it, run it commercially, build on it. That's the point.
 **Trademarks:** "Wick" and "Agora Dynamics" are marks of Agora Dynamics LLC (see `LICENSE` for the trademark notice — nominative use is fine, branding a confusingly-similar derivative is not).
 **Training data:** Same MIT license. Fine-tune away — local, commercial, derivative, whatever suits you.

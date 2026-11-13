@@ -1,6 +1,6 @@
 # Memory Index
 
-*Updated: 2026-10-20 · first written 2026-08-01*
+*Updated: 2026-11-13 · first written 2026-08-01*
 
 The map of this agent's memory. **Read this first, then open only the file(s) you need** — do not
 load the whole layer to answer one question. That is the context bulge, and it is avoidable.
@@ -28,7 +28,7 @@ one line each (8 by default), and `--get <id>` reads only the ones you pick. An 
 - [failure-log](failure-log.md) — what went wrong, the diagnosis, and what now prevents it (2026-04-20)
 - [curiosity](curiosity.md) — open questions, unknowns and gaps queued for research (2026-04-20)
 - [predictions](predictions.md) — resolvable forecasts and probability estimates with resolve-by dates (Gate 5) (2026-04-20)
-- [calibration](calibration.md) — how accurate my predictions have been: Brier score, hit rate, over/under-confidence bias (2026-04-20)
+- [calibration](calibration.md) — how accurate my predictions have been: Brier score, hit rate, over/under-confidence bias (2026-11-13)
 
 ## Environment
 - [toolchain](toolchain.md) — external tools the work assumes (call-by-name + env override) (2026-08-03)
