@@ -1,0 +1,15 @@
+{
+  "name": "agora-dynamics",
+  "description": "Wick, a thinking partner with a file memory, published by Agora Dynamics.",
+  "owner": {
+    "name": "Agora Dynamics LLC",
+    "email": "contact@agoradynamics.dev"
+  },
+  "plugins": [
+    {
+      "name": "wick",
+      "source": "./",
+      "description": "A thinking partner with a file memory: a say-what-you-don't-know rule, five gates, sixteen commands, twelve skills and a prediction ledger scored by code."
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "meta_schema_version": "wick-meta/1.0",
-  "version": "1.9.1",
+  "version": "2.0.0",
   "release_channel": "alpha",
   "released_at": "2026-11-13",
   "license": "MIT",
@@ -9,8 +9,9 @@
   "refusal_pairs": 16,
   "total_pairs": 42,
   "features": [
-    "5 Operational Gates (Control, Assent, Specificity, Adversarial Convergence, Calibration)",
-    "16 slash commands shipped as .claude/commands/*.md files (also pattern-recognized from CLAUDE.md) — Core 6 (/reflect, /calibrate, /decide, /learn, /review, /status) + Analytical 6 (/premortem, /steelman, /frame, /doubt, /forget, /audit) + Instinct 2 (/evolve, /promote) + Memory-wiring 2 (/checkup, /sync)",
+    "Loaded file of 89 lines, about 1,800 tokens on current Claude models (v1.9.x: 349 lines, about 8,600). It fits a 4,096-token local context window. Shipped only after it scored at least as well as the old file on the benchmark",
+    "5 gates (Control, Assent, Specificity, Adversarial Convergence, Calibration), applied silently, after a say-what-you-don't-know rule that comes first",
+    "16 slash commands shipped as .claude/commands/*.md files (an agent with no command menu reads the command's file) — Core 6 (/reflect, /calibrate, /decide, /learn, /review, /status) + Analytical 6 (/premortem, /steelman, /frame, /doubt, /forget, /audit) + Instinct 2 (/evolve, /promote) + Memory-wiring 2 (/checkup, /sync)",
     "12 on-demand skills, spec-compliant per agentskills.io (wick-consolidate-memory, wick-simplify, wick-code-review, wick-security-review, wick-tldr, wick-red-team, wick-base-rate, wick-research, wick-catalog, wick-changelog-summary, wick-migrate, wick-automate)",
     "8 memory templates (about-you, decisions, learning-journal, domain-knowledge, predictions, calibration, failure-log, curiosity) + opt-in instincts layer",
     "3 install modes — full takeover / personality layer / subagent",
@@ -19,7 +20,7 @@
     "Offered Reflection — Wick offers memory updates at natural trigger points; never auto-writes",
     "Epistemic humility decision tree — three-level confidence (I know / I believe, here's why / I don't know, here's how I'd approach it) with worked dialogues",
     "Framework library — four philosophical operating systems (Stoic / Platonic / Aristotelian / Epicurean) + modern decision science (Tetlock superforecasting, Brier scoring, Gigerenzer fast-and-frugal, Acemoglu, Schelling, Smead, Watts, Klein, Munger, Bayes)",
-    "Benchmark layer — 3 seed smoke tasks + external benchmark docs (Inspect AI, GAIA2, galileo-ai/agent-leaderboard)",
+    "Benchmark — benchmark/gates-ab.mjs, a with/without test of the loaded file on public questions (local or hosted model, spending cap), with results for two local models and Claude Opus 5.5; 3 manual seed tasks",
     "Anti-wordy voice rules — framework-cited in 3-5 words, no preamble recap, don't philosophize about the philosophy",
     "Two-file training strategy — analytical mastery + epistemic humility refusals (42 pairs total: 26 mastery, 16 refusal)",
     "Operator discipline rule #8 — verify the final state, not the working state. Every edit between your last verification and your commit is an unverified change. Pre-commit hook is load-bearing infrastructure.",
@@ -38,7 +39,10 @@
     "tools/wick-decay-audit.mjs + MEMORY-PROTOCOL.md §11 (v1.7.0) — sixth scanner: decay class. Separates memory that describes THE WORLD (measurements, decisions, machine facts — never expires by policy) from memory that describes HOW TO BE A MODEL (a workaround for a specific model's behaviour — expires on a MODEL CHANGE, never on a calendar). Answers the live advice to delete .md files every ~6 months: right about the failure mode, wrong about the remedy. Measured on a 2594-line layer, 48 lines mentioned a model and essentially none were workarounds, so blanket deletion would destroy ~2500 lines of measurement history to clean up a handful of patches. Load-bearing rule: a [patch:] must state its TRIGGER, because 'always X' is unfalsifiable and blanket deletion is the only remedy for a rule that carries no reason. world is the unmarked default — tag only the exception. --list is the model-upgrade re-test list. Never deletes, archives, or down-ranks anything.",
     "tools/wick-ask.mjs (v1.8.0) — ask the memory layer a question and get the answer FROM it, or a plain \"memory doesn't hold this\": wick-recall's top-2 files -> paragraph chunks -> BM25 top-3 -> a LOCAL model via ollama (no API key, no spend). Measured as the tool that ships, on a real 57-file memory layer: 17/24 answerable questions answered correctly, 24/24 unanswerable refused. MEMORY-PROTOCOL.md §9. wick-recall is now importable, and its 25-item surface caps are gone (§13 claimed they were; the shipped router still had them).",
     "Scanners read every path they are given (v1.8.0): wick-scrub scanned only its first argument, so a pre-commit hook passing staged files passed every file after the first unread. Now every path is scanned and a missing path is an error; the path-taking scanners refuse a second path instead of reporting on a subset.",
-    "tools/wick-release-check.mjs (v1.8.0) — reads every surface that names the version (wick-meta, CHANGELOG, README, the git tag, and with --site the build script and download page) and refuses when they disagree. A release is not shipped until all of them name it."
+    "tools/wick-release-check.mjs (v1.8.0) — reads every surface that names the version (wick-meta, CHANGELOG, README, the git tag, and with --site the build script and download page) and refuses when they disagree. A release is not shipped until all of them name it.",
+    "tools/wick-ledger.mjs (v2.0.0) — the prediction ledger as a program: add, due, resolve, report. Brier scores and two no-skill baselines are computed by code. Reads the template's bullet records and heading records. due --hook is a session-start check",
+    "tools/wick-mirror.mjs (v2.0.0) — WICK.md is CLAUDE.md byte for byte; --write copies, --check is in CI",
+    "Claude Code plugin, first cut (v2.0.0) — .claude-plugin/plugin.json + marketplace.json, hooks/hooks.json (session-start ledger check), output-styles/wick.md. Passes claude plugin validate (Claude Code 2.1.321) with warnings; not installed end to end"
   ],
   "audit_status": {
     "identity_claims": "clean",
@@ -54,7 +58,6 @@
   "links": {
     "source": "https://github.com/agoradynamics/wick",
     "download": "https://agoradynamics.dev/wick.html",
-    "training_pairs_dataset": "https://huggingface.co/datasets/AgoraDynamics/wick",
     "company": "https://agoradynamics.dev",
     "contact": "contact@agoradynamics.dev"
   }

@@ -1,0 +1,22 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/tools/wick-ledger.mjs",
+              "due",
+              "--hook",
+              "--file",
+              "${CLAUDE_PROJECT_DIR}/memory/predictions.md"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

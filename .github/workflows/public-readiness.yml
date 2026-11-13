@@ -36,3 +36,9 @@ jobs:
 
       - name: Run identity-claim audit
         run: node tools/wick-identity-audit.mjs
+
+      - name: WICK.md mirrors CLAUDE.md
+        run: node tools/wick-mirror.mjs --check
+
+      - name: Run the tools' self-check
+        run: node tools/wick-selfcheck.mjs

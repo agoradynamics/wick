@@ -235,6 +235,8 @@ if (opts.json) {
       console.log(`   why: ${items[0].reason}`);
       for (const f of items) {
         const rel = path.relative(root, f.file).replace(/\\/g, '/');
+        // A required-term finding has no column, match text or snippet: it reports something that is ABSENT.
+        if (f.category === 'required-term') { console.log(`   ${rel}  required text is missing: "${f.match}"`); continue; }
         console.log(`   ${rel}:${f.line}:${f.col}  matched "${f.matched}"`);
         console.log(`     ${f.snippet.trim()}`);
       }

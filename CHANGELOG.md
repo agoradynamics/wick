@@ -2,6 +2,107 @@
 
 *Updated: 2026-11-13 · first written 2026-04-20*
 
+## v2.0.0 (2026-11-13) — A loaded file a quarter the size, tested before it shipped; the ledger becomes a program
+
+The file Wick loads every session goes from 349 lines to 89, and from about 8,600 tokens to about 1,800 on current
+Claude models. It shipped only after it scored at least as well as the old file on a test, because the old file, tested
+for the first time, turned out to make Claude worse at one thing it was written for. The prediction ledger's arithmetic
+moves out of prose and into `tools/wick-ledger.mjs`. The test itself ships in `benchmark/`. There is a first cut of a
+Claude Code plugin.
+
+### The loaded file was measured, and then cut
+
+**Why.** Until November 2026 nobody had tested whether `CLAUDE.md` changes an answer. We sent the same passage and
+question to a model under different system prompts, on public reading questions where half cannot be answered from
+the passage. On two local models the whole v1.9.0 file did not measurably beat no system prompt. On Claude Opus 5.5 it
+was worse than no prompt: by a judge model's strict scoring the model declined 45% of the unanswerable questions
+unprompted and 30% under the file, a drop of 8.5 points in the balanced score [-13.0, -4.0]. One plain sentence
+gained 9.0. The file's own two humility sentences worked alone on the local models and stopped working inside the
+file. The file had also never shrunk at any release since v1.0.0, and Claude Code's own guidance is to keep such a file
+under 200 lines.
+
+**What.** `CLAUDE.md` is rewritten around the rule that worked:
+
+- **"Say what you don't know" comes first,** and now covers what the model is handed (a document, a passage, a memory
+  file) as well as what it knows. It adds a line on false premises: don't correct one with a "fact" you can't verify
+  either. In the old test a model wrote "Gate 2 (Assent Check)" and under it asserted a false correction.
+- **The five gates are one or two lines each.** Gate 4 carries the v1.9.1 correction. Gate 5 points at the ledger
+  program.
+- **Memory rules now say how to read:** `memory/index.md` first, then only the files a question needs. The loaded
+  file never said this before; the saving measured in v1.5.0 depended on a rule that lived in files nothing loaded.
+- **The sixteen command definitions are no longer inside the file.** They were there twice: 2,765 tokens in
+  `CLAUDE.md` every session, and again as `.claude/commands/*.md`. The command files remain, and the loaded file lists
+  the names. A tool with no command menu reads the command's file.
+- **Removed:** the "What to Share, What to Redirect" section (it told Wick to guard publisher secrets it does not
+  hold), and most of Continuous Learning, whose detail is in `MEMORY-PROTOCOL.md` and the command files.
+
+**Measured before shipping** (the rule and five predictions were written down first; `benchmark/README.md` has the
+tables). On Claude Opus 5.5 the new file scored 10.0 points above the old one by the judge [5.0, 15.0]. It is level
+with no prompt by the judge and 6.5 points above it by the phrase rule. On a 7B local model it declined all 14 of
+the package's own "you can't know this" questions, against 5 for the old file, and it fits Ollama's default
+4,096-token window, which cut the old file and lost the gates.
+
+**Not shown.** The new file does not beat one plain sentence. A second wording was tried and did not help. The text
+was written and chosen on the same questions it was tested on, so its gain is probably overstated. Nothing here
+measures advice, decisions or use across sessions. The shipped file differs from the tested text in two places that
+this repository's checks and naming required (Gate 5 names `memory/predictions.md`; Gate 4 keeps its name).
+
+### `tools/wick-ledger.mjs` (new): the ledger is a program
+
+**Why.** Gate 5 asked the model to remember to log a probability, `/review` asked it to compute a Brier score, and
+`memory/calibration.md` asked it to keep totals. Nothing checked any of it, and no ledger we know of held a resolved
+prediction.
+
+**What.** `add`, `due`, `resolve`, `report` and `list`. Brier scores are computed by code. `report` prints the mean beside
+two no-skill baselines on the same entries (always 50%, and always the base rate), says so when there are fewer than
+20 resolved entries, and never calls a score good or bad. It reads the template's bullet records and the heading
+records models also write, and leaves a block it cannot read exactly as written. `due --hook` is a session-start
+check that prints nothing when nothing is due. `/calibrate` and `/review` now call the program.
+`MEMORY-PROTOCOL.md` §15 is new.
+
+### `benchmark/gates-ab.mjs` (new): the test, runnable by anyone
+
+The with/without test, for a local model through Ollama or a hosted model with a required spending cap. You supply
+the SQuAD 2.0 dev file; the repository ships only the list of question ids we used. `benchmark/README.md` is rewritten
+around it and carries the results. Its release rule: a change to `CLAUDE.md` ships only if its balanced score is not
+more than 3 points below the current file's on the same model. The old README's "expected edge" on benchmarks nobody
+had run is gone.
+
+### Wiring
+
+- **`tools/wick-mirror.mjs` (new).** `WICK.md` is `CLAUDE.md` byte for byte. It had drifted: a rule added in v1.7.0
+  never reached it. `--write` copies, `--check` runs in CI.
+- **`AGENTS.md` no longer tells an agent to read all of `memory/` at session start.** It says index first. Following
+  the old bootstrap line loaded about 26,700 tokens before the first question on a fresh install; the new one loads
+  about 4,000.
+- **`README.md`: the Portability section says what each tool reads,** checked against Claude Code's, Codex's and
+  Gemini CLI's documentation where marked. It no longer claims the file "works with any local model", or that
+  portability is a moat. A "What has been measured" section is new.
+- **`WICK-INTEGRATION.md`'s bootstrap prompt and `.claude/skills/README.md`** still told an agent to read every
+  memory file and to look commands up in a section of `CLAUDE.md` that no longer exists. Both now match the new file.
+- **The Hugging Face dataset link is removed** from `wick-meta.json`. The dataset is not public.
+- **CI now runs the self-check** (70 checks) and the mirror check.
+- **`wick-public-readiness`: its text reporter crashed on a missing required term** and printed a stack trace instead
+  of the finding. It now prints the finding. Found when the shorter `CLAUDE.md` first dropped a required phrase.
+- **`wick-release-check` reads the plugin manifest's version** as a surface.
+
+### Claude Code plugin (first cut)
+
+`.claude-plugin/plugin.json` and `marketplace.json`, `hooks/hooks.json` (the session-start ledger check) and
+`output-styles/wick.md` (the rules as an output style, since a plugin cannot ship a `CLAUDE.md`). Commands, skills and
+the subagent are read from `.claude/`, so nothing is duplicated. It passes `claude plugin validate` (Claude Code
+2.1.321) with warnings: no icon, and a note that a `CLAUDE.md` at a plugin's root is not loaded. **Not installed end
+to end** by us. It does not create a `memory/` folder.
+
+### Compatibility
+
+- **Breaking for paste-in users.** If you pasted `CLAUDE.md` into a chat tool and relied on the command definitions
+  inside it, they are gone from that file. Paste the command file you need, or stay on v1.9.1.
+- **Your `memory/` folder is untouched,** and `wick-ledger` reads an existing `memory/predictions.md`.
+  `report --write` renames one column of the table in `memory/calibration.md` ("Expected" to "Mean stated").
+- **Mode B users:** `WICK.md` changed with `CLAUDE.md`. Copy the new one.
+- **No tool's existing behaviour changed** apart from the reporter fix above.
+
 ## v1.9.1 (2026-11-13) — Corrections: what the frameworks say, and what a Brier score means
 
 Corrections only, no new features. Wick's framework library and Gate 4 claimed more than their sources support. The

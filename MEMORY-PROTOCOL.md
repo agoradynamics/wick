@@ -1,6 +1,6 @@
 # Wick Memory Protocol — The Single-Writer Rule
 
-*Updated: 2026-10-20 · first written 2026-06-27*
+*Updated: 2026-11-13 · first written 2026-06-27*
 
 **For:** anyone running Wick inside a host that keeps its *own* memory (Claude Code's
 auto-memory, Cursor's memory, IDE-level "project memory"). This is the layer below
@@ -733,3 +733,42 @@ leaves a tombstone. Superseding is for a fact that was true and stopped being tr
   `wick-supersede` guards only the edits it makes itself.
 - **Only the shapes in the table are entries.** A log of undated bullets stays one section entry. Date them (§10), and
   each becomes its own.
+
+---
+
+## 15. The ledger is a program
+
+**Why.** Until v2.0.0 the prediction ledger was prose: Gate 5 asked the model to remember to log a probability,
+`/review` asked it to compute `(probability - outcome)^2`, and `memory/calibration.md` asked it to keep running
+totals. Nothing checked any of it. Four of the package's own training rows carried confidences 100 times too small
+for six months (v1.9.0), and as of 2026-11-13 no ledger we know of, ours included, held a resolved prediction. A rule
+that depends on a model remembering arithmetic is not a ledger.
+
+**What.** `tools/wick-ledger.mjs` owns `memory/predictions.md` and the numbers in `memory/calibration.md`:
+
+| Command | What it does |
+|---|---|
+| `add "<claim>" --p 70 --by 2026-12-01` | appends a pending entry; refuses a missing probability, an impossible date or a duplicate |
+| `due` | lists pending entries whose resolve-by date has passed |
+| `resolve <n> true|false` | computes the Brier score and moves or completes the entry |
+| `report [--write]` | mean Brier beside two no-skill baselines on the same entries, and hit rate per bucket |
+
+It reads the template's bullet records and the heading records models also write (`## 2026-11-01 — claim` followed
+by plain bullets). A block it cannot read is reported and left exactly as written.
+
+**Baselines, not bars.** A Brier score means nothing alone: it depends on how hard the questions were. `report`
+prints two baselines computed on the same resolved entries: always saying 50% (0.25) and always saying the entries'
+own base rate. Beating both is the minimum for "better than no skill here". With fewer than 20 resolved entries the
+report says so and does not judge.
+
+**The session-start check.** `due --hook` prints nothing when nothing is due, and a short list when something is.
+The plugin runs it at session start (`hooks/hooks.json`). For a folder install, add the same hook to
+`.claude/settings.json` yourself if you want it:
+
+```json
+{ "hooks": { "SessionStart": [ { "matcher": "startup", "hooks": [
+  { "type": "command", "command": "node", "args": ["tools/wick-ledger.mjs", "due", "--hook"] } ] } ] } }
+```
+
+**Not measured.** Whether keeping a ledger improves anyone's calibration over time. That needs resolved predictions,
+and there are none yet. The program makes the measurement possible; it is not the measurement.

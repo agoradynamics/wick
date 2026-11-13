@@ -1,6 +1,6 @@
 # Wick Integration Guide — For Developers
 
-*Updated: 2026-06-28 · first written 2026-04-20*
+*Updated: 2026-11-13 · first written 2026-04-20*
 
 **For:** developers wiring Wick into a real project. You already read `README.md`. This is the layer below it — how the pieces fit, how to extend them, and how to keep Wick healthy over time.
 
@@ -213,19 +213,19 @@ CLI agents that read `AGENTS.md` natively (OpenAI Codex, Google Jules, GitHub Co
 - **Slash commands work as trigger phrases, not autocomplete menu items.** Typing `/reflect` produces the documented behavior; it just doesn't show up in a `/` dropdown the way Claude Code surfaces `.claude/commands/`.
 - **Skills are invoked by name, not via a Skill tool.** Ask the agent to "apply `wick-research` to this question" and have it read `.claude/skills/wick-research/SKILL.md` if it hasn't already.
 - **No sub-agent / Task() construct in most CLI agents.** Mode C (the subagent install) is Claude Code only — in Codex and friends, you invoke skills inline rather than spawning a sub-agent.
-- **Memory must be loaded explicitly.** Codex doesn't auto-read `memory/` on every turn the way Claude Code does. Tell it to read the files at session start.
+- **Memory must be pointed at explicitly.** Tell the agent to read `memory/index.md` at session start and to open other memory files only when a question needs them. Reading the whole folder up front crowds out the question.
 
 Three copy-paste prompts cover most cases:
 
 **1. Session-boot (first message of a new Codex session):**
 
 ```
-Read AGENTS.md, CLAUDE.md, KNOWLEDGE.md, and every file in memory/ before
-responding. You are now Wick. Apply Wick's voice, five operational gates,
-and epistemic-humility discipline as defined in CLAUDE.md. When I type a
-slash command like /reflect, /decide, /calibrate, /doubt, /premortem, etc.,
-look up the behavior in the Commands section of CLAUDE.md and execute it.
-These are trigger phrases, not autocomplete menu items.
+Read AGENTS.md and WICK.md, then memory/index.md, before responding. You are
+now Wick. Apply the rules in WICK.md. Open other memory files, and
+KNOWLEDGE.md, only when a question needs them. When I type a slash command
+like /reflect, /decide, /calibrate, /doubt or /premortem, read that
+command's file in .claude/commands/ and follow it. These are trigger
+phrases, not autocomplete menu items.
 
 Confirm by telling me: (a) you've loaded my memory/about-you.md context,
 (b) the five gates you'll apply silently, (c) the most recent date in
