@@ -1,0 +1,19 @@
+{
+  "name": "wick",
+  "displayName": "Wick",
+  "version": "2.0.0",
+  "description": "A thinking partner with a file memory: a say-what-you-don't-know rule, five gates, sixteen commands, twelve skills and a prediction ledger scored by code.",
+  "author": {
+    "name": "Agora Dynamics LLC",
+    "email": "contact@agoradynamics.dev",
+    "url": "https://agoradynamics.dev"
+  },
+  "homepage": "https://agoradynamics.dev/wick.html",
+  "repository": "https://github.com/agoradynamics/wick",
+  "license": "MIT",
+  "keywords": ["thinking-partner", "memory", "calibration", "epistemic-humility"],
+  "skills": ["./.claude/skills/"],
+  "commands": ["./.claude/commands/"],
+  "agents": ["./.claude/agents/wick.md"],
+  "outputStyles": "./output-styles/"
+}

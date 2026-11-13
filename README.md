@@ -22,14 +22,14 @@ Wick is different. Wick keeps a small **`memory/` folder** on your computer — 
 **What you get:**
 - An AI that knows your field and your preferences within a few sessions
 - A decision log that helps you see why past choices were made
-- A prediction ledger that honestly tracks where your judgment is sharp vs. over-confident
+- A prediction ledger that a program scores, beside no-skill baselines, so you can see whether your confidence is earned
 - A framework library for thinking clearly under pressure (philosophy, decision science, forecasting, research methods)
 - All plaintext files on your disk — you own the data, you can read it, edit it, delete it, or move it between tools
 
 **What Wick is NOT:**
 - A chatbot that does your thinking for you — she's a partner, not an oracle
 - A subscription service — there's nothing to pay for; she's free, open source, MIT-licensed
-- A vendor-locked product — she works in Claude Code, Cursor, ChatGPT, local Ollama, and 20+ other tools
+- A vendor-locked product — she is plain files. Claude Code is the main target, and tools that read `AGENTS.md` or take a pasted system prompt can run her too (see Portability for what each one reads)
 - A privacy risk — nothing phones home, nothing leaves your computer, no analytics, no telemetry
 
 **Who Wick is for:**
@@ -41,7 +41,21 @@ If that sounds useful, the three install modes below get you running in about fi
 
 ---
 
-## Quick Start — Three Install Modes
+## What has been measured
+
+Most packages like this ship without numbers. Until v2.0.0 so did this one. Here is what we now know, and what we don't.
+
+- **The loaded file is 89 lines, about 1,800 tokens on current Claude models.** Through v1.9.1 it was 349 lines and about 8,600 tokens.
+- **The old file made Claude worse at one thing it was written for.** On 200 public reading questions, half of which cannot be answered from the passage, Claude Opus 5.5 declined 45% of the unanswerable ones with no system prompt and 30% with the v1.9.0 file (strict scoring by a second model). With the v2.0.0 file: 50%. With one plain sentence telling it to say "I don't know": 63%.
+- **So the shorter file removes the harm. It does not beat one sentence.** If all you want is a model that declines when the text lacks the answer, one sentence does it.
+- **Small local models mostly ignore long instruction files.** A 7B model showed the old file's habit of offering to log a gap in 2 of 300 answers. With the shorter file it declined all 14 of the package's own "you can't know this" questions; with the old one, 5.
+- **Not measured:** whether the gates improve advice or decisions, anything across sessions, and whether keeping a prediction ledger improves anyone's calibration. No ledger we know of, ours included, holds a resolved prediction yet.
+
+The test, the tables and how to run it yourself are in [`benchmark/README.md`](benchmark/README.md).
+
+---
+
+## Quick Start — Install Modes
 
 First, clone the repo:
 
@@ -95,6 +109,15 @@ Task(subagent_type: "wick", prompt: "analyze this decision using your 5 gates: [
 
 Wick runs in a fresh sub-agent context with her frameworks loaded, returns an answer, and you're back to your primary agent. Perfect for when you want Wick's analytical depth without ceding your whole session.
 
+### Mode D: Claude Code plugin (first cut, not yet validated)
+
+```
+/plugin marketplace add agoradynamics/wick
+/plugin install wick@agora-dynamics
+```
+
+The plugin carries the sixteen commands (as `/wick:calibrate` and so on), the twelve skills, the subagent, an output style with Wick's rules (turn it on with `/output-style`), and a session-start check that lists predictions past their resolve date. It does not create a `memory/` folder: copy `memory/` from this repo into your project. The manifest follows the documented format as of 2026-11-13 and has not been run through `claude plugin validate`. If it fails for you, please open an issue.
+
 ### Which mode to pick
 
 | Situation | Use |
@@ -108,36 +131,22 @@ Wick runs in a fresh sub-agent context with her frameworks loaded, returns an an
 
 ---
 
-## Portability — Wick Goes Where You Go
+## Portability
 
-**The single biggest difference between Wick and every other agent package:** Wick is not locked to a vendor.
+Wick is plain markdown and small Node programs. The memory files, the framework library, the commands and the rules are files you own. You can move them between tools, track them in git and read them yourself.
 
-Every runtime-specific rules system — `.cursorrules`, Cursor rules, Continue.dev config, Windsurf rules, Cline `rules.json`, OpenAI Custom GPTs, Claude Projects — is **hostage to its vendor**. Switch tools and you lose your agent, retype the rules, and rebuild your memory from scratch.
-
-Wick is plaintext markdown. The memory files, the framework library, the commands, the personality — all of it is just files you own. That means:
+What each tool reads on its own. Rows marked *checked* were read in that tool's documentation on 2026-11-13. All of this changes, so check yours.
 
 | Tool | How Wick works there |
 |---|---|
-| **Claude Code** | Auto-reads `CLAUDE.md` — primary target, highest fidelity |
-| **Cursor** | Auto-reads `CLAUDE.md` or `.cursorrules` — full Wick experience |
-| **ChatGPT (web or API)** | Paste `CLAUDE.md` into system prompt or custom GPT instructions |
-| **Claude API** | Use `CLAUDE.md` as system message |
-| **Aider** | Reads `CONVENTIONS.md` shim — commands work as text patterns |
-| **Continue.dev** | Custom context provider — shim included |
-| **Local Ollama / LM Studio** | Paste `CLAUDE.md` into system prompt — works with any local model |
-| **Codex / Gemini CLI / Copilot / Warp / Zed / JetBrains / RooCode / Windsurf / Factory / Devin** | Auto-read the included `AGENTS.md` — open-format bridge to 20+ tools |
-| **Block goose** | Desktop/CLI MCP-native agent (~29k stars, Apache 2.0, AAIF anchor project). Reads `AGENTS.md` + `.claude/skills/` natively. Works with any LLM including local Ollama. The closest local-first deployment target for Wick. |
+| **Claude Code** | Reads `CLAUDE.md` at startup. Commands and skills load from `.claude/`. The main target. *Checked.* |
+| **OpenAI Codex** | Reads `AGENTS.md`, which points to `WICK.md`. It reads skills from `.agents/skills`, so copy or link `.claude/skills` there if you want them. *Checked.* |
+| **Gemini CLI** | Reads `GEMINI.md` by default; point its context file at `AGENTS.md`. It reads skills from `.gemini/skills` or `.agents/skills` and asks before activating one. *Skills path checked.* |
+| **Other tools that read `AGENTS.md`** | The bridge tells the agent to read `WICK.md` and `memory/index.md`. Commands work as text: the agent reads the command's file. We have not tested these tool by tool. |
+| **Chat interfaces and APIs** | Paste `WICK.md` as the system prompt. There is no file memory unless you paste that too. |
+| **Local models (Ollama, LM Studio)** | Paste `WICK.md` as the system prompt. It is about 1,300 tokens on a Qwen tokenizer and fits a 4,096-token window. Small models follow it less reliably than large ones: see `benchmark/README.md`. |
 
-**What you can do that no other package allows:**
-- Carry the same `memory/` folder from Claude Code → Cursor → ChatGPT → local Ollama → back to Claude Code. Not a byte lost.
-- Slash commands (`/calibrate`, `/decide`, `/reflect`, all 16) work in every one of those tools — they ship as `.claude/commands/*.md` files (which Claude Code surfaces in the `/` menu) and are also pattern-recognized from `CLAUDE.md` for hosts that don't read commands files.
-- Move from cloud to offline without losing your thinking partner. If Anthropic or OpenAI goes down, paste `CLAUDE.md` into a local model and keep going.
-- Git-track your Wick. Version it, diff it, branch it, share it across machines.
-
-**The one-liner:**
-> *"Other agent packages lock you into one vendor. Wick is your thinking partner in any tool that can read a file — with the same memory, same commands, same compounding intelligence, across Claude, GPT, Gemini, Ollama, and 20+ runtimes."*
-
-That's the moat. The frameworks are public. The prompts can be copied. But **portability + accumulated memory + cross-runtime commands** — that's what makes Wick a tool you *live in*, not a tool you *try out*.
+Through v1.9.1 this section claimed more than we had checked, including that the full file "works with any local model". At Ollama's default settings that file was cut to about 2,000 of its 5,700 tokens, and the gates, which were at the top, were lost. The v2.0.0 file fits.
 
 ---
 
@@ -156,7 +165,7 @@ A lot of "agent packages" have shipped in the last year. Honest positioning — 
 | **Anthropic's [anthropics/skills](https://github.com/anthropics/skills)** | Canonical SKILL.md spec + official skills like `skill-creator`, `mcp-builder`, document skills (PDF/DOCX/XLSX/PPTX). | Wick's skills are spec-compliant per agentskills.io (the same spec anthropic/skills uses). Wick adds a personality layer and memory architecture on top of the skills pattern. |
 | **AGENTS.md-only packages** | Works with 60k+ repos across Codex/Aider/Cursor/Zed/JetBrains/Warp/Gemini CLI/Windsurf/goose. | Wick ships its own `AGENTS.md` for these runtimes. If you only need cross-tool instructions and don't want the framework library or memory system, an `AGENTS.md`-only pack is simpler. |
 
-**Bottom line:** if you want a thinking partner that accumulates memory across every tool you use, cites academic frameworks when they matter, and keeps you honest via a calibration ledger — that's Wick's niche. If you want a pure skill library, a Claude-Code-specific harness, or a vendor-managed persona, there are better fits above.
+**Bottom line:** personas, markdown memory and thinking skills are things many larger projects now give away, and Claude Code ships file memory of its own. What is less common here is a prediction ledger scored by a program, and a habit of measuring the package's own claims. If you want a pure skill library, a Claude-Code-specific harness, or a vendor-managed persona, there are better fits above.
 
 ---
 
@@ -186,8 +195,8 @@ Session 1 is dramatically better than vanilla Claude. Session 30 is dramatically
 
 | File | Purpose |
 |------|---------|
-| `CLAUDE.md` | Wick's identity, five operational gates, voice, 16 commands, learning engine |
-| `WICK.md` | Mirror of `CLAUDE.md` for Mode B (personality layer without overwriting existing CLAUDE.md) |
+| `CLAUDE.md` | The loaded file: the say-what-you-don't-know rule, five gates, voice, charter and memory rules. 89 lines |
+| `WICK.md` | The same text as `CLAUDE.md`, byte for byte, for Mode B. `tools/wick-mirror.mjs` writes it and CI checks it |
 | `AGENTS.md` | Open-format bridge — makes Wick work in Codex, Aider, Cursor, Zed, JetBrains, Warp, Gemini CLI, Windsurf, and 20+ other tools |
 | `KNOWLEDGE.md` | Framework library: philosophy, game theory, Bayes, Gigerenzer heuristics, decision science, biases, methodology, operationalized epistemic humility |
 | `GROWING-WICK.md` | Week-by-week guide for users — "zero to indispensable in 30 days" |
@@ -196,12 +205,15 @@ Session 1 is dramatically better than vanilla Claude. Session 30 is dramatically
 | `PORTABILITY.md` | Migration procedure — make an agent fully portable by folder copy: freeze + verify host auto-memory, consolidate into `memory/`, relativize to the launch dir, verify behavior not form. Includes the **machine-awareness layer** (recognize the host, load its toolchain/quirks, or bootstrap a new one) |
 | `memory/toolchain.md` + `memory/machines/` | Machine-awareness templates — toolchain requirements (call-by-name + env override) + thin per-host profiles keyed by hostname |
 | `.claude/skills/` | On-demand skills — consolidate-memory, code-review, security-review, simplify, tldr, red-team, base-rate, research, catalog, changelog-summary, migrate, automate (12 skills, spec-compliant per agentskills.io) |
-| `benchmark/` | Seed tasks + external-benchmark docs — targets GAIA2, Inspect AI (UK AISI), galileo-ai/agent-leaderboard |
+| `benchmark/` | `gates-ab.mjs`, a with/without test of the loaded file on public questions (local or hosted model), its results, and three manual seed tasks |
 | `tools/wick-recall.mjs` | Zero-model-token memory router — names the 1–2 files that answer a question (BM25 over index rows + headers + bold lead-ins), ~1 ms. For long files, `--index` lists the matching *entries*, one line each (8 by default) and `--get <id>` reads only those (MEMORY-PROTOCOL.md §14) |
 | `tools/wick-ask.mjs` | Ask your memory a question and get the answer *from it* — or a plain "memory doesn't hold this". Router → paragraph chunks → a local model via ollama; no API key, no spend. Measured: 17/24 answerable right, 24/24 unanswerable refused (MEMORY-PROTOCOL.md §9) |
 | `tools/wick-supersede.mjs` | Retire a fact that changed without erasing it — writes the new entry and tags the old one `[superseded: <date> → <id>]`; recall and ask skip it unless `--include-superseded` (MEMORY-PROTOCOL.md §14) |
 | `tools/wick-selfcheck.mjs` | End-to-end checks for stepwise retrieval and superseding: throwaway memory layers, the real CLIs, no dependencies, no model |
 | `tools/wick-release-check.mjs` | Release gate — every surface that names the version (wick-meta, CHANGELOG, README, git tag; `--site` adds the build script + download page) must agree, or it exits 1 |
+| `tools/wick-ledger.mjs` | The prediction ledger as a program: `add`, `due`, `resolve`, `report`. Brier scores and baselines are computed by code, not by the model |
+| `tools/wick-mirror.mjs` | Keeps `WICK.md` identical to `CLAUDE.md` (`--check`, `--write`) |
+| `.claude-plugin/`, `hooks/`, `output-styles/` | The Claude Code plugin: manifest, marketplace entry, session-start ledger check, and Wick's rules as an output style |
 | `tools/wick-scrub.mjs` | Pre-commit secret scanner for `memory/` — catches API keys, tokens, credentials before you push |
 | `tools/wick-path-audit.mjs` | Pre-commit absolute-path scanner — flags non-portable paths in `memory/` + config before the folder moves |
 | `tools/wick-freshness-audit.mjs` | Temporal-provenance scanner — every memory file stamped `Updated · host · first written`, every index row dated, and the index actually agreeing with the files. `--fix` backfills a whole layer from `git log` |
@@ -244,7 +256,7 @@ Next session, Wick remembers everything.
 
 ## Commands
 
-Sixteen slash commands. They ship as `.claude/commands/*.md` files (Claude Code surfaces them in the `/` autocomplete menu) and are also pattern-recognized from `CLAUDE.md` for runtimes that don't read commands files — Cursor, ChatGPT, Aider, local Ollama. Same behavior, two delivery paths.
+Sixteen slash commands. They ship as `.claude/commands/*.md` files (Claude Code surfaces them in the `/` menu). In a tool with no command menu, the agent reads the command's file when you type its name.
 
 ### Core (6)
 
@@ -412,7 +424,7 @@ If you want to run Wick offline on your own GPU, see **[TRAINING-GUIDE.md](TRAIN
 
 ## Version & License
 
-**Version:** 1.9.1
+**Version:** 2.0.0
 **License:** [MIT](LICENSE) — fork it, modify it, run it commercially, build on it. That's the point.
 **Trademarks:** "Wick" and "Agora Dynamics" are marks of Agora Dynamics LLC (see `LICENSE` for the trademark notice — nominative use is fine, branding a confusingly-similar derivative is not).
 **Training data:** Same MIT license. Fine-tune away — local, commercial, derivative, whatever suits you.

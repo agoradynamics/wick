@@ -8,6 +8,7 @@
 //   1  wick-meta.json      "version" and "released_at"
 //   2  CHANGELOG.md        the newest "## vX (date)" heading: the same version, and the same date as released_at
 //   3  README.md           the "**Version:** X" line
+//   3b plugin manifest     "version" in .claude-plugin/plugin.json, when the file exists
 //   4  git                 tag vX exists and points at HEAD             (with --tagged)
 //   5  build script        VERSION="vX" in the site's build-wick-packages.sh   (with --site <dir>)
 //   6  download page       every wick-v*.zip link and the version chip in the site's wick.html   (with --site <dir>)
@@ -49,6 +50,14 @@ rows.push(['wick-meta.json released_at', m.released_at, !!top && m.released_at =
 const readme = read(path.join(ROOT, 'README.md')) || '';
 const rv = readme.match(/\*\*Version:\*\*\s*v?(\d+\.\d+\.\d+)/);
 rows.push(['README.md Version line', rv ? rv[1] : '(none found)', !!rv && rv[1] === want]);
+
+// The plugin manifest pins plugin users to its version string until it changes, so it is a surface too (v2.0.0).
+const pj = path.join(ROOT, '.claude-plugin', 'plugin.json');
+if (fs.existsSync(pj)) {
+  let pv = null;
+  try { pv = JSON.parse(fs.readFileSync(pj, 'utf8')).version ?? null; } catch { unreadable = true; }
+  rows.push(['.claude-plugin/plugin.json version', pv ?? '(none found)', pv === want]);
+}
 
 if (tagged) {
   let at = null, head = null;
