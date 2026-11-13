@@ -11,6 +11,9 @@
 //      and index row move, and every refusal leaves the disk exactly as it was
 //   4. hidden by default: routing, --index, --get and wick-ask skip a superseded entry; --include-superseded shows it
 //   5. size: on a large generated memory set, step 1 stays a few lines however big memory gets
+//   6. the prediction ledger (wick-ledger): both entry shapes parse, the Brier arithmetic and the two baselines are
+//      right on fixed numbers, the due check and its --hook form behave, every refusal leaves the disk as it was, and a
+//      block the parser cannot read is reported and never touched
 //
 // Exit 0 = every check passed, 1 = a check failed.
 //   node tools/wick-selfcheck.mjs
@@ -378,6 +381,431 @@ console.log('\n5. step 1 stays small on a large memory set');
   check('a fact at line 55 of a 604-line file is the top row of step 1, and step 2 returns just that entry',
         rows(ki.out)[0]?.trim().startsWith(needle) && kg.code === 0 && kg.out.includes('reads 40 degrees low') &&
         Buffer.byteLength(kg.out) < 300, ki.out + '\n--\n' + kg.out + kg.err);
+}
+
+// ─── 6. the prediction ledger ──────────────────────────────────────────────
+console.log('\n6. wick-ledger: both shapes read, the arithmetic done by code, nothing unread ever touched');
+{
+  const seen = [];                                   // everything the tool printed, for the no-verdict check at the end
+  const L = (args, mem) => { const r = run('wick-ledger.mjs', args, mem); seen.push(r.out, r.err); return r; };
+  const json = (r) => { try { return JSON.parse(r.out); } catch { return null; } };
+  const bumped = (t) => t.replace(/^\*Updated: \d{4}-\d{2}-\d{2}/m, `*Updated: ${TODAY}`);
+  const crlf = (t) => t.replace(/\n/g, '\r\n');
+  const isCrlf = (t) => t.includes('\r\n') && !/[^\r]\n/.test(t) && !/\r(?!\n)/.test(t);
+
+  // The ledger the templates teach, holding both shapes a model writes: bold and plain bullet records, a heading
+  // record under ## Pending whose date has free text after it, and a resolved heading record outside both sections.
+  const VENDOR = `- **Date:** 2026-09-01
+- **Claim:** The vendor contract renews before October
+- **Probability:** 70%
+- **Resolve by:** 2026-10-01
+- **Reasoning:** base rate of renewals
+- **Status:** pending`;
+  const LEDGER = `# Predictions Ledger
+
+*Updated: 2026-08-01 · first written 2026-04-20*
+
+Probability claims logged for calibration.
+
+## Pending
+
+<!-- Template:
+- **Date:** YYYY-MM-DD
+- **Claim:** [specific, resolvable statement]
+- **Probability:** XX%
+- **Resolve by:** YYYY-MM-DD
+- **Reasoning:** [one-line framework citation]
+- **Status:** pending
+-->
+
+${VENDOR}
+
+- Date: 2026-09-05
+- Claim: The audit closes with no findings
+- Probability: 0.4
+- Resolve by: 2026-12-15
+- Status: pending
+
+### 2026-09-10 — The release ships in November
+- Probability: 85
+- Resolve by: 2026-11-30 (or the day the tag is cut, whichever is first)
+- Reasoning: two sprints left
+- Status: pending
+- Outcome:
+- Brier:
+
+## Resolved
+
+<!-- Template:
+- **Date:** YYYY-MM-DD
+- **Claim:** [the original claim]
+- **Probability:** XX% (predicted) | **Outcome:** true / false
+- **Brier score:** (probability/100 - outcome)^2
+- **Lesson:** [what was learned]
+-->
+
+- **Date:** 2026-06-01
+- **Claim:** Hiring closes by July
+- **Probability:** 90% (predicted) | **Outcome:** true
+- **Brier score:** 0.0100
+- **Lesson:** the pipeline was already full
+
+## 2026-06-10 – Churn stays under 3% in Q2
+- **Probability:** 60%
+- **Resolve by:** 2026-07-01
+- **Status:** resolved
+- **Outcome:** false
+- **Brier:** 0.3600
+
+---
+*Wick MUST log here before stating any resolvable probability (Gate 5).*
+`;
+  const CAL = `# Calibration Stats
+
+*Updated: 2026-04-20 · first written 2026-04-20*
+
+Running accuracy metrics across all resolved predictions.
+
+## Summary
+- **Total predictions:** 0
+- **Resolved:** 0
+- **Pending:** 0
+- **Mean Brier score:** N/A
+- **Calibration:** N/A (need 10+ resolved predictions)
+
+## By Confidence Bucket
+
+| Bucket | Count | Hit Rate | Expected |
+|--------|-------|----------|----------|
+| 90%+   | 0     | --       | ~90%     |
+| 70-89% | 0     | --       | ~80%     |
+| 50-69% | 0     | --       | ~60%     |
+| 30-49% | 0     | --       | ~40%     |
+| <30%   | 0     | --       | ~20%     |
+
+## Trend
+<!-- Populated later. -->
+
+## What These Numbers Mean
+- **Brier score:** lower is closer. Always saying 50% scores 0.25.
+- a hand-written note that no tool may touch
+
+---
+*Updated by /review command.*
+`;
+  const IDX = `# Memory Index
+
+*Updated: 2026-08-01 · first written 2026-08-01*
+
+## Core
+- [predictions](predictions.md) — forecasts and probability estimates with resolve-by dates (2026-08-01)
+- [calibration](calibration.md) — Brier score, hit rate per bucket (2026-04-20)
+`;
+  const layer = (name, ledger = LEDGER) => put(path.join(TMP, name), { 'predictions.md': ledger, 'calibration.md': CAL, 'index.md': IDX });
+
+  // ── reading ──
+  const base = layer('ledger');                      // read-only from here on: every refusal below is run against it
+  const held = snap(base);
+  const j0 = json(L(['list', '--json'], base));
+  const row = (e) => `${e.n} ${e.shape} ${e.date} ${e.probability}% by ${e.resolveBy} ${e.outcome ?? '-'} ${e.claim}`;
+  const got = j0 ? [...j0.pending, ...j0.resolved].map(row).join('\n') : '(no JSON)';
+  check('both shapes parse: bullet records and heading records, numbered in file order, pending first',
+        got === ['1 A 2026-09-01 70% by 2026-10-01 - The vendor contract renews before October',
+                 '2 A 2026-09-05 40% by 2026-12-15 - The audit closes with no findings',
+                 '3 B 2026-09-10 85% by 2026-11-30 - The release ships in November',
+                 '4 A 2026-06-01 90% by null true Hiring closes by July',
+                 '5 B 2026-06-10 60% by 2026-07-01 false Churn stays under 3% in Q2'].join('\n') && j0.pending.length === 3, got);
+  const dash = put(path.join(TMP, 'ledger-dash'), { 'predictions.md': '# P\n\n## 2026-01-05 - A hyphen in the heading\n- probability: 55%\n' +
+    '- RESOLVE BY: 2026-03-01\n\n### 2026-01-06 — An em dash, bold labels, a bare fraction\n- **Prob:** .2\n- **Resolve-by:** 2026-03-02\n' });
+  const jd = json(L(['list', '--json'], dash));
+  check('labels match in any case, bold or plain; 55%, 0.4, 85 and .2 are all probabilities; em dash, en dash and hyphen all open a heading record',
+        jd?.pending.map(e => `${e.shape}${e.probability}`).join(' ') === 'B55 B20' && j0.pending.map(e => e.probability).join(' ') === '70 40 85',
+        JSON.stringify(jd));
+  const shippedLedger = json(L(['list', '--json', '--file', path.join(ROOT, 'memory', 'predictions.md')], base));
+  check('a template inside an HTML comment is not an entry: the fixture reads as 5 entries, and the shipped memory/predictions.md has nothing unreadable',
+        j0?.unreadable.length === 0 && ![...j0.pending, ...j0.resolved].some(e => /YYYY|XX|\[/.test(e.date + e.claim)) &&
+        shippedLedger?.unreadable.length === 0 && ![...shippedLedger.pending, ...shippedLedger.resolved].some(e => /\[specific|\[the original/.test(e.claim)),
+        JSON.stringify(shippedLedger?.unreadable));
+
+  // ── add ──
+  const addm = layer('ledger-add');
+  const REC = `- **Date:** 2026-11-02
+- **Claim:** Rain falls on the launch day
+- **Probability:** 65%
+- **Resolve by:** 2026-12-20
+- **Reasoning:** seasonal base rate
+- **Status:** pending`;
+  const a1 = L(['add', 'Rain falls on the launch day', '--p', '65', '--by', '2026-12-20', '--why', 'seasonal base rate', '--date', '2026-11-02'], addm);
+  const j1 = json(L(['list', '--json'], addm)), neu = j1?.pending.find(e => e.claim === 'Rain falls on the launch day');
+  check('add writes the template\'s Pending record as the last thing under ## Pending and changes no other line; list reads it back as #4',
+        a1.code === 0 && read(addm, 'predictions.md') === bumped(LEDGER.replace('\n## Resolved', `\n${REC}\n\n## Resolved`)) &&
+        neu?.n === 4 && neu.shape === 'A' && neu.probability === 65 && neu.resolveBy === '2026-12-20' && neu.date === '2026-11-02' &&
+        j1.pending[2].probability === 85 && j1.resolved.length === 2, a1.out + a1.err + read(addm, 'predictions.md'));
+  const idxRow = (dir, f) => read(dir, 'index.md').split('\n').find(l => l.includes(`](${f}.md)`))?.match(/\((\d{4}-\d{2}-\d{2})\)\s*$/)?.[1];
+  check(`a content change moves the ledger's Updated stamp and its index.md row to today (${TODAY}); the calibration row stays`,
+        idxRow(addm, 'predictions') === TODAY && idxRow(addm, 'calibration') === '2026-04-20', read(addm, 'index.md'));
+  const a2 = L(['add', 'A fraction', '--p', '0.25', '--by', '2026-12-21', '--date', '2026-11-02'], addm);
+  const a3 = L(['add', 'A percent sign', '--p', '30%', '--by', '2026-12-22', '--date', '2026-11-02'], addm);
+  const j2 = json(L(['list', '--json'], addm));
+  check('--p takes 65, 0.25 and 30%: all three read back as percentages (65, 25, 30)',
+        a2.code === 0 && a3.code === 0 && j2?.pending.slice(3).map(e => e.probability).join(' ') === '65 25 30', a2.err + a3.err);
+
+  const fine = ['--p', '50', '--by', '2026-12-01', '--date', '2026-11-02'];
+  const addRefusals = [
+    ['an empty claim', ['add', '', ...fine]],
+    ['a claim of spaces', ['add', '   ', ...fine]],
+    ['no --p', ['add', 'x', '--by', '2026-12-01', '--date', '2026-11-02']],
+    ['--p that is not a number', ['add', 'x', '--p', 'likely', '--by', '2026-12-01', '--date', '2026-11-02']],
+    ['--p above 100', ['add', 'x', '--p', '150', '--by', '2026-12-01', '--date', '2026-11-02']],
+    ['--p below 0', ['add', 'x', '--p', '-5', '--by', '2026-12-01', '--date', '2026-11-02']],
+    ['no --by', ['add', 'x', '--p', '50', '--date', '2026-11-02']],
+    ['--by that is not a date', ['add', 'x', '--p', '50', '--by', 'soon', '--date', '2026-11-02']],
+    ['--by on a day that does not exist', ['add', 'x', '--p', '50', '--by', '2026-02-30', '--date', '2026-01-02']],
+    ['--by earlier than the entry date', ['add', 'x', '--p', '50', '--by', '2026-10-01', '--date', '2026-11-02']],
+    ['a claim that is already pending', ['add', 'the vendor contract  renews before OCTOBER', ...fine]],
+  ];
+  const resolveRefusals = [
+    ['a number that is not there', ['resolve', '99', 'true']],
+    ['a substring no claim contains', ['resolve', 'zebra', 'true']],
+    ['a substring three pending claims share', ['resolve', 'the', 'true']],
+    ['an entry already resolved, by number', ['resolve', '4', 'false']],
+    ['an entry already resolved, by its claim', ['resolve', 'Hiring closes', 'false']],
+    ['an outcome that is not true or false', ['resolve', '1', 'maybe']],
+    ['--on before the prediction was made', ['resolve', '1', 'true', '--on', '2026-08-01']],
+  ];
+  for (const [what, set] of [['add', addRefusals], ['resolve', resolveRefusals]]) {
+    const wrong = [];
+    for (const [name, a] of set) {
+      const r = L(a, base);
+      if (r.code !== 1 || !/Nothing was written/.test(r.err)) wrong.push(`${name}: exit ${r.code}\n${r.out}${r.err}`);
+    }
+    const same = JSON.stringify(snap(base)) === JSON.stringify(held);
+    check(`every ${what} refusal exits 1 and leaves the disk byte-identical (${set.length}: ${set.map(s => s[0]).join('; ')})`,
+          !wrong.length && same, wrong.join('\n') + (same ? '' : '\nthe disk changed'));
+  }
+
+  // ── due ──
+  const dueOn = (d) => { const r = L(['due', '--on', d, '--json'], base); return r.code === 0 ? json(r)?.due.map(e => e.n).join(',') : `exit ${r.code}`; };
+  const dues = ['2026-09-30', '2026-10-01', '2026-11-29', '2026-11-30', '2026-12-15'].map(dueOn);
+  check('due respects --on, from the resolve-by date itself onward, and reads the date in "2026-11-30 (or the day the tag is cut, ...)"',
+        dues.join(' | ') === ' | 1 | 1 | 1,3 | 1,3,2', dues.join(' | '));
+  const h0 = L(['due', '--hook', '--on', '2026-09-30'], base);
+  const h1 = L(['due', '--hook'], path.join(TMP, 'no-such-ledger'));
+  const h2 = L(['due', '--hook', '--file', TMP], base);                     // a directory where the file should be
+  check('--hook prints nothing at all and exits 0 when nothing is due, when the file is missing, and when it cannot be read',
+        [h0, h1, h2].every(r => r.code === 0 && r.out === '' && r.err === ''), [h0, h1, h2].map(r => `exit ${r.code}\n${r.out}${r.err}`).join('\n--\n'));
+  const h3 = L(['due', '--hook', '--on', '2026-11-30'], base), hl = h3.out.trimEnd().split('\n');
+  check('--hook names each due claim with its number and ends with one line: ask the person, then run resolve <n> true|false',
+        h3.code === 0 && hl.length === 4 && h3.out.includes('1. "The vendor contract renews before October"') &&
+        h3.out.includes('3. "The release ships in November"') && !h3.out.includes('audit') &&
+        /^Ask the person/.test(hl[3]) && hl[3].includes('`node tools/wick-ledger.mjs resolve <n> true|false`'), h3.out + h3.err);
+  const many = put(path.join(TMP, 'ledger-many'), { 'predictions.md': '# P\n\n## Pending\n\n' + Array.from({ length: 8 }, (_, i) =>
+    `- **Date:** 2026-01-0${i + 1}\n- **Claim:** Claim number ${i + 1}\n- **Probability:** 50%\n- **Resolve by:** 2026-02-0${i + 1}\n- **Status:** pending\n`).join('\n') + '\n## Resolved\n' });
+  const h4 = L(['due', '--hook', '--on', '2026-03-01'], many), ml = h4.out.trimEnd().split('\n');
+  check('--hook with 8 due shows 5 and "and 3 more", in 8 lines (the limit is 12)',
+        h4.code === 0 && ml.length === 8 && ml.filter(l => /^\s+\d+\. "/.test(l)).length === 5 && ml[6].trim() === 'and 3 more', h4.out);
+  const dm = L(['due'], path.join(TMP, 'no-such-ledger')), lm = L(['list'], path.join(TMP, 'no-such-ledger'));
+  check('a missing ledger is UNREACHABLE, never "nothing due": due still exits 0 and says it could not check; list exits 2',
+        dm.code === 0 && !/nothing is due/.test(dm.out) && /UNREACHABLE/.test(dm.err) && lm.code === 2 && /UNREACHABLE/.test(lm.err), dm.out + dm.err + lm.err);
+
+  // ── resolve ──
+  const ra = layer('ledger-resolve-a');
+  const r1 = L(['resolve', '1', 'true', '--lesson', 'renewals are sticky', '--on', '2026-10-02'], ra);
+  const DONE = `- **Date:** 2026-09-01
+- **Claim:** The vendor contract renews before October
+- **Probability:** 70% (predicted) | **Outcome:** true
+- **Brier score:** 0.0900
+- **Lesson:** renewals are sticky
+- **Resolved:** 2026-10-02`;
+  check('resolve on a bullet record, 70% and true: Brier 0.0900; the record leaves ## Pending, the template\'s Resolved form is appended under ## Resolved, no other line changes',
+        r1.code === 0 && read(ra, 'predictions.md') === bumped(LEDGER.replace(`${VENDOR}\n\n`, '').replace('full\n\n## 2026-06-10', `full\n\n${DONE}\n\n## 2026-06-10`)),
+        r1.out + r1.err + read(ra, 'predictions.md'));
+  const rf = layer('ledger-resolve-false');
+  const r2 = L(['resolve', 'vendor contract', 'false', '--on', '2026-10-02'], rf);
+  check('the same prediction resolved false, by a substring of its claim: Brier 0.4900, and no Lesson bullet when none was given',
+        r2.code === 0 && read(rf, 'predictions.md').includes('- **Probability:** 70% (predicted) | **Outcome:** false\n- **Brier score:** 0.4900\n- **Resolved:** 2026-10-02\n') &&
+        json(L(['list', '--json'], rf))?.resolved.find(e => /vendor/.test(e.claim))?.brier === 0.49, r2.out + r2.err);
+  const rb = layer('ledger-resolve-b');
+  const r3 = L(['resolve', 'release ships', 'false', '--on', '2026-12-01'], rb);
+  check('resolve on a heading record, 85% and false: Status, Outcome and Brier (0.7225) are filled in place and every other line is byte-identical',
+        r3.code === 0 && read(rb, 'predictions.md') === bumped(LEDGER.replace('- Status: pending\n- Outcome:\n- Brier:', '- Status: resolved (2026-12-01)\n- Outcome: false\n- Brier: 0.7225')),
+        r3.out + r3.err + read(rb, 'predictions.md'));
+  const BARE = '# P\n\n## 2026-03-01 — A heading record with no Status, Outcome or Brier bullet\n- **Probability:** 70%\n- **Resolve by:** 2026-04-01\n\nA note under it that must not move.\n';
+  const bare = put(path.join(TMP, 'ledger-bare'), { 'predictions.md': BARE });
+  const r4 = L(['resolve', '1', 'true', '--on', '2026-04-02'], bare);
+  check('a heading record missing those bullets gets them after its last field, in its own bold style (70% and true: 0.0900 again)',
+        r4.code === 0 && read(bare, 'predictions.md') === BARE.replace('2026-04-01\n', '2026-04-01\n- **Status:** resolved (2026-04-02)\n- **Outcome:** true\n- **Brier:** 0.0900\n'),
+        r4.out + r4.err + read(bare, 'predictions.md'));
+  const HAND = '# P\n\n## 2026-03-01 — An older heading record\n- Probability: 30%\n- Resolve by: 2026-04-01\n- Status: pending\n\n---\n*kept by hand*\n';
+  const hand = put(path.join(TMP, 'ledger-hand'), { 'predictions.md': HAND });
+  const r5 = L(['add', 'A new one', '--p', '45', '--by', '2026-12-01', '--date', '2026-11-02'], hand);
+  const mid = read(hand, 'predictions.md');
+  const r6 = L(['resolve', 'A new one', 'true', '--on', '2026-12-02'], hand);
+  check('a ledger with no ## Pending or ## Resolved heading gets each one when it is first needed, above the footer, and its heading record still reads',
+        r5.code === 0 && r6.code === 0 &&
+        mid === HAND.replace('\n---', '\n## Pending\n\n- **Date:** 2026-11-02\n- **Claim:** A new one\n- **Probability:** 45%\n- **Resolve by:** 2026-12-01\n- **Status:** pending\n\n---') &&
+        read(hand, 'predictions.md') === HAND.replace('\n---', '\n## Pending\n\n## Resolved\n\n- **Date:** 2026-11-02\n- **Claim:** A new one\n' +
+          '- **Probability:** 45% (predicted) | **Outcome:** true\n- **Brier score:** 0.3025\n- **Resolved:** 2026-12-02\n\n---') &&
+        json(L(['list', '--json'], hand))?.pending[0]?.claim === 'An older heading record', r5.err + r6.err + read(hand, 'predictions.md'));
+
+  // ── report ──
+  // Five fixed results, in both shapes. Brier: 0.01, 0.36, 0.09, 0.04, 0.04; their sum is 0.54.
+  const SCORED = `# Predictions Ledger
+
+*Updated: 2026-08-01 · first written 2026-04-20*
+
+## Pending
+
+- **Date:** 2026-07-01
+- **Claim:** Still open
+- **Probability:** 55%
+- **Resolve by:** 2026-12-31
+- **Status:** pending
+
+## Resolved
+
+- **Date:** 2026-05-01
+- **Claim:** Ninety and it happened
+- **Probability:** 90% (predicted) | **Outcome:** true
+- **Brier score:** 0.0100
+
+- **Date:** 2026-05-02
+- **Claim:** Sixty and it did not
+- **Probability:** 60% (predicted) | **Outcome:** false
+- **Brier score:** 0.3600
+
+- **Date:** 2026-05-03
+- **Claim:** Seventy and it happened
+- **Probability:** 70% (predicted) | **Outcome:** true
+- **Brier score:** 0.0900
+
+### 2026-05-04 — Eighty and it happened
+- Probability: 80%
+- Resolve by: 2026-06-01
+- Status: resolved
+- Outcome: true
+- Brier: 0.0400
+
+### 2026-05-05 — Twenty and it did not
+- Probability: 0.2
+- Resolve by: 2026-06-01
+- Status: resolved
+- Outcome: false
+- Brier: 0.0400
+`;
+  const sc = layer('ledger-scored', SCORED);
+  const p1 = L(['report'], sc), jr = json(L(['report', '--json'], sc));
+  check('report on five fixed results (90% true, 60% false, 70% true, 80% true, 20% false): mean Brier 0.54/5 = 0.1080; always-50% baseline 0.2500, ' +
+        'difference -0.1420; base rate 3 of 5, so that baseline is 0.6 x 0.4 = 0.2400, difference -0.1320',
+        jr?.resolved === 5 && jr.pending === 1 && jr.meanBrier === 0.108 && jr.baseRate === 0.6 && jr.baselines.always50 === 0.25 && jr.baselines.baseRate === 0.24 &&
+        jr.difference.always50 === -0.142 && jr.difference.baseRate === -0.132 &&
+        ['0.1080', '0.2500', '-0.1420', '0.2400', '-0.1320', '3 of 5 came true'].every(s => p1.out.includes(s)), p1.out + JSON.stringify(jr));
+  check('the buckets hold a count, a hit rate and the mean stated probability: <30 1/0%/20, 30-49 empty, 50-69 1/0%/60, 70-89 2/100%/75, 90+ 1/100%/90',
+        jr?.buckets.map(b => `${b.bucket}:${b.count}:${b.hitRate}:${b.meanStated}`).join(' ') === '<30:1:0:20 30-49:0:null:null 50-69:1:0:60 70-89:2:1:75 90+:1:1:90',
+        JSON.stringify(jr?.buckets));
+  const p3 = L(['report'], ra), j3 = json(L(['report', '--json'], ra));
+  check('report with 3 resolved says plainly that this is too few to judge calibration',
+        j3?.resolved === 3 && j3.enoughToJudge === false && /3 resolved is too few to judge calibration/.test(p3.out), p3.out);
+  const results = (n) => '# P\n\n## Resolved\n\n' + Array.from({ length: n }, (_, i) =>
+    `- **Date:** 2026-01-${String(i + 1).padStart(2, '0')}\n- **Claim:** Result ${i + 1}\n- **Probability:** ${i % 2 ? 80 : 30}% (predicted) | **Outcome:** ${i % 3 === 0}\n`).join('\n');
+  const p19 = L(['report'], put(path.join(TMP, 'ledger-19'), { 'predictions.md': results(19) }));
+  const p20 = L(['report'], put(path.join(TMP, 'ledger-20'), { 'predictions.md': results(20) }));
+  check('the line is at 20: 19 resolved is still too few, 20 is not, and at 20 the report still does not grade the score',
+        /19 resolved is too few to judge/.test(p19.out) && p20.code === 0 && !/too few/.test(p20.out) && /does not grade/.test(p20.out), p19.out + p20.out);
+  const off = put(path.join(TMP, 'ledger-off'), { 'predictions.md': '# P\n\n## Resolved\n\n- **Date:** 2026-01-01\n- **Claim:** Scored by hand, wrongly\n' +
+    '- **Probability:** 70% (predicted) | **Outcome:** true\n- **Brier score:** 0.2100\n' });
+  const po = L(['report'], off);
+  check('a stored Brier score that is not (p - outcome)^2 is reported, and the computed value (0.0900) is the one used',
+        json(L(['report', '--json'], off))?.meanBrier === 0.09 && /1 stored Brier score is not/.test(po.out) && po.out.includes('line 5'), po.out);
+
+  const wr = layer('ledger-write', SCORED);
+  const w1 = L(['report', '--write'], wr), cal = read(wr, 'calibration.md');
+  // What --write may not touch: every line that is neither a Summary bullet nor a table row. The stamp's date is the
+  // one field that is allowed to move.
+  const [outside, inside] = [false, true].map(want => (t) => {
+    const out = [];
+    let summary = false;
+    for (const l of t.split('\n')) {
+      if (l.startsWith('## ')) summary = l === '## Summary';
+      if (((summary && l.startsWith('- ')) || l.startsWith('|')) === want) out.push(l.replace(/^\*Updated: \d{4}-\d{2}-\d{2}/, '*Updated: D'));
+    }
+    return out.join('\n');
+  });
+  check('--write changes only the Summary bullets and the bucket table of calibration.md, and does not touch the ledger',
+        w1.code === 0 && outside(cal) === outside(CAL) && inside(cal) !== inside(CAL) && read(wr, 'predictions.md') === SCORED &&
+        cal.includes('- **Total predictions:** 6\n- **Resolved:** 5\n- **Pending:** 1\n- **Mean Brier score:** 0.1080\n- **Always-50% baseline:** 0.2500 (difference -0.1420)\n' +
+                     '- **Base-rate baseline:** 0.2400 (base rate 60%; difference -0.1320)\n- **Calibration:** too few to judge (5 resolved; 20 or more are needed)\n') &&
+        cal.includes('| 70-89% | 2     | 100%     | 75%         |') && idxRow(wr, 'calibration') === TODAY && idxRow(wr, 'predictions') === '2026-08-01',
+        w1.out + w1.err + cal);
+  const w1b = L(['report', '--write'], wr);
+  check('--write a second time finds nothing to change and writes nothing', w1b.code === 0 && read(wr, 'calibration.md') === cal && /nothing was written/.test(w1b.out), w1b.out);
+  const NOTES = '# Calibration\n\nNotes kept by hand.\n';
+  const wn = put(path.join(TMP, 'ledger-write-notes'), { 'predictions.md': SCORED, 'calibration.md': NOTES });
+  const wm = put(path.join(TMP, 'ledger-write-missing'), { 'predictions.md': SCORED });
+  const w2 = L(['report', '--write'], wn), w3 = L(['report', '--write'], wm);
+  check('--write refuses a calibration.md that has no Summary bullets or bucket table (exit 1, nothing written) and a missing one (exit 2, none created), and says so',
+        w2.code === 1 && /Summary/.test(w2.err) && /Nothing was written/.test(w2.err) && read(wn, 'calibration.md') === NOTES &&
+        w3.code === 2 && !fs.existsSync(path.join(wm, 'calibration.md')), w2.err + w3.err);
+
+  // ── line endings ──
+  const cr = put(path.join(TMP, 'ledger-crlf'), { 'predictions.md': crlf(LEDGER), 'calibration.md': crlf(CAL) });
+  const cs = [L(['add', 'A CRLF claim', '--p', '35', '--by', '2026-12-24', '--date', '2026-11-02'], cr),
+              L(['resolve', 'vendor contract', 'true', '--on', '2026-10-02'], cr),
+              L(['resolve', 'release ships', 'false', '--on', '2026-12-01'], cr), L(['report', '--write'], cr)];
+  const ct = read(cr, 'predictions.md'), cc = read(cr, 'calibration.md');
+  check('a CRLF ledger stays CRLF through add, both kinds of resolve and --write: no bare LF, no stray CR',
+        cs.every(r => r.code === 0) && isCrlf(ct) && isCrlf(cc) && ct.includes('- **Claim:** A CRLF claim\r\n') &&
+        ct.includes('- **Brier score:** 0.0900\r\n') && ct.includes('- Brier: 0.7225\r\n') && cc.includes('- **Resolved:** 4\r\n'),
+        cs.map(r => r.err).join('') + JSON.stringify(ct));
+  const TAIL = '# P\n\n## Resolved\n\n## Pending\n\n- **Date:** 2026-01-01\n- **Claim:** The last line has no newline\n- **Probability:** 10%\n- **Resolve by:** 2026-02-01';
+  const t1 = put(path.join(TMP, 'ledger-tail'), { 'predictions.md': TAIL }), t2 = put(path.join(TMP, 'ledger-tail-crlf'), { 'predictions.md': crlf(TAIL) });
+  const ts = [L(['add', 'Appended at the very end', '--p', '50', '--by', '2026-12-01', '--date', '2026-11-02'], t1),
+              L(['add', 'Appended at the very end', '--p', '50', '--by', '2026-12-01', '--date', '2026-11-02'], t2)];
+  check('a ledger whose last line has no newline: the record is appended on lines of its own, and the CRLF one stays CRLF',
+        ts.every(r => r.code === 0) && read(t1, 'predictions.md') === TAIL + '\n\n- **Date:** 2026-11-02\n- **Claim:** Appended at the very end\n' +
+          '- **Probability:** 50%\n- **Resolve by:** 2026-12-01\n- **Status:** pending\n' && read(t2, 'predictions.md') === crlf(read(t1, 'predictions.md')),
+        ts.map(r => r.err).join('') + JSON.stringify(read(t2, 'predictions.md')));
+
+  // ── what cannot be read ──
+  const JUNK = '- **Date:** 2026-09-07\n- **Claim:** Something with no number on it\n- **Probability:** fairly likely\n- **Resolve by:** soon';
+  const NOTE = 'Ask about the Q3 number before logging it.';
+  const un = layer('ledger-unread', LEDGER.replace('\n- Date: 2026-09-05', `\n${JUNK}\n\n- Date: 2026-09-05`).replace('full\n\n## 2026-06-10', `full\n\n${NOTE}\n\n## 2026-06-10`));
+  const where = () => { const l = read(un, 'predictions.md').split('\n'); return `2 blocks could not be read (lines ${l.indexOf(JUNK.split('\n')[0]) + 1}, ${l.indexOf(NOTE) + 1})`; };
+  const u0 = L(['list'], un), u1 = L(['report'], un), ju = json(L(['list', '--json'], un));
+  check('a record with no readable probability and a stray line of prose are reported by list and report, with their lines; the entries around them still parse',
+        u0.out.includes(where()) && u1.out.includes(where()) && ju?.unreadable.length === 2 && ju.pending.length === 3 && ju.resolved.length === 2 &&
+        /no probability/.test(ju.unreadable[0].reason), u0.out + u1.out);
+  const us = [L(['add', 'Logged beside what cannot be read', '--p', '50', '--by', '2026-12-01', '--date', '2026-11-02'], un),
+              L(['resolve', 'vendor contract', 'true', '--on', '2026-10-02'], un),       // the bullet record just above the unread one
+              L(['resolve', 'audit closes', 'true', '--on', '2026-12-16'], un),          // the bullet record just below it
+              L(['resolve', 'release ships', 'false', '--on', '2026-12-01'], un)];       // a heading record, in place
+  const ut = read(un, 'predictions.md'), u2 = L(['list'], un);
+  check('both unread blocks survive add and three resolves byte for byte, where they were, and are still reported',
+        us.every(r => r.code === 0) && ut.includes(`-->\n\n${JUNK}\n\n### 2026-09-10`) && ut.includes(`full\n\n${NOTE}\n\n- **Date:** 2026-09-01`) && u2.out.includes(where()) &&
+        json(L(['list', '--json'], un))?.resolved.length === 5, us.map(r => r.err).join('') + ut);
+  const NOTED = '# P\n\n## Pending\n\n- **Date:** 2026-01-01\n- **Claim:** A record with a note typed straight under it\n- **Probability:** 80%\n' +
+    '- **Resolve by:** 2026-02-01\n- **Status:** pending\nNOTE TO SELF: check the Q3 report first.\n\n## Resolved\n\n(none yet)\n';
+  const nt = put(path.join(TMP, 'ledger-noted'), { 'predictions.md': NOTED });
+  const n0 = L(['list'], nt), n1 = L(['resolve', '1', 'true', '--on', '2026-02-02'], nt), n2 = L(['list'], nt);
+  check('an unindented line typed straight under a record is not folded into its last field: it is reported, and it stays put when the record is resolved; "(none yet)" is not a block',
+        n0.out.includes('1 block could not be read (line 10)') && n1.code === 0 && n2.out.includes('1 block could not be read (line 5)') &&
+        read(nt, 'predictions.md').startsWith('# P\n\n## Pending\n\nNOTE TO SELF: check the Q3 report first.\n\n## Resolved\n\n(none yet)\n\n- **Date:** 2026-01-01\n'),
+        n0.out + n1.err + read(nt, 'predictions.md'));
+
+  // ── usage ──
+  const flags = [L(['list', '--bogus'], base), L(['report', '--jsn'], base), L(['due', '--onn', '2026-01-01'], base), L(['list', '--write'], base),
+                 L(['add', 'x', ...fine, '--force'], base), L(['resolve', '1', 'true', '--dry'], base), L(['frobnicate'], base)];
+  const help = L(['--help'], base);
+  check('an unknown flag, a flag that belongs to another command, and an unknown command all exit 2 and write nothing; --help exits 0',
+        flags.every(r => r.code === 2 && /usage:/.test(r.err)) && JSON.stringify(snap(base)) === JSON.stringify(held) &&
+        help.code === 0 && help.out.startsWith('usage: node tools/wick-ledger.mjs list'), flags.map(r => `exit ${r.code}`).join(' '));
+
+  // The report does arithmetic. It never grades the score and never names a skill bar, in anything it printed here or
+  // wrote into calibration.md.
+  const BAR = /superforecaster|excellent|\bgood\b|\bbad\b|\bpoor\b|needs work|pundit|well[- ]calibrated|overconfident|underconfident/i;
+  const said = seen.join('\n') + inside(cal) + inside(cc.replace(/\r/g, ''));
+  check(`nothing the ledger printed or wrote grades a score or names a skill bar (${seen.length / 2} runs)`, said.length > 5000 && !BAR.test(said),
+        (said.match(BAR) || [])[0]);
 }
 
 if (!keep) fs.rmSync(TMP, { recursive: true, force: true });
