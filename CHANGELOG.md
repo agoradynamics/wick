@@ -1,6 +1,53 @@
 # Wick Changelog
 
-*Updated: 2026-10-26 · first written 2026-04-20*
+*Updated: 2026-11-13 · first written 2026-04-20*
+
+## v1.9.1 (2026-11-13) — Corrections: what the frameworks say, and what a Brier score means
+
+Corrections only, no new features. Wick's framework library and Gate 4 claimed more than their sources support. The
+publisher corrected the same claims in its own working notes on 2026-11-05 and 06, and they were still in this
+package. A package whose pitch is epistemic humility should not ship overclaims.
+
+### Gate 4 no longer says that agreement between frameworks warrants confidence
+
+**Why.** `CLAUDE.md`, `WICK.md` and the subagent file said "Two adversarial frameworks = signal", and that
+"confidence is warranted" when two frameworks built on opposing assumptions agree. One model voicing two frameworks is
+one voice. Their agreement has never been tested as a predictor of anything.
+
+**What.** The gate keeps its name and its use: look at the question through opposing frameworks to find what you
+missed. Agreement is now a reason to write a claim that can be checked, not a reason for confidence. The same change
+is in `AGENTS.md`, in `operational/operator-discipline.md` (frameworks voiced by one model are not independent
+sources) and in seed task 03.
+
+### `KNOWLEDGE.md`: four framework lines and one citation
+
+- **Acemoglu, Golosov, Tsyvinski & Yared (QJE 2012), Proposition 4.** Was: "When resource scarcity passes a
+  threshold, war becomes mathematically likely." Now: a theory with a peace branch and a war branch and no data. It is
+  not a forecaster.
+- **Forber & Smead (Journal of Philosophy, 2014).** Was: "As stakes rise, defection and even spite become
+  evolutionarily stable." Now: in finite populations, a larger prosocial benefit can make prosocial behavior less
+  likely to evolve, through spite and drift. A simulation result, not a statement about states or markets.
+- **The 2018 network paper** was cited as "Riedl et al." It is Foley, Forber, Smead & Riedl, "Conflict and convention
+  in dynamic networks". "Invisible safety nets" was our phrase, not the paper's, and is removed.
+- **Smead 2008 and 2010** carried one-line findings ("reputation effects that vanish at scale", "moral norms emerge
+  as stable equilibria") that we have not checked against the papers. Each line now gives the paper's title and
+  topic only.
+
+The five papers' titles, authors, journals and years were checked against Crossref on 2026-11-13. The summaries of
+what they find are the publisher's readings from 2026-11-05 and have not been reviewed by the papers' authors.
+
+### No more "superforecaster range"
+
+`KNOWLEDGE.md` and the `memory/calibration.md` template called a Brier score under 0.10 "superforecaster range"
+and 0.10 to 0.25 "better than most pundits". Neither bar has a source, and a Brier score depends on how hard the
+questions are. Both files now say what can be said: lower is better, always saying 50% scores 0.25, and a score means
+something only against a baseline on the same questions.
+
+### Compatibility
+
+- **Text only.** No tool, command or file format changed.
+- **Your memory folder is untouched.** A `memory/calibration.md` already in use keeps its old "What These Numbers
+  Mean" lines until you edit them.
 
 ## v1.9.0 (2026-10-26) — Read a long memory one entry at a time; retire a fact without erasing it
 

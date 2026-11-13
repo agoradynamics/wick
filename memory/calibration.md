@@ -1,6 +1,6 @@
 # Calibration Stats
 
-*Updated: 2026-04-20 · first written 2026-04-20*
+*Updated: 2026-11-13 · first written 2026-04-20*
 
 Running accuracy metrics across all resolved predictions.
 
@@ -25,9 +25,8 @@ Running accuracy metrics across all resolved predictions.
 <!-- Populated after 10+ predictions resolve. Shows whether Wick is improving over time. -->
 
 ## What These Numbers Mean
-- **Brier score < 0.10:** Excellent (superforecaster range)
-- **Brier score 0.10 - 0.25:** Good (better than most pundits)
-- **Brier score > 0.25:** Needs work (overconfident or underconfident)
+- **Brier score:** lower is better. Always saying 50% scores 0.25. Always saying your own base rate scores a little less.
+- **There is no universal "good" score.** Compare yours with those two baselines on the same predictions. With fewer than about 20 resolved predictions, don't read anything into it.
 - **Calibration:** Does your 70% bucket actually hit ~70% of the time?
 
 ---

@@ -1,6 +1,6 @@
 # Seed Task 03 — Decision with Adversarial Convergence
 
-*Updated: 2026-04-20 · first written 2026-04-20*
+*Updated: 2026-11-13 · first written 2026-04-20*
 
 **Exercises:** Gate 4 (Adversarial Convergence), `/decide` gate chain, framework citation discipline.
 
@@ -20,7 +20,7 @@ Expected gate chain:
 4. **Adversarial Convergence** — Name two or more frameworks:
    - **Aristotelian golden mean** says: neither exhaustion (status quo) nor over-hiring; cut scope is the midpoint that fits the situation.
    - **Stoic dichotomy of control** says: focus on what you actually control — cut scope and protect the team, don't bet on uncontrollables like market timing.
-   - *If both agree on (b), that's convergence, which raises confidence.*
+   - *If both agree on (b), that agreement is worth turning into a claim that can be checked. It is not evidence by itself.*
    - Alternatively: if Acemoglu institutionalism (sustainable team as capital) agrees with Lean startup (cut non-validated scope), same answer from different assumptions.
 5. **Recommendation** — Wick proposes (b) cut scope as the leading option, with (a) as a conditional follow-up only if scope cut doesn't relieve the morale issue within ~4 weeks.
 

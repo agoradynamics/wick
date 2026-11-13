@@ -1,6 +1,6 @@
 # Wick Knowledge Base — Frameworks & Reference
 
-*Updated: 2026-04-20 · first written 2026-04-20*
+*Updated: 2026-11-13 · first written 2026-04-20*
 
 This is Wick's full framework library. Load it into your project alongside CLAUDE.md for maximum capability. You can extend it with your own domain-specific sections.
 
@@ -59,7 +59,7 @@ Wick draws on four practical-ethics traditions as *tools*, not as lecture subjec
 - **Inclusive Institutions:** Protect property rights, enforce contracts, allow creative destruction, distribute power broadly.
 - **Extractive Institutions:** Extract from the many for the benefit of the few. Concentrate power. Resist change.
 
-**Acemoglu Proposition 4 (QJE 2012):** When resource scarcity passes a threshold, war becomes mathematically likely.
+**Acemoglu, Golosov, Tsyvinski & Yared, "A Dynamic Theory of Resource Wars" (QJE 2012), Proposition 4:** a theory with two branches. Below a threshold the model gives permanent peace; above it, war in the first period. It has no data and is not a forecaster. Use it to write a question, not to answer one.
 
 ### Focal Points (Schelling, Nobel 2005)
 
@@ -69,10 +69,12 @@ Wick draws on four practical-ethics traditions as *tools*, not as lecture subjec
 
 ### Evolutionary Game Theory (Smead)
 
-- **Cooperation in Finite Populations (Phil. of Science 2008, Bio. & Phil. 2010):** In small groups with repeated interaction, cooperation sustains through reputation effects that vanish at scale.
-- **Forber & Smead (2014) — Spite Dynamics:** As stakes rise, defection and even spite become evolutionarily stable.
-- **Moral Signal Evolution:** Moral norms emerge as stable equilibria in repeated games.
-- **Riedl et al. (J. Royal Society Interface 2018):** Host-guest norms in networks create invisible safety nets. Conventions emerge from structure, not centralized enforcement.
+- **Smead, "The Evolution of Cooperation in the Centipede Game with Finite Populations" (Philosophy of Science, 2008):** cooperation in finite populations.
+- **Smead, "Indirect reciprocity and the evolution of 'moral signals'" (Biology & Philosophy, 2010):** how moral signals can evolve.
+- **Forber & Smead, "An Evolutionary Paradox for Prosocial Behavior" (Journal of Philosophy, 2014):** in finite populations, a larger prosocial benefit can make prosocial behavior less likely to evolve, through spite and drift. A simulation result about populations of simple agents, not a statement about states or markets.
+- **Foley, Forber, Smead & Riedl, "Conflict and convention in dynamic networks" (Journal of the Royal Society Interface, 2018):** a host-guest norm tends to evolve on dynamic networks. A simulation result.
+
+*These are models of simple agents. The lines above name each paper's topic; read the paper before leaning on a specific result. Versions of this file before v1.9.1 overstated several of them.*
 
 ### Network Cascades (Watts, Easley & Kleinberg)
 
@@ -245,7 +247,7 @@ Forces thinking in distributions rather than point estimates. Plan for the basel
 **Superforecasting (Tetlock)** — The skill of calibrated probability estimation.
 
 - **Foxes vs Hedgehogs:** Foxes (many frameworks, comfortable with uncertainty) consistently outperform hedgehogs (one big idea, high confidence).
-- **Brier Score:** (probability - outcome)^2 averaged over predictions. Lower = better calibrated. < 0.10 = superforecaster range.
+- **Brier Score:** (probability - outcome)^2 averaged over predictions. Lower is better; always saying 50% scores 0.25. There is no universal "good" number. A score means something only against a baseline on the same questions: always 50%, the base rate, or a market price.
 - **The key insight:** Calibration improves only through feedback loops. Log predictions, resolve them, adjust. Without resolution, you're just guessing with confidence.
 
 **Never commit to a forecast without logging it for resolution.**
