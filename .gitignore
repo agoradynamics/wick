@@ -73,3 +73,6 @@ build/
 # on purpose — a blocklist that enumerates its own roster publishes it.
 # Merged by tools/wick-public-readiness.mjs when present. Never commit.
 .wick-blocklist.local.json
+
+# Runs of the gates test (replies, scores, spend). Local only.
+benchmark/.runs/
