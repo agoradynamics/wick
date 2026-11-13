@@ -42,7 +42,7 @@
     "tools/wick-release-check.mjs (v1.8.0) — reads every surface that names the version (wick-meta, CHANGELOG, README, the git tag, and with --site the build script and download page) and refuses when they disagree. A release is not shipped until all of them name it.",
     "tools/wick-ledger.mjs (v2.0.0) — the prediction ledger as a program: add, due, resolve, report. Brier scores and two no-skill baselines are computed by code. Reads the template's bullet records and heading records. due --hook is a session-start check",
     "tools/wick-mirror.mjs (v2.0.0) — WICK.md is CLAUDE.md byte for byte; --write copies, --check is in CI",
-    "Claude Code plugin, first cut (v2.0.0) — .claude-plugin/plugin.json + marketplace.json, hooks/hooks.json (session-start ledger check), output-styles/wick.md. Written to the documented format; not yet run through claude plugin validate"
+    "Claude Code plugin, first cut (v2.0.0) — .claude-plugin/plugin.json + marketplace.json, hooks/hooks.json (session-start ledger check), output-styles/wick.md. Passes claude plugin validate (Claude Code 2.1.321) with warnings; not installed end to end"
   ],
   "audit_status": {
     "identity_claims": "clean",

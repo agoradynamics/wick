@@ -78,6 +78,8 @@ had run is gone.
 - **`README.md`: the Portability section says what each tool reads,** checked against Claude Code's, Codex's and
   Gemini CLI's documentation where marked. It no longer claims the file "works with any local model", or that
   portability is a moat. A "What has been measured" section is new.
+- **`WICK-INTEGRATION.md`'s bootstrap prompt and `.claude/skills/README.md`** still told an agent to read every
+  memory file and to look commands up in a section of `CLAUDE.md` that no longer exists. Both now match the new file.
 - **The Hugging Face dataset link is removed** from `wick-meta.json`. The dataset is not public.
 - **CI now runs the self-check** (70 checks) and the mirror check.
 - **`wick-public-readiness`: its text reporter crashed on a missing required term** and printed a stack trace instead
@@ -88,9 +90,9 @@ had run is gone.
 
 `.claude-plugin/plugin.json` and `marketplace.json`, `hooks/hooks.json` (the session-start ledger check) and
 `output-styles/wick.md` (the rules as an output style, since a plugin cannot ship a `CLAUDE.md`). Commands, skills and
-the subagent are read from `.claude/`, so nothing is duplicated. **Not validated:** it follows the documented format as
-of 2026-11-13 and has not been run through `claude plugin validate` or installed. It does not create a `memory/`
-folder.
+the subagent are read from `.claude/`, so nothing is duplicated. It passes `claude plugin validate` (Claude Code
+2.1.321) with warnings: no icon, and a note that a `CLAUDE.md` at a plugin's root is not loaded. **Not installed end
+to end** by us. It does not create a `memory/` folder.
 
 ### Compatibility
 

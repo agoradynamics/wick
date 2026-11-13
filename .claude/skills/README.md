@@ -1,6 +1,6 @@
 # Wick Skills
 
-*Updated: 2026-06-28 · first written 2026-04-20*
+*Updated: 2026-11-13 · first written 2026-04-20*
 
 Skills are on-demand capabilities Wick can invoke without bloating the main prompt. They load when called, stay out of the way when not.
 
@@ -22,7 +22,7 @@ Skills are on-demand capabilities Wick can invoke without bloating the main prom
 
 ## Relationship to slash commands
 
-Wick's 16 slash commands (`/reflect`, `/calibrate`, `/decide`, `/learn`, `/review`, `/status`, `/premortem`, `/steelman`, `/frame`, `/doubt`, `/forget`, `/audit`, `/evolve`, `/promote`, `/checkup`, `/sync`) ship as `.claude/commands/*.md` files — they appear in Claude Code's `/` autocomplete menu and are also pattern-recognized from the main `CLAUDE.md` on every session.
+Wick's 16 slash commands (`/reflect`, `/calibrate`, `/decide`, `/learn`, `/review`, `/status`, `/premortem`, `/steelman`, `/frame`, `/doubt`, `/forget`, `/audit`, `/evolve`, `/promote`, `/checkup`, `/sync`) ship as `.claude/commands/*.md` files — they appear in Claude Code's `/` autocomplete menu. Through v1.9.1 their definitions were also repeated inside `CLAUDE.md`; from v2.0.0 that file only lists their names, and a tool with no command menu reads the command's file.
 
 Skills are **on-demand** — they load only when you invoke them. This keeps the core prompt lean while making specialized capabilities available when needed.
 

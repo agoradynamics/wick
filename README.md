@@ -109,14 +109,14 @@ Task(subagent_type: "wick", prompt: "analyze this decision using your 5 gates: [
 
 Wick runs in a fresh sub-agent context with her frameworks loaded, returns an answer, and you're back to your primary agent. Perfect for when you want Wick's analytical depth without ceding your whole session.
 
-### Mode D: Claude Code plugin (first cut, not yet validated)
+### Mode D: Claude Code plugin (first cut)
 
 ```
 /plugin marketplace add agoradynamics/wick
 /plugin install wick@agora-dynamics
 ```
 
-The plugin carries the sixteen commands (as `/wick:calibrate` and so on), the twelve skills, the subagent, an output style with Wick's rules (turn it on with `/output-style`), and a session-start check that lists predictions past their resolve date. It does not create a `memory/` folder: copy `memory/` from this repo into your project. The manifest follows the documented format as of 2026-11-13 and has not been run through `claude plugin validate`. If it fails for you, please open an issue.
+The plugin carries the sixteen commands (as `/wick:calibrate` and so on), the twelve skills, the subagent, an output style with Wick's rules (turn it on with `/output-style`), and a session-start check that lists predictions past their resolve date. It does not create a `memory/` folder: copy `memory/` from this repo into your project. The manifest passes `claude plugin validate` (Claude Code 2.1.321, with warnings: no icon, and a note that `CLAUDE.md` at a plugin's root is not loaded, which is why the rules ship as an output style). It has not been installed end to end by us. If it fails for you, please open an issue.
 
 ### Which mode to pick
 
